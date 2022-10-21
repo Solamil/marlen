@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"text/template"
+	"encoding/json"
 	"io/ioutil"
 	"strings"
 	"strconv"
@@ -35,8 +36,9 @@ type currPriceInfo struct {
 }
 var currPrices = currPriceInfo{}
 
-type jsonData struct {
-	foo string
+type userBaseRequest struct {
+	CoinCode string `json:"coinCode"`	
+	Param	 string `json:"param"`
 }
 
 func main() {
@@ -49,9 +51,21 @@ func main() {
 	
 	indexTemplate, _ = template.ParseFiles("web/index.html")	
 	responseTemplate, _ = template.ParseFiles("web/response.html")
+
+//	jsonFile, err := os.Open("testfile.json")
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	fmt.Println("reading testfile.json")
+//	defer jsonFile.Close()
+//
+//	byteValue, _ := ioutil.ReadAll(jsonFile)
+//	var base userBaseRequest 
+//	json.Unmarshal(byteValue, &base)
+//	fmt.Println(base.CoinCode)
+	
 	http.HandleFunc("/base_info", base_handler)
 	http.HandleFunc("/forecast_info", forecast_handler)
-//	fmt.Println(session.Name)
 	http.ListenAndServe(":8900", nil)
 }
 
@@ -60,31 +74,29 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	params := strings.Split(string(body), " ")
-	var typeCurr string
-	if params[0] == "" { 
-		typeCurr = "usd"
-	} else {
-		typeCurr = params[0]
+	var base userBaseRequest
+	json.Unmarshal(body, &base)
+
+	if base.CoinCode  == "" { 
+		base.CoinCode = "usd"
 	}
 
-	if btc := get_coin_price(typeCurr, "btc"); btc != 0 {
+	if btc := get_coin_price(base.CoinCode, "btc"); btc != 0 {
 		coinPrices.Btc = btc
 	}
-	if xmr := get_coin_price(typeCurr, "xmr"); xmr != 0 {
+	if xmr := get_coin_price(base.CoinCode, "xmr"); xmr != 0 {
 		coinPrices.Xmr = xmr
 	}
 	var json string
-//	params: CURRENCY conversion
-	if len(params) > 1 && params[1] == "conversion" {
-		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, typeCurr)
+	if len(base.CoinCode) > 1 && base.Param == "conversion" {
+		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
 	} else {
 		sunMoon := get_sun_moon_info()
 		currency := get_currency_rates()
 		hum_low_high := get_text_wttr_forecast()
 		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s",
 			"sun_moon": %s, "hum_low_high": %s,  %s}`, 
-		coinPrices.Btc, coinPrices.Xmr,typeCurr, sunMoon, hum_low_high, currency)
+		coinPrices.Btc, coinPrices.Xmr,base.CoinCode, sunMoon, hum_low_high, currency)
 	}
 //	var session http.Cookie
 //	session.Name = "sessionid"
@@ -99,13 +111,20 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 
 func forecast_handler(w http.ResponseWriter, r *http.Request) {
 
-	weatherFile, err := os.Open("weatherreport")
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Println(err)
 	}
-	defer weatherFile.Close()
-	byteWeather, _ := ioutil.ReadAll(weatherFile)
-	w.Write(byteWeather)
+	var base userBaseRequest
+	json.Unmarshal(body, &base)
+	fmt.Println(base.CoinCode)
+//	weatherFile, err := os.Open("weatherreport")
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	defer weatherFile.Close()
+//	byteWeather, _ := ioutil.ReadAll(weatherFile)
+//	w.Write(byteWeather)
 }
 
 func get_sun_moon_info() string {
