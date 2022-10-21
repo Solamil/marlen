@@ -79,9 +79,11 @@
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"Cookie": document.cookie
 				},
-				body: fiat_select.value
+				body: {
+					"coin_code": fiat_select.value,
+					"location": ""
+				}
 			}
 			fetch("/base_info", options).then(res => res.json())
 				.then(res => {
@@ -124,7 +126,10 @@
 					headers: {
 						"Content-Type": "application/json"
 					},
-					body: this.value+" conversion"
+					body: {
+						"coin_code": this.value,
+						"param": "conversion"
+					}
 				}
 				
 				var date = new Date(Date.now())

@@ -92,6 +92,9 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	if len(base.CoinCode) > 1 && base.Param == "conversion" {
 		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
 	} else {
+		if base.Location == "" {
+			base.Location = "Zdar"
+		}
 		sunMoon := get_sun_moon_info(base.Location)
 		hum_low_high := get_text_wttr_forecast(base.Location)
 		currency := get_currency_rates()
