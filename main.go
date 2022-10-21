@@ -11,7 +11,7 @@ import (
 	"time"
 	"unicode/utf8"
 	"os/exec"
-	"os"
+//	"os"
 )
 var indexTemplate *template.Template
 var responseTemplate *template.Template
@@ -37,8 +37,9 @@ type currPriceInfo struct {
 var currPrices = currPriceInfo{}
 
 type userBaseRequest struct {
-	CoinCode string `json:"coinCode"`	
+	CoinCode string `json:"coin_code"`	
 	Param	 string `json:"param"`
+	Location string `json:"location"`
 }
 
 func main() {
@@ -91,9 +92,9 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	if len(base.CoinCode) > 1 && base.Param == "conversion" {
 		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
 	} else {
-		sunMoon := get_sun_moon_info()
+		sunMoon := get_sun_moon_info(base.Location)
+		hum_low_high := get_text_wttr_forecast(base.Location)
 		currency := get_currency_rates()
-		hum_low_high := get_text_wttr_forecast()
 		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s",
 			"sun_moon": %s, "hum_low_high": %s,  %s}`, 
 		coinPrices.Btc, coinPrices.Xmr,base.CoinCode, sunMoon, hum_low_high, currency)
@@ -127,11 +128,11 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 //	w.Write(byteWeather)
 }
 
-func get_sun_moon_info() string {
+func get_sun_moon_info(location string) string {
 	year, month, day := time.Now().Date()
 	if sunMoon.Day != day || sunMoon.Month != month || sunMoon.Year != year {
 		format := "%S+%s+%m"	
-		if info := get_weather(format); info != "" {
+		if info := get_weather(format, location); info != "" {
 			sunMoon.Info = info
 			sunMoon.Day = day 
 			sunMoon.Month = month 
@@ -140,9 +141,8 @@ func get_sun_moon_info() string {
 	}
 	return sunMoon.Info
 }
-func get_weather(format string) string {
-	place := "Zdar"
-	url := fmt.Sprintf(`https://wttr.in/%s?format="%s"`, place, format)
+func get_weather(format, location string) string {
+	url := fmt.Sprintf(`https://wttr.in/%s?format="%s"`, location, format)
 	reqm, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
@@ -164,20 +164,19 @@ func get_weather(format string) string {
 	}
 	return string(weather)
 }
-func get_text_wttr_forecast() string {
-
-	output, err := exec.Command("/bin/sh", "sb-forecast.sh").Output()
+func get_text_wttr_forecast(location string) string {
+	output, err := exec.Command("/bin/sh", "sb-forecast.sh", location).Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high := strings.Replace(string(output), "\n", "", 1)
 
-	output, err = exec.Command("/bin/sh", "sb-forecast.sh", "23", "26").Output()
+	output, err = exec.Command("/bin/sh", "sb-forecast.sh", location, "23", "26").Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high_next := strings.Replace(string(output), "\n", "", 1)
-	output, err = exec.Command("/bin/sh", "sb-forecast.sh", "33", "36").Output()
+	output, err = exec.Command("/bin/sh", "sb-forecast.sh", location, "33", "36").Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
