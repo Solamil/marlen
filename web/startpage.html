@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Start Page</title>
+<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="background-color:#893531 ">
+	<div class="status-bar">
+		<p id="sun_moon" style="display: inline-block;">Sunrise Sunset Moonphase</p>
+		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">Coins</a>
+		<!--		<p id="coins" style="float: right; display: inline-block;">Currency</p> -->
+		<select name="fiat_select" id="fiat_select" style="float: right; display: inline-block;">
+			<option value="usd">$<option>
+			<option value="eur">€</option>
+			<option value="czk">Kč</option>
+			<option value="btc">BTC</option>
+		</select>
+
+	</div>
+	<hr style="color: beige">
+	<nav id="nav">
+		<ul>
+			<li><a href="./actual_forecast.html">🌧️</a></li>
+			<li><a href="./clouds.html">☀️/☁️</a></li>
+			<li><a href="./forecast.html">🌧️📅</a></li>
+		</ul>
+	</nav>
+
+	<main  style="margin-top: 20px;">
+		<p id="curr">💵Currency</p>
+		<div id="text_forecast">
+			<p id="tomorrow_forecast" style="display: inline-block">Text Forecast</p>
+			<p id="next_forecast" style="display: inline-block">Text Forecast</p>
+		</div>
+		<div id="english">
+			<h4 style="display:inline-block">English</h4>
+			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
+				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
+				<button type="submit" id="submit">Search</button>
+			</form>
+		</div>
+		<div id="deutsch">
+			<h4 style="display: inline-block">Deutsch</h4>
+			<form action="https://slovniky.lingea.cz/nemecko-cesky/" autocomplete="off" method="get" style="display:inline-block">
+				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
+				<button type="submit" id="submit">Search</button>
+			</form>
+		</div>
+		<div id="wttr-in-module">
+			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png' loading=lazy alt="Current weather"></a>
+			<form id="weather-form">
+				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
+				<button id="weather-btn" type="button">Search</button>
+			</form>
+		</div>
+
+		<a href='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu' target='sat24'><image src='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=300&height=187&zoom=1.00&continent=eu' width=360 height=227 loading=lazy></a>
+		<br>
+		<div id="set_pref" style="margin-top: 60px">
+			<h4 style="display: inline-block">🔧</h4>
+			<input id="location-input" type="text" placeholder="Location..." aria-label="Location...">
+			<button id="location-btn" type="button">Save</button>
+		</div>
+		<script async="" src="./js/module-set-preferences.js"></script>
+		<script async="" src="./js/module-wttrin-widget.js"></script>
+		<script>
+			var fiat_select = document.getElementById("fiat_select")
+//			if (document.cookie.length == 0) {
+//				var date = new Date(Date.now())
+//				date.setFullYear(date.getFullYear()+1)
+//				document.cookie = "fiatCurr="+fiat_select.value+"; expires="+date.toUTCString()+"; SameSite=Lax; HttpOnly: true; Secure: true"
+//			} else {
+//				fiat_select.value = document.cookie.split("=")[1]
+//			}
+			const options = {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Cookie": document.cookie
+				},
+				body: fiat_select.value
+			}
+			fetch("/base_info", options).then(res => res.json())
+				.then(res => {
+				resList = res.sun_moon.split(" ")
+				var sun_moon = document.getElementById("sun_moon")	
+				sun_moon.innerHTML = "🌅 "+resList[0]+"  🌇"+resList[1]+"  "+resList[2]+"  "+res.hum_low_high[0]
+				const date = new Date(Date.now())
+				date.setDate(date.getDate()+1)
+				var tomorrow_forecast = document.getElementById("tomorrow_forecast")
+				date_output = new Intl.DateTimeFormat('en-US', {weekday: "long", day:"numeric", month:"long"}).format(date)
+				tomorrow_forecast.innerHTML = date_output+": "+res.hum_low_high[1]
+
+				var next_forecast = document.getElementById("next_forecast")
+				date.setDate(date.getDate()+1)
+				date_output = new Intl.DateTimeFormat('en-US', {weekday: "long", day:"numeric", month:"long"}).format(date)
+				next_forecast.innerHTML = date_output+": "+res.hum_low_high[2]
+
+				var fiat_select = document.getElementById("fiat_select")
+				fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč" }
+				var coins = document.getElementById("coins")			
+				var btc = parseFloat(res.btc)
+				var xmr = parseFloat(res.xmr)
+				coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(2)+fiatSymbol[res.coinCode]+"  "+
+						 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(2)+fiatSymbol[res.coinCode]
+				var curr = document.getElementById("curr")
+				res.USD.value = res.USD.value.replace(",", ".")
+				var usd = parseFloat(res.USD.value)
+				res.EUR.value = res.EUR.value.replace(",", ".")
+				var eur = parseFloat(res.EUR.value)
+				res.GBP.value = res.GBP.value.replace(",", ".")
+				var gbp = parseFloat(res.GBP.value)
+				
+				curr.innerHTML = "💵 "+res.USD.volume+"$  "+usd.toFixed(2)+"Kč  "+res.EUR.volume+"€  "+eur.toFixed(2)+"Kč  "+res.GBP.volume+"£  "+gbp.toFixed(2)+"Kč"
+				
+				
+			})
+			fiat_select.onchange = function() {
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: this.value+" conversion"
+				}
+				
+				var date = new Date(Date.now())
+				date.setFullYear(date.getFullYear()+1)
+//				document.cookie = "fiatCurr="+fiat_select.value+"; expires="+date.toUTCString()+"; SameSite=Lax; HttpOnly: true; Secure: true"
+				fetch("/base_info", options).then(res => res.json())
+					.then(res => {
+					fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč", "btc": "<img src=\"./pics/bitcoin-icon.svg\">" }
+					var coins = document.getElementById("coins")			
+
+					var countdecimals = 2
+					var btc = parseFloat(res.btc)
+					var xmr = parseFloat(res.xmr)
+					if (res.coinCode == "btc") {
+						 countdecimals = 6
+					}
+					coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(countdecimals)+fiatSymbol[res.coinCode]+"  "+
+							 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(countdecimals)+fiatSymbol[res.coinCode]
+				})
+			}
+
+		</script>
+
+	</main>
+	<footer style="text-align: right">
+		<p><a href="https://michalkukla.xyz/" style="color: beige">Author</a></p>
+	</footer>
+</body>
+</html>

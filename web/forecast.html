@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Forecast Page</title>
+<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />
+<!--<link rel="stylesheet" href="./style.css" type="text/css" media="screen" />-->
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>h4,p{color:beige;}
+	a{text-decoration: underline; color: grey}
+	.timelist_other:hover,.timelist_today:hover{color: #df7f1a}
+</style>
+
+</head>
+<body style="background-color:#442244">
+	<main style="margin-top: 20px;">
+		
+
+		<h4 id="forecast_section"><a href="./startpage.html">🛖</a> Forecast</h4>
+
+		<input type="date" id="calendar"/>
+
+		<p id="other"></p>
+		<a class="timelist_other" href="#forecast_section">00:00</a>
+		<a class="timelist_other" href="#forecast_section">03:00</a>
+		<a class="timelist_other" href="#forecast_section">06:00</a>
+		<a class="timelist_other" href="#forecast_section">09:00</a>
+		<a class="timelist_other" href="#forecast_section">12:00</a>
+		<a class="timelist_other" href="#forecast_section">15:00</a>
+		<a class="timelist_other" href="#forecast_section">18:00</a>
+		<a class="timelist_other" href="#forecast_section">21:00</a>
+
+
+		<p id="today"></p>
+		<a class="timelist_today" href="#forecast_section">00:00</a>
+		<a class="timelist_today" href="#forecast_section">03:00</a>
+		<a class="timelist_today" href="#forecast_section">06:00</a>
+		<a class="timelist_today" href="#forecast_section">09:00</a>
+		<a class="timelist_today" href="#forecast_section">12:00</a>
+		<a class="timelist_today" href="#forecast_section">15:00</a>
+		<a class="timelist_today" href="#forecast_section">18:00</a>
+		<a class="timelist_today" href="#forecast_section">21:00</a>
+
+		<a href=""><image id="forecast" src='https://en.sat24.com/image?type=forecastPrecip&region=europa&timestamp=202209251800' width=540 height=632 loading=lazy style="display:block"></a>
+		<p id="currentForecast" style="margin-left: 180px; color: #df7f1a"></p>
+
+		<script>
+			const date = new Date(Date.now())
+			dateDisplay = document.getElementById("today")
+			dateDisplay.innerHTML = "Today: "+date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()
+			other = new Date(Date.now())
+			other.setDate(other.getDate()+1)
+			dateDisplay = document.getElementById("other")
+			dateDisplay.innerHTML = other.getDate()+"."+(other.getMonth()+1)+"."+other.getFullYear()
+			cal = document.getElementById("calendar")
+
+			cal.min = cal.value = other.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")
+
+			other.setDate(other.getDate()+4)
+			cal.max = other.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")
+
+			cal.onchange = function () {
+				dateDisplay = document.getElementById("other")	
+				dateChosen = new Date(this.value)
+				dateDisplay.innerHTML = dateChosen.getDate()+"."+(dateChosen.getMonth()+1)+"."+dateChosen.getFullYear()
+			}
+
+			other.setDate(date.getDate()+1)
+			
+			yearMonthDay = date.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")[0]
+			dateSat24 = yearMonthDay.replaceAll("-", "")
+			var img = document.getElementById("forecast")	
+
+			nHours = date.getHours()
+			if (nHours % 3 != 0) {
+				nHours -= nHours % 3	
+			}
+			if (nHours < 10) {
+				nHours = "0"+nHours
+			}
+			img.src = "https://en.sat24.com/image?type=forecastPrecip&region=europa&timestamp="+dateSat24+nHours+"00"
+			var currentDisplay = document.getElementById("currentForecast")
+			currentDisplay.innerHTML = date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()+" "+nHours+":00"
+
+			todayLink = document.getElementsByClassName("timelist_today");
+			for (var i = 0; i < todayLink.length; i++) {
+				todayLink[i].onclick = function () {
+					const date = new Date(Date.now())
+					yearMonthDay = date.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")[0]
+					dateSat24 = yearMonthDay.replaceAll("-", "")
+					var img = document.getElementById("forecast")	
+					img.src = "https://en.sat24.com/image?type=forecastPrecip&region=europa&timestamp="+dateSat24+this.innerHTML[0]+this.innerHTML[1]+"00"
+					var currentDisplay = document.getElementById("currentForecast")
+					currentDisplay.innerHTML = date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear()+" "+this.innerHTML[0]+this.innerHTML[1]+":00"
+				}
+			}
+
+			otherLink = document.getElementsByClassName("timelist_other")
+			for (var i = 0; i < otherLink.length; i++) {
+				otherLink[i].onclick = function () {
+					cal = document.getElementById("calendar")
+					other = new Date(cal.value)
+					var img = document.getElementById("forecast")	
+					yearMonthDay = other.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")[0]
+					dateSat24 = yearMonthDay.replaceAll("-", "")
+					img.src = "https://en.sat24.com/image?type=forecastPrecip&region=europa&timestamp="+dateSat24+this.innerHTML[0]+this.innerHTML[1]+"00"
+					var currentDisplay = document.getElementById("currentForecast")
+					currentDisplay.innerHTML = other.getDate()+"."+(other.getMonth()+1)+"."+other.getFullYear()+" "+this.innerHTML[0]+this.innerHTML[1]+":00"
+				}
+			}
+		
+		</script>
+	</main>
+
+	<nav id="nav" style="margin-top: 200px; color: beige">
+		<ul>
+			<li><a href="./startpage.html">🛖</a></li>
+			<li><a href="./startpage.html#pic_section">🖼️</a></li>
+			<li><a href="./actual_forecast.html">🌧️</a></li>
+			<li><a href="./clouds.html">☀️/☁️</a></li>
+			<li><a href="./forecast.html">🌧️📅</a></li>
+		</ul>
+	</nav>
+</body>
+</html>
