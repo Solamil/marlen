@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
-	"strconv"
+//	"strconv"
 	"time"
 	"unicode/utf8"
 	"os/exec"
@@ -25,10 +25,10 @@ type sunMoonInfo struct {
 var sunMoon = sunMoonInfo{}
 
 type coinPriceInfo struct {
-	Btc float64
-	Xmr float64
+	Btc string 
+	Xmr string
 }
-var coinPrices = coinPriceInfo{0.0, 0.0}
+var coinPrices = coinPriceInfo{}
 
 type currPriceInfo struct {
 	Json string
@@ -82,15 +82,15 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		base.CoinCode = "usd"
 	}
 
-	if btc := get_coin_price(base.CoinCode, "btc"); btc != 0 {
+	if btc := get_coin_price(base.CoinCode, "btc"); btc != "" {
 		coinPrices.Btc = btc
 	}
-	if xmr := get_coin_price(base.CoinCode, "xmr"); xmr != 0 {
+	if xmr := get_coin_price(base.CoinCode, "xmr"); xmr != "" {
 		coinPrices.Xmr = xmr
 	}
 	var json string
 	if len(base.CoinCode) > 1 && base.Param == "conversion" {
-		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
+		json = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
 	} else {
 		if base.Location == "" {
 			base.Location = "Zdar"
@@ -98,7 +98,7 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		sunMoon := get_sun_moon_info(base.Location)
 		hum_low_high := get_text_wttr_forecast(base.Location)
 		currency := get_currency_rates()
-		json = fmt.Sprintf(`{"btc": "%f","xmr": "%f", "coinCode": "%s",
+		json = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s",
 			"sun_moon": %s, "hum_low_high": %s,  %s}`, 
 		coinPrices.Btc, coinPrices.Xmr,base.CoinCode, sunMoon, hum_low_high, currency)
 	}
@@ -206,36 +206,30 @@ func exec_shellscript(shellscript ...string) string {
 	return outputStr
 }
 
-func get_coin_price(showRates, coinCode string) float64 {
+func get_coin_price(showRates, coinCode string) string {
 
 	url := fmt.Sprintf(`https://%s.rate.sx/1%s`, showRates, coinCode)
 	reqm, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println(err)
-		return 0.0
+		return "" 
 	}
 	reqm.Header.Set("Content-Type", "text/html")
 	content, err := http.DefaultClient.Do(reqm)
 
 	if err != nil {
 		fmt.Println(err)
-		return 0.0
+		return ""
 	}
 	price, err := ioutil.ReadAll(content.Body)
 
 	if err != nil {
 		fmt.Println(err)
-		return 0.0
+		return ""
 	}
 	priceStr := string(price)
 	priceStr = priceStr[:len(priceStr)-1]
-
-	priceFloat, err := strconv.ParseFloat(priceStr, 32)
-	if err != nil {
-		fmt.Println(err)
-		return 0.0
-	}
-	return priceFloat
+	return priceStr
 }
 func get_currency_rates() string {
 	now := time.Now()
