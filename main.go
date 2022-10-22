@@ -19,7 +19,7 @@ var responseTemplate *template.Template
 type sunMoonInfo struct {
 	Info string
 	Day int
-	Month time.Month
+	Month int 
 	Year int
 }
 var sunMoon = sunMoonInfo{}
@@ -133,12 +133,12 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 
 func get_sun_moon_info(location string) string {
 	year, month, day := time.Now().Date()
-	if sunMoon.Day != day || sunMoon.Month != month || sunMoon.Year != year {
+	if sunMoon.Day != day || time.Month(sunMoon.Month) != month || sunMoon.Year != year {
 		format := "%S+%s+%m"	
 		if info := get_weather(format, location); info != "" {
 			sunMoon.Info = info
 			sunMoon.Day = day 
-			sunMoon.Month = month 
+			sunMoon.Month = int(month) 
 			sunMoon.Year = year
 		}
 	}
