@@ -44,14 +44,14 @@ func main() {
 		http.ServeFile(w, r, "web/style.css")
 	})
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/index.html")
+		http.ServeFile(w, r, "web/startpage.html")
 	})
 	
 	indexTemplate, _ = template.ParseFiles("web/index.html")	
 	responseTemplate, _ = template.ParseFiles("web/response.html")
 	http.HandleFunc("/base_info", base_handler)
 	http.HandleFunc("/forecast_info", forecast_handler)
-	fmt.Println(session.Name)
+//	fmt.Println(session.Name)
 	http.ListenAndServe(":8900", nil)
 }
 
@@ -86,12 +86,12 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 			"sun_moon": %s, "hum_low_high": %s,  %s}`, 
 		coinPrices.Btc, coinPrices.Xmr,typeCurr, sunMoon, hum_low_high, currency)
 	}
-	var session http.Cookie
-	session.Name = "sessionid"
-	session.Domain = "michalkukla.xyz"
-	session.Path = "/startpage"
-	session.HttpOnly = true
-	session.Secure = true
+//	var session http.Cookie
+//	session.Name = "sessionid"
+//	session.Domain = "michalkukla.xyz"
+//	session.Path = "/startpage"
+//	session.HttpOnly = true
+//	session.Secure = true
 	w.Write([]byte(json))
 
 	
@@ -217,6 +217,14 @@ func get_coin_price(showRates, coinCode string) float64 {
 	return priceFloat
 }
 func get_currency_rates() string {
+	now := time.Now()
+	if len(currPrices.Json) > 0 {
+		dateStr := string(now.Day())+"."+string(int(now.Month()))+"."+string(now.Year())
+		
+		if currPrices.Date == dateStr || now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
+			return currPrices.Json
+		}
+	}
 	rates := getCnbRates()
 	exchRates := strings.Split(rates, "\n")
 
@@ -246,14 +254,6 @@ func get_currency_rates() string {
 }
 
 func getCnbRates() string {
-	now := time.Now()
-	if len(currPrices.Json) > 0 {
-		dateStr := string(now.Day())+"."+string(int(now.Month()))+"."+string(now.Year())
-		
-		if currPrices.Date == dateStr || now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
-			return currPrices.Json
-		}
-	}
 	url := "https://cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt"
 	reqm, _ := http.NewRequest("GET", url, nil)
 
@@ -262,13 +262,13 @@ func getCnbRates() string {
 
 	if err != nil {
 		fmt.Println(err)
-		return currPrices.Json
+		return ""
 	}
 	b, err := ioutil.ReadAll(content.Body)
 
 	if err != nil {
 		fmt.Println(err)
-		return currPrices.Json
+		return "" 
 	}
 	return string(b)
 }
