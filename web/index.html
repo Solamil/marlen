@@ -137,17 +137,18 @@
 //				document.cookie = "fiatCurr="+fiat_select.value+"; expires="+date.toUTCString()+"; SameSite=Lax; HttpOnly: true; Secure: true"
 				fetch("/base_info", options).then(res => res.json())
 					.then(res => {
+					console.log(res)
 					fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč", "btc": "<img src=\"./pics/bitcoin-icon.svg\">" }
 					var coins = document.getElementById("coins")			
 
 					var countdecimals = 2
 					var btc = parseFloat(res.btc)
 					var xmr = parseFloat(res.xmr)
-					if (res.coinCode == "btc") {
+					if (res.coin_code == "btc") {
 						 countdecimals = 6
 					}
-					coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(countdecimals)+fiatSymbol[res.coinCode]+"  "+
-							 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(countdecimals)+fiatSymbol[res.coinCode]
+					coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(countdecimals)+fiatSymbol[res.coin_code]+"  "+
+							 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(countdecimals)+fiatSymbol[res.coin_code]
 				})
 			}
 

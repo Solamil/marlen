@@ -23,10 +23,10 @@ type sunMoonInfo struct {
 	Year int
 }
 var sunMoon = sunMoonInfo{}
-
 type coinPriceInfo struct {
-	Btc string 
-	Xmr string
+	Btc string `json:"btc"` 
+	Xmr string `json:"xmr"`
+	CoinCode string `json:"coin_code"`
 }
 var coinPrices = coinPriceInfo{}
 
@@ -81,16 +81,19 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	if base.CoinCode  == "" { 
 		base.CoinCode = "usd"
 	}
-
-	if btc := get_coin_price(base.CoinCode, "btc"); btc != "" {
+	coinPrices.CoinCode = base.CoinCode
+	if btc := get_coin_price(coinPrices.CoinCode, "btc"); btc != "" {
 		coinPrices.Btc = btc
 	}
-	if xmr := get_coin_price(base.CoinCode, "xmr"); xmr != "" {
+	if xmr := get_coin_price(coinPrices.CoinCode, "xmr"); xmr != "" {
 		coinPrices.Xmr = xmr
 	}
-	var json string
-	if len(base.CoinCode) > 1 && base.Param == "conversion" {
-		json = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
+	var jsonData string
+	if len(coinPrices.CoinCode) > 1 && base.Param == "conversion" {
+
+//		jsonData = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
+		raw, _ := json.Marshal(coinPrices)
+		w.Write(raw)
 	} else {
 		if base.Location == "" {
 			base.Location = "Zdar"
@@ -98,9 +101,10 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		sunMoon := get_sun_moon_info(base.Location)
 		hum_low_high := get_text_wttr_forecast(base.Location)
 		currency := get_currency_rates()
-		json = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s",
+		jsonData = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s",
 			"sun_moon": %s, "hum_low_high": %s,  %s}`, 
 		coinPrices.Btc, coinPrices.Xmr,base.CoinCode, sunMoon, hum_low_high, currency)
+		w.Write([]byte(jsonData))
 	}
 //	var session http.Cookie
 //	session.Name = "sessionid"
@@ -108,7 +112,6 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 //	session.Path = "/startpage"
 //	session.HttpOnly = true
 //	session.Secure = true
-	w.Write([]byte(json))
 
 	
 }
