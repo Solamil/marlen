@@ -47,7 +47,7 @@ func main() {
 		http.ServeFile(w, r, "web/style.css")
 	})
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/startpage.html")
+		http.ServeFile(w, r, "web/index.html")
 	})
 	
 	indexTemplate, _ = template.ParseFiles("web/index.html")	
@@ -90,14 +90,9 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	var jsonData string
 	if len(coinPrices.CoinCode) > 1 && base.Param == "conversion" {
-
-//		jsonData = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s"}`, coinPrices.Btc, coinPrices.Xmr, base.CoinCode)
-		raw, _ := json.Marshal(coinPrices)
+		raw, _ := json.Marshal(&coinPrices)
 		w.Write(raw)
 	} else {
-		if base.Location == "" {
-			base.Location = "Zdar"
-		}
 		sunMoon := get_sun_moon_info(base.Location)
 		hum_low_high := get_text_wttr_forecast(base.Location)
 		currency := get_currency_rates()
