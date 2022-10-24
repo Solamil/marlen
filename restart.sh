@@ -1,3 +1,3 @@
 #!/bin/sh
-pgrep webserver && kill -2 "$(pgrep webserver)"
-setsid -f go run ./webserver.go >/dev/null 2>&1
+pgrep main && kill -2 "$(pgrep main)"
+setsid -f go run ./main.go >/dev/null 2>&1
