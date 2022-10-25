@@ -19,7 +19,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Updating webserver.
-      uses: appleboy/ssh-action@master # ????
+      uses: appleboy/ssh-action@master
       with:
         host: michalkukla.xyz 
         username: merlot
@@ -27,7 +27,7 @@ jobs:
         passphrase: ${{ secrets.merlot_ssh_pass }}
         port: ${{ secrets.merlot_port }}
         script: |
-          cd repo
+          cd repo 
           git stash
           git pull --force origin main
-          ./restart.sh
+          sh ./restart.sh
