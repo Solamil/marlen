@@ -96,7 +96,7 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		sunMoon := get_sun_moon_info(base.Location)
 		hum_low_high := get_text_wttr_forecast(base.Location)
 		currency := get_currency_rates()
-		jsonData = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coinCode": "%s",
+		jsonData = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coin_code": "%s",
 			"sun_moon": %s, "hum_low_high": %s,  %s}`, 
 		coinPrices.Btc, coinPrices.Xmr,base.CoinCode, sunMoon, hum_low_high, currency)
 		w.Write([]byte(jsonData))

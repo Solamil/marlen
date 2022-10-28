@@ -106,8 +106,8 @@
 				var coins = document.getElementById("coins")			
 				var btc = parseFloat(res.btc)
 				var xmr = parseFloat(res.xmr)
-				coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(2)+fiatSymbol[res.coinCode]+"  "+
-						 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(2)+fiatSymbol[res.coinCode]
+				coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(2)+fiatSymbol[res.coin_code]+"  "+
+						 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(2)+fiatSymbol[res.coin_code]
 				var curr = document.getElementById("curr")
 				res.USD.value = res.USD.value.replace(",", ".")
 				var usd = parseFloat(res.USD.value)
