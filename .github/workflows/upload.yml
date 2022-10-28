@@ -30,4 +30,5 @@ jobs:
           cd repo 
           git stash
           git pull --force origin main
+          cp -r web/* /var/www/startpage/
           sh ./restart.sh
