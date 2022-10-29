@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"text/template"
 	"encoding/json"
 	"io/ioutil"
 	"strings"
@@ -13,28 +12,37 @@ import (
 	"os/exec"
 //	"os"
 )
-var indexTemplate *template.Template
-var responseTemplate *template.Template
 
-type sunMoonInfo struct {
-	Info string
-	Day int
-	Month int 
-	Year int
-}
-var sunMoon = sunMoonInfo{}
-type coinPriceInfo struct {
-	Btc string `json:"btc"` 
-	Xmr string `json:"xmr"`
-	CoinCode string `json:"coin_code"`
-}
-var coinPrices = coinPriceInfo{}
+type userBaseResponse struct {
+	CoinPrices struct {
+		Btc string `json:"btc"` 
+		Xmr string `json:"xmr"`
+		CoinCode string `json:"coin_code"`
+	} `json:"coins"`
 
-type currPriceInfo struct {
-	Json string
-	Date string
+	SunMoon struct {
+		Info string `json:"info"`
+		Day int `json:"day"`
+		Month int `json:"month"`
+		Year int `json:"year"`
+	} `json:"sun_moon"`
+
+	HumLowHigh struct {
+		Days [3]string `json:"days"`
+	} `json:"hum_low_high"`
+
+	CurrPrices struct {
+		Code []string `json:"code"`
+		Volume []string `json:"volume"`
+		Value []string `json:"value"`
+		CoinCode string `json:"coin_code"`
+		Date string `json:"date"`
+	} `json:"currs"`
 }
-var currPrices = currPriceInfo{}
+var baseResp userBaseResponse
+var coinPrices = &baseResp.CoinPrices
+var sunMoon = &baseResp.SunMoon
+var humLowHigh = &baseResp.HumLowHigh
 
 type userBaseRequest struct {
 	CoinCode string `json:"coin_code"`	
@@ -49,9 +57,6 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/index.html")
 	})
-	
-	indexTemplate, _ = template.ParseFiles("web/index.html")	
-	responseTemplate, _ = template.ParseFiles("web/response.html")
 
 //	jsonFile, err := os.Open("testfile.json")
 //	if err != nil {
@@ -63,7 +68,7 @@ func main() {
 //	byteValue, _ := ioutil.ReadAll(jsonFile)
 //	var base userBaseRequest 
 //	json.Unmarshal(byteValue, &base)
-//	fmt.Println(base.CoinCode)
+//	fmt.Println(baseRequest.CoinCode)
 	
 	http.HandleFunc("/base_info", base_handler)
 	http.HandleFunc("/forecast_info", forecast_handler)
@@ -75,31 +80,32 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var base userBaseRequest
-	json.Unmarshal(body, &base)
+	var baseRequest userBaseRequest
+	json.Unmarshal(body, &baseRequest)
+	fmt.Println(baseRequest.CoinCode)
 
-	if base.CoinCode  == "" { 
-		base.CoinCode = "usd"
+	if baseRequest.CoinCode  == "" { 
+		baseRequest.CoinCode = "usd"
 	}
-	coinPrices.CoinCode = base.CoinCode
-	if btc := get_coin_price(coinPrices.CoinCode, "btc"); btc != "" {
+	coinPrices.CoinCode = baseRequest.CoinCode
+	if btc := get_coin_price(baseResp.CoinPrices.CoinCode, "btc"); btc != "" {
 		coinPrices.Btc = btc
 	}
-	if xmr := get_coin_price(coinPrices.CoinCode, "xmr"); xmr != "" {
+	if xmr := get_coin_price(baseResp.CoinPrices.CoinCode, "xmr"); xmr != "" {
 		coinPrices.Xmr = xmr
 	}
-	var jsonData string
-	if len(coinPrices.CoinCode) > 1 && base.Param == "conversion" {
-		raw, _ := json.Marshal(&coinPrices)
+	if len(coinPrices.CoinCode) > 1 && baseRequest.Param == "conversion" {
+		raw, _ := json.Marshal(coinPrices)
 		w.Write(raw)
 	} else {
-		sunMoon := get_sun_moon_info(base.Location)
-		hum_low_high := get_text_wttr_forecast(base.Location)
-		currency := get_currency_rates()
-		jsonData = fmt.Sprintf(`{"btc": "%s","xmr": "%s", "coin_code": "%s",
-			"sun_moon": %s, "hum_low_high": %s,  %s}`, 
-		coinPrices.Btc, coinPrices.Xmr,base.CoinCode, sunMoon, hum_low_high, currency)
-		w.Write([]byte(jsonData))
+		get_sun_moon_info(baseRequest.Location)
+		get_text_wttr_forecast(baseRequest.Location)
+		get_currency_rates()
+		raw, err := json.Marshal(&baseResp)
+		if err != nil {
+			fmt.Println(err)
+		}
+		w.Write(raw)
 	}
 //	var session http.Cookie
 //	session.Name = "sessionid"
@@ -117,9 +123,9 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var base userBaseRequest
-	json.Unmarshal(body, &base)
-	fmt.Println(base.CoinCode)
+	var baseRequest userBaseRequest
+	json.Unmarshal(body, &baseRequest)
+	fmt.Println(baseRequest.CoinCode)
 //	weatherFile, err := os.Open("weatherreport")
 //	if err != nil {
 //		fmt.Println(err)
@@ -129,7 +135,7 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 //	w.Write(byteWeather)
 }
 
-func get_sun_moon_info(location string) string {
+func get_sun_moon_info(location string) {
 	year, month, day := time.Now().Date()
 	if sunMoon.Day != day || time.Month(sunMoon.Month) != month || sunMoon.Year != year {
 		format := "%S+%s+%m"	
@@ -140,8 +146,8 @@ func get_sun_moon_info(location string) string {
 			sunMoon.Year = year
 		}
 	}
-	return sunMoon.Info
 }
+
 func get_weather(format, location string) string {
 	url := fmt.Sprintf(`https://wttr.in/%s?format="%s"`, location, format)
 	reqm, err := http.NewRequest("GET", url, nil)
@@ -157,15 +163,18 @@ func get_weather(format, location string) string {
 		fmt.Println(err)
 		return ""
 	}
-	weather, err := ioutil.ReadAll(content.Body)
+	out, err := ioutil.ReadAll(content.Body)
 
 	if err != nil {
 		fmt.Println(err)
 		return ""
 	}
-	return string(weather)
+	str_out := strings.ReplaceAll(string(out), "\"", "")
+
+	return string(str_out)
 }
-func get_text_wttr_forecast(location string) string {
+
+func get_text_wttr_forecast(location string) {
 	output, err := exec.Command("/bin/sh", "sb-forecast.sh", location).Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
@@ -182,10 +191,15 @@ func get_text_wttr_forecast(location string) string {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
-	json := fmt.Sprintf(`["%s", "%s", "%s"]`, hum_low_high, hum_low_high_next, hum_low_high_next2)
+	humLowHigh.Days[0] = hum_low_high
+	humLowHigh.Days[1] = hum_low_high_next
+	humLowHigh.Days[2] = hum_low_high_next2
+
+//	json := fmt.Sprintf(`["%s", "%s", "%s"]`, hum_low_high, hum_low_high_next, hum_low_high_next2)
 	
-	return json
+//	return json
 }
+
 func exec_shellscript(shellscript ...string) string {
 	cmd := shellscript[0]
 	var param1 string
@@ -229,13 +243,14 @@ func get_coin_price(showRates, coinCode string) string {
 	priceStr = priceStr[:len(priceStr)-1]
 	return priceStr
 }
-func get_currency_rates() string {
+func get_currency_rates() {
 	now := time.Now()
-	if len(currPrices.Json) > 0 {
+
+	if len(baseResp.CurrPrices.Code) > 0 {
 		dateStr := string(now.Day())+"."+string(int(now.Month()))+"."+string(now.Year())
 		
-		if currPrices.Date == dateStr || now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
-			return currPrices.Json
+		if baseResp.CurrPrices.Date == dateStr || now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
+			return
 		}
 	}
 	rates := getCnbRates()
@@ -257,13 +272,24 @@ func get_currency_rates() string {
 	usdCode := usdCurr[len(usdCurr)-2]
 	usdVolume := usdCurr[len(usdCurr)-3]
 
-	json := fmt.Sprintf(`"%s":{"volume": %s, "value": "%s"}, "%s":{"volume": %s, "value": "%s"}, "%s":{"volume": %s, "value": "%s"}`,
-			usdCode, usdVolume, usdValue, eurCode, eurVolume, eurValue, gbpCode, gbpVolume, gbpValue)
-	
-	currPrices.Json = json
+//	json := fmt.Sprintf(`"%s":{"volume": %s, "value": "%s"}, "%s":{"volume": %s, "value": "%s"}, "%s":{"volume": %s, "value": "%s"}`,
+//			usdCode, usdVolume, usdValue, eurCode, eurVolume, eurValue, gbpCode, gbpVolume, gbpValue)
+	var currPrices = userBaseResponse{}.CurrPrices
+	currPrices.Code = append(currPrices.Code, gbpCode)
+	currPrices.Code = append(currPrices.Code, eurCode)
+	currPrices.Code = append(currPrices.Code, usdCode)
+	currPrices.Volume = append(currPrices.Volume, gbpVolume)
+	currPrices.Volume = append(currPrices.Volume, eurVolume)
+	currPrices.Volume = append(currPrices.Volume, usdVolume)
+	currPrices.Value = append(currPrices.Value, gbpValue)
+	currPrices.Value = append(currPrices.Value, eurValue)
+	currPrices.Value = append(currPrices.Value, usdValue)
+//	currPrices.Json = json
+	currPrices.CoinCode = "czk"
 	currPrices.Date = strings.Split(exchRates[0], " ")[0]
 
-	return currPrices.Json 
+	baseResp.CurrPrices = currPrices	
+
 }
 
 func getCnbRates() string {
