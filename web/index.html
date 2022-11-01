@@ -50,39 +50,81 @@
 			</form>
 		</div>
 		<div id="wttr-in-module">
-			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png' loading=lazy alt="Current weather"></a>
+			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
 			<form id="weather-form">
 				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
 				<button id="weather-btn" type="button">Search</button>
 			</form>
 		</div>
 
-		<a href='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu' target='sat24'><image src='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=300&height=187&zoom=1.00&continent=eu' width=360 height=227 loading=lazy></a>
+		<a href='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu' target='sat24'><image src='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=360&height=227&zoom=1.00&continent=eu' width=360 height=227 loading=lazy></a>
 		<br>
 		<div id="set_pref" style="margin-top: 60px">
-			<h4 style="display: inline-block">🔧</h4>
-			<input id="location-input" type="text" placeholder="Location..." aria-label="Location...">
-			<button id="location-btn" type="button">Save</button>
+			<h4 style="display: inline-block">🏠</h4>
+			<input id="location_input" type="text" placeholder="Location..." aria-label="Location...">
+			<button id="location_btn" type="button">Save</button>
 		</div>
-		<script async="" src="./js/module-set-preferences.js"></script>
+<!--		<script async="" src="./js/module-set-preferences.js"></script> -->
 		<script async="" src="./js/module-wttrin-widget.js"></script>
 		<script>
-			var fiat_select = document.getElementById("fiat_select")
-//			if (document.cookie.length == 0) {
-//				var date = new Date(Date.now())
-//				date.setFullYear(date.getFullYear()+1)
-//				document.cookie = "fiatCurr="+fiat_select.value+"; expires="+date.toUTCString()+"; SameSite=Lax; HttpOnly: true; Secure: true"
-//			} else {
-//				fiat_select.value = document.cookie.split("=")[1]
-//			}
+//
+//			preferences
+//
+			var fiatSelect = document.getElementById("fiat_select")
+			var coinCode = fiatSelect.value
+			var place = ""
+
+			if (document.cookie.length != 0) {
+				var cookieList = document.cookie.split("; ")
+				var cookieCoinCode = cookieList.find(e => e.startsWith("coin_code"))
+				if (cookieCoinCode != undefined) {
+					coinCode = cookieCoinCode.split("=")[1]
+					fiatSelect.value = coinCode
+				} else {
+					var date = new Date(Date.now())
+					date.setFullYear(date.getFullYear()+1)
+					document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+					coinCode = fiatSelect.value
+
+				}
+
+				var cookiePlace = cookieList.find(e => e.startsWith("place"))
+				if (cookiePlace != undefined) {
+					place = cookiePlace.split("=")[1]
+					var inputLocation = document.getElementById("location_input")
+					inputLocation.value = place
+				} else {
+					document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+				}
+			} else {
+				var date = new Date(Date.now())
+				date.setFullYear(date.getFullYear()+1)
+				document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+				document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+			}
+			var weatherImg = document.getElementById("weather-img")
+			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
+
+			document.getElementById("location_btn").onclick = function () {
+				var date = new Date(Date.now())
+				date.setFullYear(date.getFullYear()+1)
+				var inputLocation = document.getElementById("location_input")	
+				place = inputLocation.value
+				document.cookie = "place="+inputLocation.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+				var weatherImg = document.getElementById("weather-img")
+				weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
+			}
+//
+//			base init
+//
 			const options = {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify({
-					"coin_code": fiat_select.value,
-					"location": ""
+					"coin_code": fiatSelect.value,
+					"location": place
 				})
 			}
 			fetch("/base_info", options).then(res => res.json())
@@ -105,7 +147,7 @@
 //
 //				COINS
 //
-				var fiat_select = document.getElementById("fiat_select")
+				var fiatSelect = document.getElementById("fiat_select")
 				fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč" }
 				var coins = document.getElementById("coins")			
 				var btc = parseFloat(res.coins.btc)
@@ -132,7 +174,8 @@
 				
 				
 			})
-			fiat_select.onchange = function() {
+
+			fiatSelect.onchange = function() {
 				const options = {
 					method: "POST",
 					headers: {
@@ -144,9 +187,9 @@
 					})
 				}
 				
-//				var date = new Date(Date.now())
-//				date.setFullYear(date.getFullYear()+1)
-//				document.cookie = "fiatCurr="+fiat_select.value+"; expires="+date.toUTCString()+"; SameSite=Lax; HttpOnly: true; Secure: true"
+				var date = new Date(Date.now())
+				date.setFullYear(date.getFullYear()+1)
+				document.cookie = "coin_code="+this.value+"; Path=/; SameSite: None; Secure"
 				fetch("/base_info", options).then(res => res.json())
 					.then(res => {
 					fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč", "btc": "<img src=\"./pics/bitcoin-icon.svg\">" }
