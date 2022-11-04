@@ -13,7 +13,7 @@
 		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">Coins</a>
 		<!--		<p id="coins" style="float: right; display: inline-block;">Currency</p> -->
 		<select name="fiat_select" id="fiat_select" style="float: right; display: inline-block;">
-			<option value="usd">$<option>
+			<option value="usd">$</option>
 			<option value="eur">€</option>
 			<option value="czk">Kč</option>
 			<option value="btc">BTC</option>
@@ -50,21 +50,33 @@
 			</form>
 		</div>
 		<div id="wttr-in-module">
+		<!-- https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png -->
 			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
 			<form id="weather-form">
 				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
 				<button id="weather-btn" type="button">Search</button>
 			</form>
 		</div>
-
-		<a href='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu' target='sat24'><image src='https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=360&height=227&zoom=1.00&continent=eu' width=360 height=227 loading=lazy></a>
+		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu-->
+		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=360&height=227&zoom=1.00&continent=eu-->
+		<a href='https://api.sat24.com/mostrecent/DE/rainTMC' target='sat24' id="link_sat24"><image src='https://api.sat24.com/mostrecent/DE/rainTMC' id="img_sat24" width=360 height=227 loading=lazy></a>
 		<br>
-		<div id="set_pref" style="margin-top: 60px">
-			<h4 style="display: inline-block">🏠</h4>
+		<details style="margin-top: 30px">
+			<summary>⚙️/🔧</summary>
+			<br>
 			<input id="location_input" type="text" placeholder="Location..." aria-label="Location...">
-			<button id="location_btn" type="button">Save</button>
-		</div>
-<!--		<script async="" src="./js/module-set-preferences.js"></script> -->
+
+			<input id="linksat24_input" type="text" placeholder="Sat24 link..." aria-label="Sat24 link...">
+
+			<select name="lang" id="select_lang">
+				<option value="en-US">US</option>
+				<option value="de-DE">DE</option>
+				<option value="cs-CZ">CZ</option>
+			</select>
+
+			<button id="save_btn" type="button">Save</button>
+		</details>
+
 		<script async="" src="./js/module-wttrin-widget.js"></script>
 		<script>
 //
@@ -73,7 +85,11 @@
 			var fiatSelect = document.getElementById("fiat_select")
 			var coinCode = fiatSelect.value
 			var place = ""
+			var linkSat24 = document.getElementById("link_sat24") 
+			var formatSelect = document.getElementById("select_lang")
 
+			var date = new Date(Date.now())
+			date.setFullYear(date.getFullYear()+1)
 			if (document.cookie.length != 0) {
 				var cookieList = document.cookie.split("; ")
 				var cookieCoinCode = cookieList.find(e => e.startsWith("coin_code"))
@@ -81,8 +97,6 @@
 					coinCode = cookieCoinCode.split("=")[1]
 					fiatSelect.value = coinCode
 				} else {
-					var date = new Date(Date.now())
-					date.setFullYear(date.getFullYear()+1)
 					document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
 					coinCode = fiatSelect.value
 
@@ -96,23 +110,57 @@
 				} else {
 					document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
 				}
+
+				var inputLink = document.getElementById("linksat24_input")
+				var cookieLinkSat24 = cookieList.find(e => e.startsWith("link_sat24"))
+				if (cookieLinkSat24 != undefined) {
+					link = cookieLinkSat24.split("link_sat24=")[1]
+					var img = document.getElementById("img_sat24")
+					linkSat24.href = link
+					img.src = link
+					inputLink.value = link
+
+				} else {
+					document.cookie = "link_sat24="+linkSat24.href+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+					inputLink.value = linkSat24.href
+				}
+				var cookieLang = cookieList.find(e => e.startsWith("lang"))
+				if (cookieLang != undefined) {
+					lang = cookieLang.split("=")[1]
+					formatSelect.value = lang
+				} else {
+					document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+
+				}
+
 			} else {
-				var date = new Date(Date.now())
-				date.setFullYear(date.getFullYear()+1)
 				document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
 				document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+				document.cookie = "link_sat24="+linkSat24.href+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 			}
 			var weatherImg = document.getElementById("weather-img")
 			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
 
-			document.getElementById("location_btn").onclick = function () {
+			document.getElementById("save_btn").onclick = function () {
 				var date = new Date(Date.now())
 				date.setFullYear(date.getFullYear()+1)
 				var inputLocation = document.getElementById("location_input")	
-				place = inputLocation.value
-				document.cookie = "place="+inputLocation.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-				var weatherImg = document.getElementById("weather-img")
-				weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
+				if (inputLocation.value != ""){
+					place = inputLocation.value
+					document.cookie = "place="+inputLocation.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+					var weatherImg = document.getElementById("weather-img")
+					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
+				}
+
+				var inputLink = document.getElementById("linksat24_input")
+				var img = document.getElementById("img_sat24")
+				img.src = inputLink.value
+				if (inputLink.value != "") {
+					linkSat24.href = inputLink.value
+					document.cookie = "link_sat24="+inputLink.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+				}
+				
 			}
 //
 //			base init
@@ -135,13 +183,14 @@
 						     "  "+res.hum_low_high.days[0]
 				const date = new Date(Date.now())
 				date.setDate(date.getDate()+1)
+				var formatSelect = document.getElementById("select_lang")
 				var tomorrow_forecast = document.getElementById("tomorrow_forecast")
-				date_output = new Intl.DateTimeFormat('en-US', {weekday: "long", day:"numeric", month:"long"}).format(date)
+				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
 				tomorrow_forecast.innerHTML = date_output+": "+res.hum_low_high.days[1]
 
 				var next_forecast = document.getElementById("next_forecast")
 				date.setDate(date.getDate()+1)
-				date_output = new Intl.DateTimeFormat('en-US', {weekday: "long", day:"numeric", month:"long"}).format(date)
+				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
 				next_forecast.innerHTML = date_output+": "+res.hum_low_high.days[2]
 
 //
@@ -174,6 +223,10 @@
 				
 				
 			})
+
+			formatSelect.onchange = function() {
+				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+			}
 
 			fiatSelect.onchange = function() {
 				const options = {
@@ -213,7 +266,8 @@
 	</main>
 	<footer >
 		<p style="float:left"> <a href="https://github.com/Solamil/merlot"><img src="./pics/git-icon.svg"></a></p>
-		<p style="float: right"><a href="https://michalkukla.xyz/" style="color: beige">Author</a></p>
+		<p id="donateLink" style="float: right"><a href="https://donate.michalkukla.xyz/" style="color: beige; text-decoration: none">💸</a></p>
+		<p style="float: right"><a href="https://michalkukla.xyz/" style="color: beige; text-decoration: none">Author</a></p>
 	</footer>
 </body>
 </html>

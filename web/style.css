@@ -138,6 +138,12 @@ footer{
 	margin-left: 140px;
 
 }
+#donateLink{
+	transition-duration: 0.2s;
+}
+#donateLink:hover{
+	font-size: larger;
+}
 @keyframes bf{
 	from{transform: translateY(.25em);}
 	to{transform: translateY(0em);}
