@@ -177,10 +177,10 @@
 			}
 			fetch("/base_info", options).then(res => res.json())
 				.then(res => {
-				resList = res.sun_moon.info.split(" ")
+				resList = res.weather.sun_moon.split(" ")
 				var sun_moon = document.getElementById("sun_moon")	
 				sun_moon.innerHTML = "🌅 "+resList[0]+"  🌇"+resList[1]+"  "+resList[2]+
-						     "  "+res.hum_low_high.days[0]
+						     "  "+res.weather.hum_low_high[0]
 				const date = new Date(Date.now())
 				date.setDate(date.getDate()+1)
 				var formatSelect = document.getElementById("select_lang")

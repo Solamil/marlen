@@ -20,16 +20,14 @@ type userBaseResponse struct {
 		CoinCode string `json:"coin_code"`
 	} `json:"coins"`
 
-	SunMoon struct {
-		Info string `json:"info"`
+	Weather struct {
+		SunMoon string `json:"sun_moon"`
 		Day int `json:"day"`
 		Month int `json:"month"`
 		Year int `json:"year"`
-	} `json:"sun_moon"`
-
-	HumLowHigh struct {
-		Days [3]string `json:"days"`
-	} `json:"hum_low_high"`
+		HumLowHigh [3]string `json:"hum_low_high"`
+		Location string `json:"location"`
+	} `json:"weather"`
 
 	CurrPrices struct {
 		Code []string `json:"code"`
@@ -41,8 +39,7 @@ type userBaseResponse struct {
 }
 var baseResp userBaseResponse
 var coinPrices = &baseResp.CoinPrices
-var sunMoon = &baseResp.SunMoon
-var humLowHigh = &baseResp.HumLowHigh
+var weather = &baseResp.Weather
 
 type userBaseRequest struct {
 	CoinCode string `json:"coin_code"`	
@@ -82,7 +79,6 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	var baseRequest userBaseRequest
 	json.Unmarshal(body, &baseRequest)
-	fmt.Println(baseRequest.CoinCode)
 
 	if baseRequest.CoinCode  == "" { 
 		baseRequest.CoinCode = "usd"
@@ -98,8 +94,10 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		raw, _ := json.Marshal(coinPrices)
 		w.Write(raw)
 	} else {
-		get_sun_moon_info(baseRequest.Location)
-		get_text_wttr_forecast(baseRequest.Location)
+		if baseRequest.Location == "" {
+			baseRequest.Location = "Zdar"
+		}
+		get_weather(baseRequest.Location)
 		get_currency_rates()
 		raw, err := json.Marshal(&baseResp)
 		if err != nil {
@@ -134,21 +132,27 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 //	byteWeather, _ := ioutil.ReadAll(weatherFile)
 //	w.Write(byteWeather)
 }
-
-func get_sun_moon_info(location string) {
+func get_weather(location string) {
 	year, month, day := time.Now().Date()
-	if sunMoon.Day != day || time.Month(sunMoon.Month) != month || sunMoon.Year != year {
-		format := "%S+%s+%m"	
-		if info := get_weather(format, location); info != "" {
-			sunMoon.Info = info
-			sunMoon.Day = day 
-			sunMoon.Month = int(month) 
-			sunMoon.Year = year
-		}
+	if weather.Location != location || weather.Day != day || time.Month(weather.Month) != month || weather.Year != year {
+		get_sun_moon_info(location)
+		get_text_wttr_forecast(location)
+		weather.Day = day 
+		weather.Month = int(month) 
+		weather.Year = year
+		weather.Location = location
 	}
 }
 
-func get_weather(format, location string) string {
+
+func get_sun_moon_info(location string) {
+	format := "%S+%s+%m"	
+	if info := get_weather_info(format, location); info != "" {
+		weather.SunMoon = info
+	}
+}
+
+func get_weather_info(format, location string) string {
 	url := fmt.Sprintf(`https://wttr.in/%s?format="%s"`, location, format)
 	reqm, err := http.NewRequest("GET", url, nil)
 
@@ -191,13 +195,10 @@ func get_text_wttr_forecast(location string) {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
-	humLowHigh.Days[0] = hum_low_high
-	humLowHigh.Days[1] = hum_low_high_next
-	humLowHigh.Days[2] = hum_low_high_next2
+	weather.HumLowHigh[0] = hum_low_high
+	weather.HumLowHigh[1] = hum_low_high_next
+	weather.HumLowHigh[2] = hum_low_high_next2
 
-//	json := fmt.Sprintf(`["%s", "%s", "%s"]`, hum_low_high, hum_low_high_next, hum_low_high_next2)
-	
-//	return json
 }
 
 func exec_shellscript(shellscript ...string) string {
