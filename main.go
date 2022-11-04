@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
+	"html"
 //	"strconv"
 	"time"
 	"unicode/utf8"
@@ -83,6 +84,7 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	if baseRequest.CoinCode  == "" { 
 		baseRequest.CoinCode = "usd"
 	}
+	baseRequest.CoinCode = html.EscapeString(baseRequest.CoinCode)
 	coinPrices.CoinCode = baseRequest.CoinCode
 	if btc := get_coin_price(baseResp.CoinPrices.CoinCode, "btc"); btc != "" {
 		coinPrices.Btc = btc
@@ -94,6 +96,7 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		raw, _ := json.Marshal(coinPrices)
 		w.Write(raw)
 	} else {
+		baseRequest.Location = html.EscapeString(baseRequest.Location)
 		if baseRequest.Location == "" {
 			baseRequest.Location = "Zdar"
 		}

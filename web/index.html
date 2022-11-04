@@ -147,7 +147,7 @@
 				date.setFullYear(date.getFullYear()+1)
 				var inputLocation = document.getElementById("location_input")	
 				if (inputLocation.value != ""){
-					place = inputLocation.value
+					place = encodeURIComponent(inputLocation.value)
 					document.cookie = "place="+inputLocation.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 					var weatherImg = document.getElementById("weather-img")
 					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
@@ -186,12 +186,12 @@
 				var formatSelect = document.getElementById("select_lang")
 				var tomorrow_forecast = document.getElementById("tomorrow_forecast")
 				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
-				tomorrow_forecast.innerHTML = date_output+": "+res.hum_low_high.days[1]
+				tomorrow_forecast.innerHTML = date_output+": "+res.weather.hum_low_high[1]
 
 				var next_forecast = document.getElementById("next_forecast")
 				date.setDate(date.getDate()+1)
 				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
-				next_forecast.innerHTML = date_output+": "+res.hum_low_high.days[2]
+				next_forecast.innerHTML = date_output+": "+res.weather.hum_low_high[2]
 
 //
 //				COINS
