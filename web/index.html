@@ -147,7 +147,7 @@
 				date.setFullYear(date.getFullYear()+1)
 				var inputLocation = document.getElementById("location_input")	
 				if (inputLocation.value != ""){
-					place = inputLocation.value
+					place = encodeURIComponent(inputLocation.value)
 					document.cookie = "place="+inputLocation.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 					var weatherImg = document.getElementById("weather-img")
 					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
