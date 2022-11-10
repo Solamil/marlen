@@ -23,8 +23,6 @@
 	<hr style="color: beige">
 	<nav id="nav">
 		<ul>
-			<li><a href="./actual_forecast.html">🌧️</a></li>
-			<li><a href="./clouds.html">☀️/☁️</a></li>
 			<li><a href="./forecast.html">🌧️📅</a></li>
 		</ul>
 	</nav>
@@ -59,7 +57,10 @@
 		</div>
 		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu-->
 		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=360&height=227&zoom=1.00&continent=eu-->
-		<a href='https://api.sat24.com/animated/DE/rainTMC/2/Central%20Europe%20Standard%20Time/3107721' target='sat24' id="link_sat24"><image src='https://api.sat24.com/mostrecent/DE/rainTMC' id="img_sat24" width=360 height=227 loading=lazy></a>
+		<!-- rain -->
+		<a href='https://api.sat24.com/animated/DE/rainTMC/3/Central%20Europe%20Standard%20Time/5603172' target='sat24' id="link_sat24"><image src='https://api.sat24.com/mostrecent/DE/rainTMC' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
+		<!-- sun and clouds -->
+		<a href='https://api.sat24.com/animated/DE/visual/3/Central%20Europe%20Standard%20Time/530005' target='sat24'><img src='https://api.sat24.com/mostrecent/DE/visual5hdcomplete' width=360 height=227 style="margin: 5px"></a>
 		<br>
 		<details style="margin-top: 30px">
 			<summary>⚙️/🔧</summary>
@@ -85,6 +86,7 @@
 			var fiatSelect = document.getElementById("fiat_select")
 			var coinCode = fiatSelect.value
 			var place = ""
+			var defaultLinkSat24 = "https://api.sat24.com/mostrecent/DE/rainTMC"
 			var linkSat24 = document.getElementById("link_sat24") 
 			var formatSelect = document.getElementById("select_lang")
 
@@ -159,6 +161,10 @@
 				if (inputLink.value != "") {
 					linkSat24.href = inputLink.value
 					document.cookie = "link_sat24="+inputLink.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+				} else {
+					linkSat24.href = defaultLinkSat24 
+					document.cookie = "link_sat24="+defaultLinkSat24+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+
 				}
 				
 			}
