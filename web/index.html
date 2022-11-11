@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Start Page</title>
+<title>Home Page</title>
 <link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
 <meta charset="utf-8"/>
@@ -67,8 +67,6 @@
 			<br>
 			<input id="location_input" type="text" placeholder="Location..." aria-label="Location...">
 
-			<input id="linksat24_input" type="text" placeholder="Sat24 link..." aria-label="Sat24 link...">
-
 			<select name="lang" id="select_lang">
 				<option value="en-US">US</option>
 				<option value="de-DE">DE</option>
@@ -86,8 +84,6 @@
 			var fiatSelect = document.getElementById("fiat_select")
 			var coinCode = fiatSelect.value
 			var place = ""
-			var defaultLinkSat24 = "https://api.sat24.com/mostrecent/DE/rainTMC"
-			var linkSat24 = document.getElementById("link_sat24") 
 			var formatSelect = document.getElementById("select_lang")
 
 			var date = new Date(Date.now())
@@ -113,19 +109,6 @@
 					document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
 				}
 
-				var inputLink = document.getElementById("linksat24_input")
-				var cookieLinkSat24 = cookieList.find(e => e.startsWith("link_sat24"))
-				if (cookieLinkSat24 != undefined) {
-					link = cookieLinkSat24.split("link_sat24=")[1]
-					var img = document.getElementById("img_sat24")
-					linkSat24.href = link
-					img.src = link
-					inputLink.value = link
-
-				} else {
-					document.cookie = "link_sat24="+linkSat24.href+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-					inputLink.value = linkSat24.href
-				}
 				var cookieLang = cookieList.find(e => e.startsWith("lang"))
 				if (cookieLang != undefined) {
 					lang = cookieLang.split("=")[1]
@@ -138,7 +121,6 @@
 			} else {
 				document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
 				document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
-				document.cookie = "link_sat24="+linkSat24.href+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 			}
 			var weatherImg = document.getElementById("weather-img")
@@ -153,18 +135,6 @@
 					document.cookie = "place="+inputLocation.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 					var weatherImg = document.getElementById("weather-img")
 					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
-				}
-
-				var inputLink = document.getElementById("linksat24_input")
-				var img = document.getElementById("img_sat24")
-				img.src = inputLink.value
-				if (inputLink.value != "") {
-					linkSat24.href = inputLink.value
-					document.cookie = "link_sat24="+inputLink.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-				} else {
-					linkSat24.href = defaultLinkSat24 
-					document.cookie = "link_sat24="+defaultLinkSat24+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-
 				}
 				
 			}
@@ -274,6 +244,7 @@
 		<p style="float:left"> <a href="https://github.com/Solamil/merlot"><img src="./pics/git-icon.svg"></a></p>
 		<p id="donateLink" style="float: right"><a href="https://donate.michalkukla.xyz/" style="color: beige; text-decoration: none">💸</a></p>
 		<p style="float: right"><a href="https://michalkukla.xyz/" style="color: beige; text-decoration: none">Author</a></p>
+		<p style="font-size: x-small">Personal Home Page</p>
 	</footer>
 </body>
 </html>
