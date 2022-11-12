@@ -137,7 +137,9 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 }
 func get_weather(location string) {
 	year, month, day := time.Now().Date()
-	if weather.Location != location || weather.Day != day || time.Month(weather.Month) != month || weather.Year != year {
+	if weather.HumLowHigh[1] == "" || weather.Location != location || weather.Day != day ||
+		time.Month(weather.Month) != month || weather.Year != year {
+
 		get_sun_moon_info(location)
 		get_text_wttr_forecast(location)
 		weather.Day = day 
