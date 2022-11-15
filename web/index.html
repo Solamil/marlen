@@ -33,20 +33,6 @@
 			<p id="tomorrow_forecast" style="display: inline-block">Text Forecast</p>
 			<p id="next_forecast" style="display: inline-block">Text Forecast</p>
 		</div>
-		<div id="english">
-			<h4 style="display:inline-block">English</h4>
-			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
-				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
-				<button type="submit" id="submit">Search</button>
-			</form>
-		</div>
-		<div id="deutsch">
-			<h4 style="display: inline-block">Deutsch</h4>
-			<form action="https://slovniky.lingea.cz/nemecko-cesky/" autocomplete="off" method="get" style="display:inline-block">
-				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
-				<button type="submit" id="submit">Search</button>
-			</form>
-		</div>
 		<div id="wttr-in-module">
 		<!-- https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png -->
 			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
@@ -61,6 +47,21 @@
 		<a href='https://api.sat24.com/animated/DE/rainTMC/3/Central%20Europe%20Standard%20Time/5603172' target='sat24' id="link_sat24"><image src='https://api.sat24.com/mostrecent/DE/rainTMC' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
 		<!-- sun and clouds -->
 		<a href='https://api.sat24.com/animated/DE/visual/3/Central%20Europe%20Standard%20Time/530005' target='sat24'><img src='https://api.sat24.com/mostrecent/DE/visual5hdcomplete' width=360 height=227 style="margin: 5px"></a>
+
+		<div id="english">
+			<h4 style="display:inline-block">English</h4>
+			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
+				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
+				<button type="submit" id="submit">Search</button>
+			</form>
+		</div>
+		<div id="deutsch">
+			<h4 style="display: inline-block">Deutsch</h4>
+			<form action="https://slovniky.lingea.cz/nemecko-cesky/" autocomplete="off" method="get" style="display:inline-block">
+				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
+				<button type="submit" id="submit">Search</button>
+			</form>
+		</div>
 		<br>
 		<details style="margin-top: 30px">
 			<summary>⚙️/🔧</summary>
@@ -105,6 +106,7 @@
 					place = cookiePlace.split("=")[1]
 					var inputLocation = document.getElementById("location_input")
 					inputLocation.value = place
+
 				} else {
 					document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
 				}
@@ -124,7 +126,8 @@
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 			}
 			var weatherImg = document.getElementById("weather-img")
-			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
+			var prefix = formatSelect.value.split("-")[0]
+			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background=893531_lang="+prefix+".png"
 
 			document.getElementById("save_btn").onclick = function () {
 				var date = new Date(Date.now())
@@ -134,7 +137,9 @@
 					place = encodeURIComponent(inputLocation.value)
 					document.cookie = "place="+inputLocation.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 					var weatherImg = document.getElementById("weather-img")
-					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=240_background=442244_lang=en.png"
+					var formatSelect = document.getElementById("select_lang")
+					var prefix = formatSelect.value.split("-")[0]
+					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background=893531_lang="+prefix+".png"
 				}
 				
 			}
