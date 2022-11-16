@@ -11,6 +11,8 @@ import (
 	"time"
 	"unicode/utf8"
 	"os/exec"
+	"crypto/md5"
+	"github.com/hashicorp/golang-lru/v2"
 //	"os"
 )
 
@@ -38,6 +40,14 @@ type userBaseResponse struct {
 		Date string `json:"date"`
 	} `json:"currs"`
 }
+type cacheRecord struct {
+	value string
+	expiry time.Time
+
+}
+const CACHESIZE int = 10000
+var cache, _ = lru.New[[16]byte, cacheRecord](CACHESIZE)
+
 var baseResp userBaseResponse
 var coinPrices = &baseResp.CoinPrices
 var weather = &baseResp.Weather
@@ -86,12 +96,10 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	baseRequest.CoinCode = html.EscapeString(baseRequest.CoinCode)
 	coinPrices.CoinCode = baseRequest.CoinCode
-	if btc := get_coin_price(baseResp.CoinPrices.CoinCode, "btc"); btc != "" {
-		coinPrices.Btc = btc
-	}
-	if xmr := get_coin_price(baseResp.CoinPrices.CoinCode, "xmr"); xmr != "" {
-		coinPrices.Xmr = xmr
-	}
+
+	coinPrices.Btc = get_crypto_curr(coinPrices.CoinCode, "btc") 
+	coinPrices.Xmr = get_crypto_curr(coinPrices.CoinCode, "xmr")
+
 	if len(coinPrices.CoinCode) > 1 && baseRequest.Param == "conversion" {
 		raw, _ := json.Marshal(coinPrices)
 		w.Write(raw)
@@ -136,25 +144,62 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 //	w.Write(byteWeather)
 }
 func get_weather(location string) {
-	year, month, day := time.Now().Date()
+	tm := time.Now()
+	year, month, day := tm.Date()
 	if weather.HumLowHigh[1] == "" || weather.Location != location || weather.Day != day ||
 		time.Month(weather.Month) != month || weather.Year != year {
 
-		get_sun_moon_info(location)
 		get_text_wttr_forecast(location)
 		weather.Day = day 
 		weather.Month = int(month) 
 		weather.Year = year
 		weather.Location = location
+//		weather.HumLowHigh[0], weather.HumLowHigh[1],weather.HumLowHigh[2]
 	}
+	weather.SunMoon = get_sun_moon_info(location)
 }
 
+func get_crypto_curr(coinCode, name string) string {
+	signature := fmt.Sprintf(`%s:%s`, coinCode, name)
+	cacheSignature := hash(signature)
+	record, found := get(cacheSignature)
+	var answer string = ""
+	if found {
+		now := time.Now()
+		d := record.expiry
+		d.Add(time.Minute * 5)	
 
-func get_sun_moon_info(location string) {
-	format := "%S+%s+%m"	
-	if info := get_weather_info(format, location); info != "" {
-		weather.SunMoon = info
+		if  record.value != "" && d.After(now) {
+			answer = record.value
+			return answer
+		}
 	}
+	value := get_coin_price(coinCode, name)
+	answer = store(cacheSignature, value)
+	return answer
+}
+
+func get_sun_moon_info(location string) string {
+	format := "%S+%s+%m"	
+	signature := fmt.Sprintf(`%s:%s`, location, format)
+	cacheSignature := hash(signature)
+	var answer string = ""
+	record, found := get(cacheSignature)	
+	if found {
+		yearNow, monthNow, dayNow := time.Now().Date()	
+		year, month, day := record.expiry.Date()	
+		if record.value != "" && dayNow == day && monthNow == month && yearNow == year {
+			answer = record.value
+			return answer
+		}
+	}
+	value := get_weather_info(format, location)
+	answer = store(cacheSignature, value)
+	return answer
+//	if info := get_weather_info(format, location); info != "" {
+//		weather.SunMoon = info
+//	}
+//	return weather.SunMoon
 }
 
 func get_weather_info(format, location string) string {
@@ -316,6 +361,21 @@ func getCnbRates() string {
 		return "" 
 	}
 	return string(b)
+}
+
+func store(signature [16]byte, value string) string {
+	cache.Add(signature, cacheRecord{value, time.Now()})
+	return value
+} 
+
+func get(signature [16]byte) (cacheRecord, bool) {
+	record, found := cache.Get(signature)
+	return record, found
+}
+
+func hash(signature string) [16]byte {
+	h := md5.Sum([]byte(signature))
+	return h
 }
 
 func condenseSpaces(s string) string {
