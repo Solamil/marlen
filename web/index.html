@@ -33,21 +33,6 @@
 			<p id="tomorrow_forecast" style="display: inline-block">Text Forecast</p>
 			<p id="next_forecast" style="display: inline-block">Text Forecast</p>
 		</div>
-		<div id="wttr-in-module">
-		<!-- https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png -->
-			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
-			<form id="weather-form">
-				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
-				<button id="weather-btn" type="button">Search</button>
-			</form>
-		</div>
-		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu-->
-		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=360&height=227&zoom=1.00&continent=eu-->
-		<!-- rain -->
-		<a href='https://api.sat24.com/animated/DE/rainTMC/3/Central%20Europe%20Standard%20Time/5603172' target='sat24' id="link_sat24"><image src='https://api.sat24.com/mostrecent/DE/rainTMC' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
-		<!-- sun and clouds -->
-		<a href='https://api.sat24.com/animated/DE/visual/3/Central%20Europe%20Standard%20Time/530005' target='sat24'><img src='https://api.sat24.com/mostrecent/DE/visual5hdcomplete' width=360 height=227 style="margin: 5px"></a>
-
 		<div id="english">
 			<h4 style="display:inline-block">English</h4>
 			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
@@ -62,6 +47,23 @@
 				<button type="submit" id="submit">Search</button>
 			</form>
 		</div>
+
+		<div id="wttr-in-module">
+		<!-- https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png -->
+			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
+			<form id="weather-form">
+				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
+				<button id="weather-btn" type="button">Search</button>
+			</form>
+		</div>
+
+		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu-->
+		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=360&height=227&zoom=1.00&continent=eu-->
+		<!-- rain -->
+		<a href='https://api.sat24.com/animated/DE/rainTMC/3/Central%20Europe%20Standard%20Time/5603172' target='sat24' id="link_sat24"><image src='https://api.sat24.com/mostrecent/DE/rainTMC' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
+		<!-- sun and clouds -->
+		<a href='https://api.sat24.com/animated/DE/visual/3/Central%20Europe%20Standard%20Time/530005' target='sat24'><img src='https://api.sat24.com/mostrecent/DE/visual5hdcomplete' width=360 height=227 style="margin: 5px"></a>
+
 		<br>
 		<details style="margin-top: 30px">
 			<summary>⚙️/🔧</summary>
