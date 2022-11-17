@@ -46,7 +46,8 @@ type cacheRecord struct {
 
 }
 const CACHESIZE int = 10000
-var cache, _ = lru.New[[16]byte, cacheRecord](CACHESIZE)
+const HASHSIZE int = 16
+var cache, _ = lru.New[[HASHSIZE]byte, cacheRecord](CACHESIZE)
 
 var baseResp userBaseResponse
 var coinPrices = &baseResp.CoinPrices
@@ -104,7 +105,7 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		raw, _ := json.Marshal(coinPrices)
 		w.Write(raw)
 	} else {
-		baseRequest.Location = html.EscapeString(baseRequest.Location)
+		baseRequest.Location = baseRequest.Location
 		if baseRequest.Location == "" {
 			baseRequest.Location = "Zdar"
 		}
@@ -149,13 +150,14 @@ func get_weather(location string) {
 	if weather.HumLowHigh[1] == "" || weather.Location != location || weather.Day != day ||
 		time.Month(weather.Month) != month || weather.Year != year {
 
-		get_text_wttr_forecast(location)
 		weather.Day = day 
 		weather.Month = int(month) 
 		weather.Year = year
 		weather.Location = location
 //		weather.HumLowHigh[0], weather.HumLowHigh[1],weather.HumLowHigh[2]
 	}
+
+	get_forecast(location)
 	weather.SunMoon = get_sun_moon_info(location)
 }
 
@@ -167,7 +169,7 @@ func get_crypto_curr(coinCode, name string) string {
 	if found {
 		now := time.Now()
 		d := record.expiry
-		d.Add(time.Minute * 5)	
+		d = d.Add(time.Minute * 5)
 
 		if  record.value != "" && d.After(now) {
 			answer = record.value
@@ -228,7 +230,20 @@ func get_weather_info(format, location string) string {
 	return string(str_out)
 }
 
-func get_text_wttr_forecast(location string) {
+func get_forecast(location string) string {
+	signature := fmt.Sprintf(`%s:%s`, location, "forecast")
+	cacheSignature := hash(signature)
+	var answer string = ""
+	record, found := get(cacheSignature)
+
+	if found {
+		yearNow, monthNow, dayNow := time.Now().Date()
+		year, month, day := record.expiry.Date()
+		if record.value != "" && dayNow == day && monthNow == month && yearNow == year {
+			answer = record.value
+			return answer
+		}
+	}
 	output, err := exec.Command("/bin/sh", "sb-forecast.sh", location).Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
@@ -245,9 +260,13 @@ func get_text_wttr_forecast(location string) {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
+
 	weather.HumLowHigh[0] = hum_low_high
 	weather.HumLowHigh[1] = hum_low_high_next
 	weather.HumLowHigh[2] = hum_low_high_next2
+	value := strings.Join([]string{hum_low_high, hum_low_high_next, hum_low_high_next2}, "\n")
+	answer = store(cacheSignature, value)
+	return answer
 
 }
 
@@ -296,15 +315,27 @@ func get_coin_price(showRates, coinCode string) string {
 }
 func get_currency_rates() {
 	now := time.Now()
+	var rates string = ""
+	signature := "cnb-rates"
+	cacheSignature := hash(signature)
 
-	if len(baseResp.CurrPrices.Code) > 0 {
+	record, found := get(cacheSignature)
+
+	if found {
 		dateStr := string(now.Day())+"."+string(int(now.Month()))+"."+string(now.Year())
+		d := strings.Split(record.value, " ")[0]
 		
-		if baseResp.CurrPrices.Date == dateStr || now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
-			return
+		if d == dateStr || now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
+			rates = record.value
+		} else {
+			rates = getCnbRates()
+			rates = store(cacheSignature, rates)
 		}
+
+	} else {
+		rates = getCnbRates()
+		rates = store(cacheSignature, rates)
 	}
-	rates := getCnbRates()
 	exchRates := strings.Split(rates, "\n")
 
 
@@ -323,8 +354,6 @@ func get_currency_rates() {
 	usdCode := usdCurr[len(usdCurr)-2]
 	usdVolume := usdCurr[len(usdCurr)-3]
 
-//	json := fmt.Sprintf(`"%s":{"volume": %s, "value": "%s"}, "%s":{"volume": %s, "value": "%s"}, "%s":{"volume": %s, "value": "%s"}`,
-//			usdCode, usdVolume, usdValue, eurCode, eurVolume, eurValue, gbpCode, gbpVolume, gbpValue)
 	var currPrices = userBaseResponse{}.CurrPrices
 	currPrices.Code = append(currPrices.Code, gbpCode)
 	currPrices.Code = append(currPrices.Code, eurCode)
@@ -363,19 +392,18 @@ func getCnbRates() string {
 	return string(b)
 }
 
-func store(signature [16]byte, value string) string {
+func store(signature [HASHSIZE]byte, value string) string {
 	cache.Add(signature, cacheRecord{value, time.Now()})
 	return value
 } 
 
-func get(signature [16]byte) (cacheRecord, bool) {
+func get(signature [HASHSIZE]byte) (cacheRecord, bool) {
 	record, found := cache.Get(signature)
 	return record, found
 }
 
-func hash(signature string) [16]byte {
-	h := md5.Sum([]byte(signature))
-	return h
+func hash(signature string) [HASHSIZE]byte {
+	return md5.Sum([]byte(signature))
 }
 
 func condenseSpaces(s string) string {
