@@ -241,7 +241,6 @@ func get_forecast(location string) string {
 		d := record.expiry
 		d = d.Add(time.Hour * 6)
 		if record.value != "" && d.After(now) {
-			fmt.Println("In cache data found")
 			answer = record.value
 			return answer
 		}
