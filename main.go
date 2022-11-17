@@ -237,9 +237,11 @@ func get_forecast(location string) string {
 	record, found := get(cacheSignature)
 
 	if found {
-		yearNow, monthNow, dayNow := time.Now().Date()
-		year, month, day := record.expiry.Date()
-		if record.value != "" && dayNow == day && monthNow == month && yearNow == year {
+		now := time.Now()
+		d := record.expiry
+		d = d.Add(time.Hour * 6)
+		if record.value != "" && d.After(now) {
+			fmt.Println("In cache data found")
 			answer = record.value
 			return answer
 		}
