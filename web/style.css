@@ -138,10 +138,10 @@ footer{
 	margin-left: 140px;
 
 }
-#donateLink{
+#donateLink,#emailLink{
 	transition-duration: 0.2s;
 }
-#donateLink:hover{
+#donateLink:hover,#emailLink:hover{
 	font-size: larger;
 }
 @keyframes bf{
