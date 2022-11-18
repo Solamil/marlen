@@ -78,7 +78,6 @@ func main() {
 //	var base userBaseRequest 
 //	json.Unmarshal(byteValue, &base)
 //	fmt.Println(baseRequest.CoinCode)
-	
 	http.HandleFunc("/base_info", base_handler)
 	http.HandleFunc("/forecast_info", forecast_handler)
 	http.ListenAndServe(":8900", nil)
@@ -405,6 +404,15 @@ func get(signature [HASHSIZE]byte) (cacheRecord, bool) {
 
 func hash(signature string) [HASHSIZE]byte {
 	return md5.Sum([]byte(signature))
+}
+
+func download_sat_images() {
+	output, err := exec.Command("/bin/sh", "sat-img.sh").Output()
+	fmt.Println(output)
+	if err != nil {
+		fmt.Printf("error %s", err)
+	}
+
 }
 
 func condenseSpaces(s string) string {
