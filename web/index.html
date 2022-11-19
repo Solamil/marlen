@@ -50,7 +50,7 @@
 
 		<div id="wttr-in-module">
 		<!-- https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png -->
-			<a href='https://wttr.in/' target="_blank" target='sat24'><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
+			<a href='https://wttr.in/' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
 			<form id="weather-form">
 				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
 				<button id="weather-btn" type="button">Search</button>
@@ -60,9 +60,9 @@
 		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=600&height=437&zoom=1.00&continent=eu-->
 		<!-- https://api.sat24.com/crop?type=rainTMC&lat=50.2334&lon=14.7313&width=360&height=227&zoom=1.00&continent=eu-->
 		<!-- rain -->
-		<a href='./pics/rain.gif' target='sat24' id="link_sat24"><image src='./pics/rain.webp' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
+		<a href='./pics/rain.gif' id="link_sat24"><image src='./pics/rain.webp' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
 		<!-- sun and clouds -->
-		<a href='./pics/clouds.gif' target='sat24'><img src='./pics/clouds.webp' width=360 height=227 style="margin: 5px"></a>
+		<a href='./pics/clouds.gif' ><img src='./pics/clouds.webp' width=360 height=227 style="margin: 5px"></a>
 
 		<br>
 		<details style="margin-top: 30px">
@@ -130,6 +130,8 @@
 			var weatherImg = document.getElementById("weather-img")
 			var prefix = formatSelect.value.split("-")[0]
 			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background=893531_lang="+prefix+".png"
+			var wttrLink = document.getElementById("wttr-link")
+			wttrLink.href = "https://wttr.in/?lang="+prefix
 
 			document.getElementById("save_btn").onclick = function () {
 				var date = new Date(Date.now())
