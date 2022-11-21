@@ -9,7 +9,8 @@
 </head>
 <body style="background-color:#893531 ">
 	<div class="status-bar">
-		<p id="sun_moon" style="display: inline-block;">Sunrise Sunset Moonphase</p>
+
+		<p id="location" style="display: inline-block; margin-bottom: 0px">🏠</p>
 		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">Coins</a>
 		<!--		<p id="coins" style="float: right; display: inline-block;">Currency</p> -->
 		<select name="fiat_select" id="fiat_select" style="float: right; display: inline-block;">
@@ -19,6 +20,7 @@
 			<option value="btc">BTC</option>
 		</select>
 
+		<p id="sun_moon" style="margin-top: 0px">Sunrise Sunset Moonphase</p>
 	</div>
 	<hr style="color: beige">
 	<nav id="nav">
@@ -170,6 +172,8 @@
 				var sun_moon = document.getElementById("sun_moon")	
 				sun_moon.innerHTML = "🌅 "+resList[0]+"  🌇"+resList[1]+"  "+resList[2]+
 						     "  "+res.weather.hum_low_high[0]
+				var locationOutput = document.getElementById("location")
+				locationOutput.innerHTML = "🏠 "+res.weather.location
 				const date = new Date(Date.now())
 				date.setDate(date.getDate()+1)
 				var formatSelect = document.getElementById("select_lang")
