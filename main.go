@@ -25,10 +25,7 @@ type userBaseResponse struct {
 
 	Weather struct {
 		SunMoon string `json:"sun_moon"`
-		Day int `json:"day"`
-		Month int `json:"month"`
-		Year int `json:"year"`
-		HumLowHigh [3]string `json:"hum_low_high"`
+		HumLowHigh []string `json:"hum_low_high"`
 		Location string `json:"location"`
 	} `json:"weather"`
 
@@ -144,19 +141,9 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 //	w.Write(byteWeather)
 }
 func get_weather(location string) {
-	tm := time.Now()
-	year, month, day := tm.Date()
-	if weather.HumLowHigh[1] == "" || weather.Location != location || weather.Day != day ||
-		time.Month(weather.Month) != month || weather.Year != year {
-
-		weather.Day = day 
-		weather.Month = int(month) 
-		weather.Year = year
-		weather.Location = location
-//		weather.HumLowHigh[0], weather.HumLowHigh[1],weather.HumLowHigh[2]
-	}
-
-	get_forecast(location)
+	answer := get_forecast(location)
+	weather.HumLowHigh = strings.Split(answer, "\n")
+	weather.Location = location
 	weather.SunMoon = get_sun_moon_info(location)
 }
 
@@ -197,10 +184,6 @@ func get_sun_moon_info(location string) string {
 	value := get_weather_info(format, location)
 	answer = store(cacheSignature, value)
 	return answer
-//	if info := get_weather_info(format, location); info != "" {
-//		weather.SunMoon = info
-//	}
-//	return weather.SunMoon
 }
 
 func get_weather_info(format, location string) string {
@@ -261,9 +244,6 @@ func get_forecast(location string) string {
 	}
 	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
 
-	weather.HumLowHigh[0] = hum_low_high
-	weather.HumLowHigh[1] = hum_low_high_next
-	weather.HumLowHigh[2] = hum_low_high_next2
 	value := strings.Join([]string{hum_low_high, hum_low_high_next, hum_low_high_next2}, "\n")
 	answer = store(cacheSignature, value)
 	return answer
