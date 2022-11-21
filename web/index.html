@@ -37,14 +37,14 @@
 			<h4 style="display:inline-block">English</h4>
 			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
 				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
-				<button type="submit" id="submit">Search</button>
+				<button type="submit" id="submit">OK</button>
 			</form>
 		</div>
 		<div id="deutsch">
 			<h4 style="display: inline-block">Deutsch</h4>
 			<form action="https://slovniky.lingea.cz/nemecko-cesky/" autocomplete="off" method="get" style="display:inline-block">
 				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
-				<button type="submit" id="submit">Search</button>
+				<button type="submit" id="submit">OK</button>
 			</form>
 		</div>
 
@@ -53,7 +53,7 @@
 			<a href='https://wttr.in/' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
 			<form id="weather-form">
 				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
-				<button id="weather-btn" type="button">Search</button>
+				<button id="weather-btn" type="button">OK</button>
 			</form>
 		</div>
 
@@ -68,12 +68,12 @@
 		<details style="margin-top: 30px">
 			<summary>⚙️/🔧</summary>
 			<br>
-			<input id="location_input" type="text" placeholder="Location..." aria-label="Location...">
+			<input id="location_input" type="text" >
 
 			<select name="lang" id="select_lang">
-				<option value="en-US">US</option>
-				<option value="de-DE">DE</option>
-				<option value="cs-CZ">CZ</option>
+				<option value="en-US" default>🇺🇸</option>
+				<option value="de-DE">🇩🇪</option>
+				<option value="cs-CZ">🇨🇿</option>
 			</select>
 
 			<button id="save_btn" type="button">Save</button>
@@ -128,10 +128,14 @@
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 			}
 			var weatherImg = document.getElementById("weather-img")
+			var weatherInput = document.getElementById("weather-input")
+			var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", "us": "Weather in..." }
+			
 			var prefix = formatSelect.value.split("-")[0]
 			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background=893531_lang="+prefix+".png"
 			var wttrLink = document.getElementById("wttr-link")
 			wttrLink.href = "https://wttr.in/?lang="+prefix
+			weatherInput.placeholder = weatherInputDict[prefix]
 
 			document.getElementById("save_btn").onclick = function () {
 				var date = new Date(Date.now())
