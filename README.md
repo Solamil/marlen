@@ -1,4 +1,4 @@
-# Merlot - personal home page 
+# 🌳Marlen - personal home page 
 
 - Self hosted personal home page for serving the basic informations (weather, exchange rates, ...).
 
@@ -7,8 +7,8 @@
 For self-hosting yourself use following commands:
 
 ```
-git clone  https://github.com/Solamil/merlot
-cd merlot/
+git clone  https://github.com/Solamil/marlen
+cd marlen/
 go run main.go
 ```
 
