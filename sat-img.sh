@@ -1,5 +1,5 @@
 #!/bin/bash
-repo_path="/home/merlot/repo"
+repo_path="$HOME/repo"
 repo_pics_path=$repo_path"/web/pics"
 curl --parallel --parallel-max 5 \
 	https://api.sat24.com/mostrecent/DE/visual5hdcomplete --output $repo_pics_path/clouds.png \
