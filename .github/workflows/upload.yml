@@ -22,10 +22,10 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: michalkukla.xyz 
-        username: merlot
-        key: ${{ secrets.merlot_ssh }}
-        passphrase: ${{ secrets.merlot_ssh_pass }}
-        port: ${{ secrets.merlot_port }}
+        username: marlen
+        key: ${{ secrets.marlen_ssh }}
+        passphrase: ${{ secrets.marlen_ssh_pass }}
+        port: ${{ secrets.marlen_port }}
         script: |
           cd repo 
           git stash
