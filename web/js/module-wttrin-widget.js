@@ -8,7 +8,7 @@ function changeWeather () {
 	+ '.png';
 	img.alt = weatherImgAlt + input.value;
 	wttrLink.href = 'https://wttr.in/' + input.value +
-	'?lang='+langOption;
+	'?lang='+langCode;
 	input.value = '';
 }
 
@@ -22,13 +22,13 @@ document.getElementById('weather-form').onkeypress = function(event) {
 	  changeWeather();
 	}
 }
-var langOption = "";
+var langCode = "";
 var cookieList = document.cookie.split("; ");
 var cookieLang = cookieList.find(e => e.startsWith("lang"));
 if (cookieLang != undefined) {
 	lang = cookieLang.split("=")[1];
-	langOption = lang.split("-")[0];
+	langCode = lang.split("-")[0];
 }
 
-var weatherOptions = '0pq_transparency=255_background=893531_lang=en';
+var weatherOptions = '0pq_transparency=255_background=893531_lang='+langCode;
 var weatherImgAlt = 'Current weather in ';
