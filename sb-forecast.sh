@@ -1,8 +1,9 @@
+#!/bin/sh
 weatherreport="./weatherreport"
 place=${1:-""}
 line_temp=${2:-13}
 line_hum=${3:-16}
-
+place=$(echo "$place" | sed "s/ /%20/" )
 curl wttr.in/"$place" > $weatherreport
 
 printf "%s" "$(sed "${line_hum}q;d" "$weatherreport" |
