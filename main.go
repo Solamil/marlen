@@ -60,6 +60,30 @@ func main() {
 	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/style.css")
 	})
+	http.HandleFunc("/pics/bitcoin-icon.svg", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/bitcoin-icon.svg")
+	})
+	http.HandleFunc("/pics/monero-icon.svg", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/monero-icon.svg")
+	})
+	http.HandleFunc("/pics/git-icon.svg", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/git-icon.svg")
+	})
+	http.HandleFunc("/pics/rain.webp", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/rain.webp")
+	})
+	http.HandleFunc("/pics/clouds.webp", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/clouds.webp")
+	})
+	http.HandleFunc("/pics/rain.gif", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/rain.gif")
+	})
+	http.HandleFunc("/pics/clouds.gif", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/clouds.gif")
+	})
+	http.HandleFunc("/js/module-wttrin-widget.js", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/js/module-wttrin-widget.js")
+	})
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/index.html")
 	})
