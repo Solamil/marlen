@@ -7,11 +7,12 @@ import (
 	"io/ioutil"
 	"strings"
 	"html"
-//	"strconv"
+	"strconv"
 	"time"
 	"unicode/utf8"
 	"os/exec"
 	"crypto/md5"
+	"text/template"
 	"github.com/hashicorp/golang-lru/v2"
 //	"os"
 )
@@ -42,6 +43,15 @@ type cacheRecord struct {
 	expiry time.Time
 
 }
+type indexDisplay struct {
+	Location string
+	WeatherInfo string
+	Coins string
+	Currency string
+	ForecastFirst string
+	ForecastSecond string
+
+}
 const CACHESIZE int = 10000
 const HASHSIZE int = 16
 var cache, _ = lru.New[[HASHSIZE]byte, cacheRecord](CACHESIZE)
@@ -49,6 +59,8 @@ var cache, _ = lru.New[[HASHSIZE]byte, cacheRecord](CACHESIZE)
 var baseResp userBaseResponse
 var coinPrices = &baseResp.CoinPrices
 var weather = &baseResp.Weather
+
+var indexTemplate *template.Template
 
 type userBaseRequest struct {
 	CoinCode string `json:"coin_code"`	
@@ -84,9 +96,12 @@ func main() {
 	http.HandleFunc("/js/module-wttrin-widget.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/js/module-wttrin-widget.js")
 	})
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/index.html")
+	http.HandleFunc("/forecast.html", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/forecast.html")
 	})
+//	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+//		http.ServeFile(w, r, "web/index.html")
+//	})
 
 //	jsonFile, err := os.Open("testfile.json")
 //	if err != nil {
@@ -99,11 +114,43 @@ func main() {
 //	var base userBaseRequest 
 //	json.Unmarshal(byteValue, &base)
 //	fmt.Println(baseRequest.CoinCode)
+	indexTemplate, _ = template.ParseFiles("web/index.html")
+	http.HandleFunc("/", index_handler)
 	http.HandleFunc("/base_info", base_handler)
 	http.HandleFunc("/forecast_info", forecast_handler)
 	http.ListenAndServe(":8900", nil)
 }
 
+func index_handler(w http.ResponseWriter, r *http.Request) {
+//	body, err := ioutil.ReadAll(r.Body)
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+	var location string = "Zdar"
+	var coinCode string = "usd"
+	var coinSymbol string = "$"
+	forecastStr := get_forecast(location)
+	forecasts := strings.Split(forecastStr, "\n")
+	sunMoonStr := get_sun_moon_info(location)
+	sunMoon := strings.Split(sunMoonStr, " ")
+	btcStr := get_crypto_curr(coinCode, "btc")
+	btc, _ := strconv.ParseFloat(btcStr, 64)
+	xmrStr := get_crypto_curr(coinCode, "xmr")
+	xmr, _ := strconv.ParseFloat(xmrStr, 64)
+
+	var i indexDisplay
+	i.Location = location
+	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+forecasts[0]
+	i.ForecastFirst = forecasts[1]
+	i.ForecastSecond = forecasts[2]
+	coins := fmt.Sprintf("%s %.2f%s %s %.2f%s", 
+			"<img src=\"/pics/bitcoin-icon.svg\">", btc, coinSymbol,
+			"<img src=\"/pics/monero-icon.svg\">", xmr, coinSymbol)
+	i.Coins = coins
+	i.Currency = get_currency_rates()
+	indexTemplate.Execute(w, i)
+
+}
 func base_handler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -165,8 +212,8 @@ func forecast_handler(w http.ResponseWriter, r *http.Request) {
 //	w.Write(byteWeather)
 }
 func get_weather(location string) {
-	answer := get_forecast(location)
-	weather.HumLowHigh = strings.Split(answer, "\n")
+	forecast := get_forecast(location)
+	weather.HumLowHigh = strings.Split(forecast, "\n")
 	weather.Location = location
 	weather.SunMoon = get_sun_moon_info(location)
 }
@@ -317,9 +364,10 @@ func get_coin_price(showRates, coinCode string) string {
 	priceStr = priceStr[:len(priceStr)-1]
 	return priceStr
 }
-func get_currency_rates() {
+func get_currency_rates() string {
 	now := time.Now()
 	var rates string = ""
+	var answer string = ""
 	signature := "cnb-rates"
 	cacheSignature := hash(signature)
 
@@ -357,6 +405,8 @@ func get_currency_rates() {
 	usdValue := usdCurr[len(usdCurr)-1]
 	usdCode := usdCurr[len(usdCurr)-2]
 	usdVolume := usdCurr[len(usdCurr)-3]
+	answer = usdVolume+"$  "+usdValue+" Kč  "+eurVolume+"€  "+eurValue+" Kč  "+
+		gbpVolume+"£  "+gbpValue+" Kč"
 
 	var currPrices = userBaseResponse{}.CurrPrices
 	currPrices.Code = append(currPrices.Code, gbpCode)
@@ -373,7 +423,7 @@ func get_currency_rates() {
 	currPrices.Date = strings.Split(exchRates[0], " ")[0]
 
 	baseResp.CurrPrices = currPrices	
-
+	return answer
 }
 
 func getCnbRates() string {
