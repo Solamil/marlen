@@ -10,8 +10,8 @@
 <body style="background-color:#893531 ">
 	<div class="status-bar">
 
-		<p id="location" style="display: inline-block; margin-bottom: 0px">🏠</p>
-		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">Coins</a>
+		<p id="location" style="display: inline-block; margin-bottom: 0px">🏠 {{.Location}}</p>
+		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">{{.Coins}}</a>
 		<!--		<p id="coins" style="float: right; display: inline-block;">Currency</p> -->
 		<select name="fiat_select" id="fiat_select" style="float: right; display: inline-block;">
 			<option value="usd">$</option>
@@ -20,7 +20,7 @@
 			<option value="btc">BTC</option>
 		</select>
 
-		<p id="sun_moon" style="margin-top: 0px">Sunrise Sunset Moonphase</p>
+		<p id="sun_moon" style="margin-top: 0px">{{.WeatherInfo}}</p>
 	</div>
 	<hr style="color: beige">
 	<nav id="nav">
@@ -30,10 +30,10 @@
 	</nav>
 
 	<main  style="margin-top: 20px;">
-		<p id="curr">💵Currency</p>
+		<p id="curr">💵{{.Currency}}</p>
 		<div id="text_forecast">
-			<p id="tomorrow_forecast" style="display: inline-block">Text Forecast</p>
-			<p id="next_forecast" style="display: inline-block">Text Forecast</p>
+			<p id="tomorrow_forecast" style="display: inline-block">{{.ForecastFirst}}</p>
+			<p id="next_forecast" style="display: inline-block">{{.ForecastSecond}}</p>
 		</div>
 		<div id="english">
 			<h4 style="display:inline-block">English</h4>
@@ -161,66 +161,66 @@
 //
 //			base init
 //
-			const options = {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
-					"coin_code": fiatSelect.value,
-					"location": place
-				})
-			}
-			fetch("/base_info", options).then(res => res.json())
-				.then(res => {
-				resList = res.weather.sun_moon.split(" ")
-				var sun_moon = document.getElementById("sun_moon")	
-				sun_moon.innerHTML = "🌅 "+resList[0]+"  🌇"+resList[1]+"  "+resList[2]+
-						     "  "+res.weather.hum_low_high[0]
-				var locationOutput = document.getElementById("location")
-				locationOutput.innerHTML = "🏠 "+res.weather.location
-				const date = new Date(Date.now())
-				date.setDate(date.getDate()+1)
-				var formatSelect = document.getElementById("select_lang")
-				var tomorrow_forecast = document.getElementById("tomorrow_forecast")
-				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
-				tomorrow_forecast.innerHTML = date_output+": "+res.weather.hum_low_high[1]
-
-				var next_forecast = document.getElementById("next_forecast")
-				date.setDate(date.getDate()+1)
-				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
-				next_forecast.innerHTML = date_output+": "+res.weather.hum_low_high[2]
+//			const options = {
+//				method: "POST",
+//				headers: {
+//					"Content-Type": "application/json"
+//				},
+//				body: JSON.stringify({
+//					"coin_code": fiatSelect.value,
+//					"location": place
+//				})
+//			}
+//			fetch("/base_info", options).then(res => res.json())
+//				.then(res => {
+//				resList = res.weather.sun_moon.split(" ")
+//				var sun_moon = document.getElementById("sun_moon")	
+//				sun_moon.innerHTML = "🌅 "+resList[0]+"  🌇"+resList[1]+"  "+resList[2]+
+//						     "  "+res.weather.hum_low_high[0]
+//				var locationOutput = document.getElementById("location")
+//				locationOutput.innerHTML = "🏠 "+res.weather.location
+//				const date = new Date(Date.now())
+//				date.setDate(date.getDate()+1)
+//				var formatSelect = document.getElementById("select_lang")
+//				var tomorrow_forecast = document.getElementById("tomorrow_forecast")
+//				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
+//				tomorrow_forecast.innerHTML = date_output+": "+res.weather.hum_low_high[1]
+//
+//				var next_forecast = document.getElementById("next_forecast")
+//				date.setDate(date.getDate()+1)
+//				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
+//				next_forecast.innerHTML = date_output+": "+res.weather.hum_low_high[2]
 
 //
 //				COINS
 //
-				var fiatSelect = document.getElementById("fiat_select")
-				fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč" }
-				var coins = document.getElementById("coins")			
-				var btc = parseFloat(res.coins.btc)
-				var xmr = parseFloat(res.coins.xmr)
-				coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(2)+fiatSymbol[res.coins.coin_code]+"  "+
-						 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(2)+fiatSymbol[res.coins.coin_code]
+//				var fiatSelect = document.getElementById("fiat_select")
+//				fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč" }
+//				var coins = document.getElementById("coins")			
+//				var btc = parseFloat(res.coins.btc)
+//				var xmr = parseFloat(res.coins.xmr)
+//				coins.innerHTML = "<img src=\"/pics/bitcoin-icon.svg\"> "+btc.toFixed(2)+fiatSymbol[res.coins.coin_code]+"  "+
+//						 "<img src=\"/pics/monero-icon.svg\"> "+xmr.toFixed(2)+fiatSymbol[res.coins.coin_code]
 //
 //				FIAT CURRENCY
 //
-				var curr = document.getElementById("curr")
-				var currPrices = res.currs
-				var usd_index = currPrices.code.indexOf("USD")
-				currPrices.value[usd_index] = currPrices.value[usd_index].replace(",", ".")
-				var usd = parseFloat(currPrices.value[usd_index])
-				var eur_index = currPrices.code.indexOf("EUR")
-				currPrices.value[eur_index] = currPrices.value[eur_index].replace(",", ".")
-				var eur = parseFloat(currPrices.value[eur_index])
-
-				var gbp_index = currPrices.code.indexOf("GBP")
-				currPrices.value[gbp_index] = currPrices.value[gbp_index].replace(",", ".")
-				var gbp = parseFloat(currPrices.value[gbp_index])
-				
-				curr.innerHTML = "💵 "+currPrices.volume[usd_index]+"$  "+usd.toFixed(2)+"Kč  "+currPrices.volume[eur_index]+"€  "+eur.toFixed(2)+"Kč  "+currPrices.volume[gbp_index]+"£  "+gbp.toFixed(2)+"Kč"
-				
-				
-			})
+//				var curr = document.getElementById("curr")
+//				var currPrices = res.currs
+//				var usd_index = currPrices.code.indexOf("USD")
+//				currPrices.value[usd_index] = currPrices.value[usd_index].replace(",", ".")
+//				var usd = parseFloat(currPrices.value[usd_index])
+//				var eur_index = currPrices.code.indexOf("EUR")
+//				currPrices.value[eur_index] = currPrices.value[eur_index].replace(",", ".")
+//				var eur = parseFloat(currPrices.value[eur_index])
+//
+//				var gbp_index = currPrices.code.indexOf("GBP")
+//				currPrices.value[gbp_index] = currPrices.value[gbp_index].replace(",", ".")
+//				var gbp = parseFloat(currPrices.value[gbp_index])
+//				
+//				curr.innerHTML = "💵 "+currPrices.volume[usd_index]+"$  "+usd.toFixed(2)+"Kč  "+currPrices.volume[eur_index]+"€  "+eur.toFixed(2)+"Kč  "+currPrices.volume[gbp_index]+"£  "+gbp.toFixed(2)+"Kč"
+//				
+//				
+//			})
 
 			formatSelect.onchange = function() {
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
