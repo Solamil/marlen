@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"encoding/json"
 	"io/ioutil"
 	"strings"
@@ -115,6 +116,7 @@ func main() {
 //	json.Unmarshal(byteValue, &base)
 //	fmt.Println(baseRequest.CoinCode)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
+	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
 	http.HandleFunc("/base_info", base_handler)
 	http.HandleFunc("/forecast_info", forecast_handler)
@@ -122,30 +124,40 @@ func main() {
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
-//	body, err := ioutil.ReadAll(r.Body)
-//	if err != nil {
-//		fmt.Println(err)
-//	}
 	var location string = "Zdar"
 	var coinCode string = "usd"
 	var coinSymbol string = "$"
+
+	if c, err := r.Cookie("coin_code"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		coinCode = value
+	} else if err != nil {
+		fmt.Println(err)
+	}
+	if c, err := r.Cookie("place"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		location, _ = url.QueryUnescape(value)
+//		fmt.Println(value)
+	} else if err != nil {
+		fmt.Println(err)
+	}
 	forecastStr := get_forecast(location)
 	forecasts := strings.Split(forecastStr, "\n")
 	sunMoonStr := get_sun_moon_info(location)
 	sunMoon := strings.Split(sunMoonStr, " ")
 	btcStr := get_crypto_curr(coinCode, "btc")
-	btc, _ := strconv.ParseFloat(btcStr, 64)
+	btc, _ := strconv.ParseFloat(btcStr, 32)
 	xmrStr := get_crypto_curr(coinCode, "xmr")
-	xmr, _ := strconv.ParseFloat(xmrStr, 64)
-
-	var i indexDisplay
-	i.Location = location
-	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+forecasts[0]
-	i.ForecastFirst = forecasts[1]
-	i.ForecastSecond = forecasts[2]
+	xmr, _ := strconv.ParseFloat(xmrStr, 32)
 	coins := fmt.Sprintf("%s %.2f%s %s %.2f%s", 
 			"<img src=\"/pics/bitcoin-icon.svg\">", btc, coinSymbol,
 			"<img src=\"/pics/monero-icon.svg\">", xmr, coinSymbol)
+
+	var i indexDisplay
+	i.Location = location
+	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
+	i.ForecastFirst = forecasts[1]
+	i.ForecastSecond = forecasts[2]
 	i.Coins = coins
 	i.Currency = get_currency_rates()
 	indexTemplate.Execute(w, i)
@@ -393,20 +405,27 @@ func get_currency_rates() string {
 
 	gbpCurr := strings.Split(exchRates[33], "|")
 	gbpValue := gbpCurr[len(gbpCurr)-1]
+	gbpValue = strings.Replace(gbpValue, ",", ".", 1)
 	gbpCode := gbpCurr[len(gbpCurr)-2]
 	gbpVolume := gbpCurr[len(gbpCurr)-3]
 
 	eurCurr := strings.Split(exchRates[7], "|")
 	eurValue := eurCurr[len(eurCurr)-1]
+	eurValue = strings.Replace(eurValue, ",", ".", 1)
 	eurCode := eurCurr[len(eurCurr)-2]
 	eurVolume := eurCurr[len(eurCurr)-3]
 
 	usdCurr := strings.Split(exchRates[32], "|")
 	usdValue := usdCurr[len(usdCurr)-1]
+	usdValue = strings.Replace(usdValue, ",", ".", 1)
 	usdCode := usdCurr[len(usdCurr)-2]
 	usdVolume := usdCurr[len(usdCurr)-3]
-	answer = usdVolume+"$  "+usdValue+" Kč  "+eurVolume+"€  "+eurValue+" Kč  "+
-		gbpVolume+"£  "+gbpValue+" Kč"
+	usdValueFloat, _ := strconv.ParseFloat(usdValue, 32)
+	eurValueFloat, _ := strconv.ParseFloat(eurValue, 32)
+	gbpValueFloat, _ := strconv.ParseFloat(gbpValue, 32)
+	answer = fmt.Sprintf("%s$ %.2fKč %s€ %.2fKč %s£ %.2fKč", usdVolume, usdValueFloat,
+								 eurVolume, eurValueFloat,
+							         gbpVolume, gbpValueFloat)
 
 	var currPrices = userBaseResponse{}.CurrPrices
 	currPrices.Code = append(currPrices.Code, gbpCode)
