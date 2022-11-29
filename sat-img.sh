@@ -11,4 +11,4 @@ curl --parallel --parallel-max 5 \
 cwebp -resize 400 300 "$repo_pics_path"/rain.png -o "$repo_pics_path"/rain.webp &
 cwebp -resize 400 300 "$repo_pics_path"/clouds.png -o "$repo_pics_path"/clouds.webp &
 wait
-rm "$repo_pics_path"/{rain.png,clouds.png} # /home/merlot/repo/web/pics/clouds.png
+rm -v "$repo_pics_path"/{rain.png,clouds.png} # /home/merlot/repo/web/pics/clouds.png
