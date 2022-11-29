@@ -159,13 +159,15 @@
 				
 			}
 			var formatSelect = document.getElementById("select_lang")
+			var dayForecast = new Date(Date.now()) 
+			dayForecast.setDate(dayForecast.getDate()+1)
 			var tomorrow_forecast = document.getElementById("tomorrow_forecast")
-			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
+			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
 			tomorrow_forecast.innerHTML = date_output+": "+tomorrow_forecast.innerHTML
 
 			var next_forecast = document.getElementById("next_forecast")
-			date.setDate(date.getDate()+1)
-			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(date)
+			dayForecast.setDate(dayForecast.getDate()+1)
+			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
 			next_forecast.innerHTML = date_output+": "+next_forecast.innerHTML
 
 
