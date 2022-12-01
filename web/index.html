@@ -13,6 +13,8 @@
 <!--		<p id="location" style="display: inline-block; margin-bottom: 0px">🏠 {{.Location}}</p> -->
 		<form action="/" method="GET" class="form" id="location_form"
 			style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
+			<input type="submit" style="position: absolute;
+                     left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<select name="lang" id="select_lang">
 				<option value="en-US" default>🇺🇸</option>
 				<option value="de-DE">🇩🇪</option>
@@ -21,7 +23,10 @@
 		<span>🏠</span>
 		<input type="text" name="location" id="location_input" value="{{.Location}}" 
 			autocomplete=off
-			style="border: none; background:transparent; color:beige">
+			style="margin: 0px; padding-left: 2px;
+				border-radius:0px; border: solid; border-width: 0px 0px 1px 0px; 
+				border-color:beige; background:transparent; color:beige">
+
 		</form>	
 		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">{{.Coins}}</a>
 
