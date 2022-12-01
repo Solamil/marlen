@@ -39,11 +39,18 @@ type userBaseResponse struct {
 		Date string `json:"date"`
 	} `json:"currs"`
 }
+
 type cacheRecord struct {
 	value string
 	expiry time.Time
 
 }
+
+type urlParams struct {
+	Lang [1]string `json:"lang"`
+	Location [1]string `json:"location"`
+}
+
 type indexDisplay struct {
 	Location string
 	WeatherInfo string
@@ -140,6 +147,21 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 //		fmt.Println(value)
 	} else if err != nil {
 		fmt.Println(err)
+	}
+	q, _ := url.PathUnescape(r.URL.RawQuery)
+	if len(q) != 0 {
+		m, err := url.ParseQuery(q)
+		if err != nil {
+			fmt.Println(err)
+		}
+		
+		js, err := json.Marshal(m)
+		if err != nil {
+			fmt.Println(err)
+		}
+		var param *urlParams
+		json.Unmarshal(js, &param)		
+		location = param.Location[0]
 	}
 	forecastStr := get_forecast(location)
 	forecasts := strings.Split(forecastStr, "\n")
