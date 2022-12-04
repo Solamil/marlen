@@ -2,7 +2,8 @@
 	--green: #4c8a31;
 	--bg1: #ebdbb2;
 	--fg0: #282828;
-	--bg: var(--green);  /* green */
+	--bg2: #893531;
+	--bg: var(--bg2);  /* green */
 }
 
 body{
@@ -152,7 +153,7 @@ footer{
 	animation: bf .5s linear both infinite alternate;
 	position: absolute;
 }
-textarea,input{
+textarea{
 	background: #faf8f0;
 	border-radius: 4px;
 	border: none;
@@ -160,6 +161,19 @@ textarea,input{
 	margin: 5px;
 	outline: none;
 }
+input{
+	margin: 0px; 
+	padding: 0px 0px 0px 2px;
+	border-radius:0px;
+	border: solid;
+	border-width: 0px 0px 1px 0px; 
+	border-color:beige;
+	text-decoration: none;
+	background:transparent;
+	outline: none;
+	color:beige
+}
+
 #message{
 	width: 60%;
 	min-height: 100px;
@@ -167,7 +181,7 @@ textarea,input{
 	max-width: 450px;
 	max-height: 900px;
 }
-#submit{
+/*#submit{
 	width: 50px;
 	height: 30px;
-}
+}*/

@@ -46,23 +46,43 @@ type cacheRecord struct {
 
 }
 
+
 type urlParams struct {
 	Lang [1]string `json:"lang"`
 	Location [1]string `json:"location"`
+	CoinCode [1]string `json:"coin_code"`
+	Bg [1]string `json:"bg"`
 }
 
 type indexDisplay struct {
+	Bg string
 	Location string
 	WeatherInfo string
 	Coins string
 	Currency string
 	ForecastFirst string
 	ForecastSecond string
-
+	WttrLink string
+	WttrSrc string
+	WttrInHolder string
 }
 const CACHESIZE int = 10000
 const HASHSIZE int = 16
 var cache, _ = lru.New[[HASHSIZE]byte, cacheRecord](CACHESIZE)
+
+var wttrInHolders = map[string]string{
+	"en": "Weather in...",
+	"de": "Wetter für...",
+	"cs": "Počasí v...",
+}
+
+var currSymbols = map[string]string{
+	"usd": "$",
+	"eur": "€",
+	"czk": "Kč",
+	"gbp": "£",
+	"btc": "BTC",
+}
 
 var baseResp userBaseResponse
 var coinPrices = &baseResp.CoinPrices
@@ -133,11 +153,12 @@ func main() {
 func index_handler(w http.ResponseWriter, r *http.Request) {
 	var location string = "Zdar"
 	var coinCode string = "usd"
-	var coinSymbol string = "$"
+	var bg string = "893531"
+	var lang string = "en-US"
 
 	if c, err := r.Cookie("coin_code"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
-		coinCode = value
+		coinCode = value 
 	} else if err != nil {
 		fmt.Println(err)
 	}
@@ -145,6 +166,12 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		value := strings.Split(c.String(), "=")[1]
 		location, _ = url.QueryUnescape(value)
 //		fmt.Println(value)
+	} else if err != nil {
+		fmt.Println(err)
+	}
+	if c, err := r.Cookie("lang"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		lang = value	
 	} else if err != nil {
 		fmt.Println(err)
 	}
@@ -161,8 +188,23 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 		var param *urlParams
 		json.Unmarshal(js, &param)		
-		location = param.Location[0]
+		if len(param.Location[0]) > 0 {
+			location = param.Location[0]
+		}
+		if len(param.Lang[0]) > 0 {
+			lang = param.Lang[0]
+		}
+		if len(currSymbols[param.CoinCode[0]]) > 0 {
+			coinCode = param.CoinCode[0]
+		}
+		if len(param.Bg[0]) > 0 {
+			bg = param.Bg[0]
+			fmt.Println(bg)
+		}
 	}
+	prefix := strings.Split(lang, "-")[0]
+	wttrSrc := "https://wttr.in/"+location+"_0pq_transparency=255_background="+bg+"_lang="+prefix+".png"
+	wttrLink := "https://wttr.in/"+location+"?lang="+prefix
 	forecastStr := get_forecast(location)
 	forecasts := strings.Split(forecastStr, "\n")
 	sunMoonStr := get_sun_moon_info(location)
@@ -172,16 +214,20 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	xmrStr := get_crypto_curr(coinCode, "xmr")
 	xmr, _ := strconv.ParseFloat(xmrStr, 32)
 	coins := fmt.Sprintf("%s %.2f%s %s %.2f%s", 
-			"<img src=\"/pics/bitcoin-icon.svg\">", btc, coinSymbol,
-			"<img src=\"/pics/monero-icon.svg\">", xmr, coinSymbol)
+			"<img src=\"/pics/bitcoin-icon.svg\">", btc, currSymbols[coinCode],
+			"<img src=\"/pics/monero-icon.svg\">", xmr, currSymbols[coinCode])
 
 	var i indexDisplay
+	i.Bg = "#"+bg
 	i.Location = location
 	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
 	i.ForecastFirst = forecasts[1]
 	i.ForecastSecond = forecasts[2]
 	i.Coins = coins
 	i.Currency = get_currency_rates()
+	i.WttrLink = wttrLink
+	i.WttrSrc = wttrSrc
+	i.WttrInHolder = wttrInHolders[prefix]
 	indexTemplate.Execute(w, i)
 
 }
