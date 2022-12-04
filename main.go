@@ -127,26 +127,11 @@ func main() {
 	http.HandleFunc("/forecast.html", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/forecast.html")
 	})
-//	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-//		http.ServeFile(w, r, "web/index.html")
-//	})
 
-//	jsonFile, err := os.Open("testfile.json")
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//	fmt.Println("reading testfile.json")
-//	defer jsonFile.Close()
-//
-//	byteValue, _ := ioutil.ReadAll(jsonFile)
-//	var base userBaseRequest 
-//	json.Unmarshal(byteValue, &base)
-//	fmt.Println(baseRequest.CoinCode)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
 	http.HandleFunc("/base_info", base_handler)
-	http.HandleFunc("/forecast_info", forecast_handler)
 	http.ListenAndServe(":8900", nil)
 }
 
@@ -264,33 +249,10 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write(raw)
 	}
-//	var session http.Cookie
-//	session.Name = "sessionid"
-//	session.Domain = "michalkukla.xyz"
-//	session.Path = "/startpage"
-//	session.HttpOnly = true
-//	session.Secure = true
 
 	
 }
 
-func forecast_handler(w http.ResponseWriter, r *http.Request) {
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Println(err)
-	}
-	var baseRequest userBaseRequest
-	json.Unmarshal(body, &baseRequest)
-	fmt.Println(baseRequest.CoinCode)
-//	weatherFile, err := os.Open("weatherreport")
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//	defer weatherFile.Close()
-//	byteWeather, _ := ioutil.ReadAll(weatherFile)
-//	w.Write(byteWeather)
-}
 func get_weather(location string) {
 	forecast := get_forecast(location)
 	weather.HumLowHigh = strings.Split(forecast, "\n")
@@ -554,18 +516,4 @@ func download_sat_images() {
 		fmt.Printf("error %s", err)
 	}
 
-}
-
-func condenseSpaces(s string) string {
-	return strings.Join(strings.Fields(s), " ")
-}
-
-func truncateStrings(s string, n int) string {
-	if len(s) <= n {
-		return s
-	}
-	for !utf8.ValidString(s[:n]) {
-		n--
-	}
-	return s[:n]
 }
