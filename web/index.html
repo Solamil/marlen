@@ -7,7 +7,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body style="background-color:#893531 ">
+<body style="background-color:{{.Bg}}">
 	<div class="status-bar">
 
 <!--		<p id="location" style="display: inline-block; margin-bottom: 0px">🏠 {{.Location}}</p> -->
@@ -16,17 +16,13 @@
 			<input type="submit" id="save_btn" style="position: absolute;
                      left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<select name="lang" id="select_lang">
-				<option value="en-US" default>🇺🇸</option>
-				<option value="de-DE">🇩🇪</option>
+				<option value="en-US" selected>🇺🇸</option>
+				<option value="de-DE" >🇩🇪</option>
 				<option value="cs-CZ">🇨🇿</option>
 			</select>
 		<span>🏠</span>
 		<input type="text" name="location" id="location_input" value="{{.Location}}" 
-			autocomplete=off
-			style="margin: 0px; padding: 0px 0px 0px 2px;
-				border-radius:0px; border: solid; border-width: 0px 0px 1px 0px; 
-				border-color:beige; background:transparent; color:beige">
-
+			autocomplete=off >
 		</form>	
 		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">{{.Coins}}</a>
 
@@ -34,6 +30,7 @@
 			<option value="usd">$</option>
 			<option value="eur">€</option>
 			<option value="czk">Kč</option>
+			<option value="gbp">£</option>
 			<option value="btc">BTC</option>
 		</select>
 
@@ -49,8 +46,8 @@
 	<main  style="margin-top: 20px;">
 		<p id="curr">💵{{.Currency}}</p>
 		<div id="text_forecast">
-			<p id="tomorrow_forecast" style="display: inline-block">{{.ForecastFirst}}</p>
-			<p id="next_forecast" style="display: inline-block">{{.ForecastSecond}}</p>
+			<p id="tomorrow_forecast" style="display: inline-block"><span id="first_date"></span> {{.ForecastFirst}}</p>
+			<p id="next_forecast" style="display: inline-block"><span id="second_date"></span> {{.ForecastSecond}}</p>
 		</div>
 		<div id="english">
 			<h4 style="display:inline-block">English</h4>
@@ -69,9 +66,9 @@
 
 		<div id="wttr-in-module">
 		<!-- https://wttr.in/_0pq_transparency=240_background=442244_lang=en.png -->
-			<a href='https://wttr.in/' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='' loading=lazy alt="Current weather in"></a>
+		<a href='{{.WttrLink}}' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='{{.WttrSrc}}' loading=lazy alt="Current weather in"></a>
 			<form id="weather-form">
-				<input id="weather-input" class="form-control" type="text" placeholder="Weather in..." aria-label="Weather in...">
+				<input id="weather-input" class="form-control" type="text" placeholder="{{.WttrInHolder}}" aria-label="Weather in...">
 				<button id="weather-btn" type="button">OK</button>
 			</form>
 		</div>
@@ -90,7 +87,7 @@
 //
 			var fiatSelect = document.getElementById("fiat_select")
 			var coinCode = fiatSelect.value
-			var place = ""
+//			var place = ""
 			var formatSelect = document.getElementById("select_lang")
 
 			var date = new Date(Date.now())
@@ -107,15 +104,15 @@
 
 				}
 
-				var cookiePlace = cookieList.find(e => e.startsWith("place"))
-				if (cookiePlace != undefined) {
-					place = cookiePlace.split("=")[1]
-					var inputLocation = document.getElementById("location_input")
-					inputLocation.value = decodeURI(place)
-
-				} else {
-					document.cookie = "place="+encodeURI(place)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
-				}
+//				var cookiePlace = cookieList.find(e => e.startsWith("place"))
+//				if (cookiePlace != undefined) {
+//					place = cookiePlace.split("=")[1]
+//					var inputLocation = document.getElementById("location_input")
+//					inputLocation.value = decodeURI(place)
+//
+//				} else {
+//					document.cookie = "place="+encodeURI(place)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+//				}
 
 				var cookieLang = cookieList.find(e => e.startsWith("lang"))
 				if (cookieLang != undefined) {
@@ -128,18 +125,18 @@
 
 			} else {
 				document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
-				document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+//				document.cookie = "place="+place+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 			}
-			var weatherImg = document.getElementById("weather-img")
-			var weatherInput = document.getElementById("weather-input")
-			var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", "us": "Weather in..." }
+//			var weatherImg = document.getElementById("weather-img")
+//			var weatherInput = document.getElementById("weather-input")
+//			var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", "us": "Weather in..." }
 			
-			var prefix = formatSelect.value.split("-")[0]
-			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background=893531_lang="+prefix+".png"
-			var wttrLink = document.getElementById("wttr-link")
-			wttrLink.href = "https://wttr.in/"+place+"?lang="+prefix
-			weatherInput.placeholder = weatherInputDict[prefix]
+//			var prefix = formatSelect.value.split("-")[0]
+//			weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background=893531_lang="+prefix+".png"
+//			var wttrLink = document.getElementById("wttr-link")
+//			wttrLink.href = "https://wttr.in/"+place+"?lang="+prefix
+//			weatherInput.placeholder = weatherInputDict[prefix]
 
 			document.getElementById("save_btn").onclick = function () {
 				var date = new Date(Date.now())
@@ -163,18 +160,28 @@
 			var formatSelect = document.getElementById("select_lang")
 			var dayForecast = new Date(Date.now()) 
 			dayForecast.setDate(dayForecast.getDate()+1)
-			var tomorrow_forecast = document.getElementById("tomorrow_forecast")
+			var tomorrow_forecast = document.getElementById("first_date")
 			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
-			tomorrow_forecast.innerHTML = date_output+": "+tomorrow_forecast.innerHTML
+			tomorrow_forecast.innerHTML = date_output
 
-			var next_forecast = document.getElementById("next_forecast")
+			var next_forecast = document.getElementById("second_date")
 			dayForecast.setDate(dayForecast.getDate()+1)
 			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
-			next_forecast.innerHTML = date_output+": "+next_forecast.innerHTML
+			next_forecast.innerHTML = date_output
 
 
 			formatSelect.onchange = function() {
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+				var dayForecast = new Date(Date.now()) 
+				dayForecast.setDate(dayForecast.getDate()+1)
+				var tomorrow_forecast = document.getElementById("first_date")
+				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+				tomorrow_forecast.innerHTML = date_output
+
+				var next_forecast = document.getElementById("second_date")
+				dayForecast.setDate(dayForecast.getDate()+1)
+				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+				next_forecast.innerHTML = date_output
 			}
 
 			fiatSelect.onchange = function() {
@@ -194,7 +201,7 @@
 				document.cookie = "coin_code="+this.value+"; Path=/; SameSite: None; Secure"
 				fetch("/base_info", options).then(res => res.json())
 					.then(res => {
-					fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč", "btc": "<img src=\"./pics/bitcoin-icon.svg\">" }
+					fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč", "gbp": "£", "btc": "<img src=\"./pics/bitcoin-icon.svg\">" }
 					var coins = document.getElementById("coins")			
 
 					var countdecimals = 2
