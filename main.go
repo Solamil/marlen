@@ -10,7 +10,6 @@ import (
 	"html"
 	"strconv"
 	"time"
-	"unicode/utf8"
 	"os/exec"
 	"crypto/md5"
 	"text/template"
@@ -58,6 +57,8 @@ type indexDisplay struct {
 	Bg string
 	Location string
 	WeatherInfo string
+	LocaleOptions string
+	CoinCodeOptions string
 	Coins string
 	Currency string
 	ForecastFirst string
@@ -76,11 +77,17 @@ var wttrInHolders = map[string]string{
 	"cs": "Počasí v...",
 }
 
+var countryFlags = map[string]string{
+	"en-US": "🇺🇸",
+	"de-DE": "🇩🇪",
+	"cs-CZ": "🇨🇿",
+}
+
 var currSymbols = map[string]string{
 	"usd": "$",
 	"eur": "€",
-	"czk": "Kč",
 	"gbp": "£",
+	"czk": "Kč",
 	"btc": "BTC",
 }
 
@@ -202,6 +209,30 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 			"<img src=\"/pics/bitcoin-icon.svg\">", btc, currSymbols[coinCode],
 			"<img src=\"/pics/monero-icon.svg\">", xmr, currSymbols[coinCode])
 
+	var coinCodeTags string = ""
+	var tag string = ""
+	for key, value := range currSymbols {
+
+		if key == coinCode {
+			tag = getHTMLOptionTag(key, value, true)
+		} else {
+			tag = getHTMLOptionTag(key, value, false)
+		}
+		coinCodeTags = strings.Join([]string{coinCodeTags, tag},"\n")  	
+	}
+
+	var localeTags string = ""
+	tag = ""
+	for key, value := range countryFlags {
+
+		if key == lang {
+			tag = getHTMLOptionTag(key, value, true)
+		} else {
+			tag = getHTMLOptionTag(key, value, false)
+		}
+		localeTags = strings.Join([]string{localeTags, tag}, "\n")  	
+	}
+		
 	var i indexDisplay
 	i.Bg = "#"+bg
 	i.Location = location
@@ -213,6 +244,8 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrSrc
 	i.WttrInHolder = wttrInHolders[prefix]
+	i.LocaleOptions = localeTags
+	i.CoinCodeOptions = coinCodeTags
 	indexTemplate.Execute(w, i)
 
 }
@@ -493,6 +526,16 @@ func getCnbRates() string {
 		return "" 
 	}
 	return string(b)
+}
+
+func getHTMLOptionTag(value, symbol string, selected bool) string {
+	var tag string = ""
+	if selected {
+		tag = fmt.Sprintf("<option value=\"%s\" %s>%s</option>", value, "selected", symbol)
+	} else {
+		tag = fmt.Sprintf("<option value=\"%s\">%s</option>", value, symbol)
+	}
+	return tag
 }
 
 func store(signature [HASHSIZE]byte, value string) string {

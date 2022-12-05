@@ -15,9 +15,7 @@
 			<input type="submit" id="save_btn" style="position: absolute;
                      left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<select name="lang" id="select_lang">
-				<option value="en-US" selected>🇺🇸</option>
-				<option value="de-DE" >🇩🇪</option>
-				<option value="cs-CZ">🇨🇿</option>
+				{{.LocaleOptions}}
 			</select>
 		<span>🏠</span>
 		<input type="text" name="location" id="location_input" value="{{.Location}}" 
@@ -26,11 +24,7 @@
 		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">{{.Coins}}</a>
 
 		<select name="fiat_select" id="fiat_select" style="float: right; display: inline-block;">
-			<option value="usd">$</option>
-			<option value="eur">€</option>
-			<option value="czk">Kč</option>
-			<option value="gbp">£</option>
-			<option value="btc">BTC</option>
+			{{.CoinCodeOptions}}
 		</select>
 
 		<p id="sun_moon" style="margin-top: 0px">{{.WeatherInfo}}</p>
@@ -85,33 +79,33 @@
 			var coinCode = fiatSelect.value
 			var formatSelect = document.getElementById("select_lang")
 
-			var date = new Date(Date.now())
-			date.setFullYear(date.getFullYear()+1)
-			if (document.cookie.length != 0) {
-				var cookieList = document.cookie.split("; ")
-				var cookieCoinCode = cookieList.find(e => e.startsWith("coin_code"))
-				if (cookieCoinCode != undefined) {
-					coinCode = cookieCoinCode.split("=")[1]
-					fiatSelect.value = coinCode
-				} else {
-					document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
-					coinCode = fiatSelect.value
+//			var date = new Date(Date.now())
+//			date.setFullYear(date.getFullYear()+1)
+//			if (document.cookie.length != 0) {
+//				var cookieList = document.cookie.split("; ")
+//				var cookieCoinCode = cookieList.find(e => e.startsWith("coin_code"))
+//				if (cookieCoinCode != undefined) {
+//					coinCode = cookieCoinCode.split("=")[1]
+//					fiatSelect.value = coinCode
+//				} else {
+//					document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+//					coinCode = fiatSelect.value
+//
+//				}
+//
+//				var cookieLang = cookieList.find(e => e.startsWith("lang"))
+//				if (cookieLang != undefined) {
+//					lang = cookieLang.split("=")[1]
+//					formatSelect.value = lang
+//				} else {
+//					document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+//
+//				}
 
-				}
-
-				var cookieLang = cookieList.find(e => e.startsWith("lang"))
-				if (cookieLang != undefined) {
-					lang = cookieLang.split("=")[1]
-					formatSelect.value = lang
-				} else {
-					document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-
-				}
-
-			} else {
-				document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
-				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-			}
+//			} else {
+//				document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
+//				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+//			}
 
 			document.getElementById("save_btn").onclick = function () {
 				var date = new Date(Date.now())
@@ -128,6 +122,7 @@
 					var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", "us": "Weather in..." }
 					var wttrLink = document.getElementById("wttr-link")
 					wttrLink.href = "https://wttr.in/"+place+"?lang="+prefix
+					var weatherInput = document.getElementById("weather-input")
 					weatherInput.placeholder = weatherInputDict[prefix]
 				}
 				
@@ -157,6 +152,19 @@
 				dayForecast.setDate(dayForecast.getDate()+1)
 				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
 				next_forecast.innerHTML = date_output
+
+
+				var weatherImg = document.getElementById("weather-img")
+				var prefix = this.value.split("-")[0]
+				var inputLocation = document.getElementById("location_input")	
+				var place = inputLocation.value
+				weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background=893531_lang="+prefix+".png"
+
+				var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", "us": "Weather in..." }
+				var wttrLink = document.getElementById("wttr-link")
+				wttrLink.href = "https://wttr.in/"+place+"?lang="+prefix
+				var weatherInput = document.getElementById("weather-input")
+				weatherInput.placeholder = weatherInputDict[prefix]
 			}
 
 			fiatSelect.onchange = function() {
