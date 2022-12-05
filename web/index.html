@@ -72,40 +72,22 @@
 
 		<script async="" src="./js/module-wttrin-widget.js"></script>
 		<script>
-//
-//			preferences
-//
+
 			var fiatSelect = document.getElementById("fiat_select")
 			var coinCode = fiatSelect.value
 			var formatSelect = document.getElementById("select_lang")
 
-//			var date = new Date(Date.now())
-//			date.setFullYear(date.getFullYear()+1)
-//			if (document.cookie.length != 0) {
-//				var cookieList = document.cookie.split("; ")
-//				var cookieCoinCode = cookieList.find(e => e.startsWith("coin_code"))
-//				if (cookieCoinCode != undefined) {
-//					coinCode = cookieCoinCode.split("=")[1]
-//					fiatSelect.value = coinCode
-//				} else {
-//					document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
-//					coinCode = fiatSelect.value
-//
-//				}
-//
-//				var cookieLang = cookieList.find(e => e.startsWith("lang"))
-//				if (cookieLang != undefined) {
-//					lang = cookieLang.split("=")[1]
-//					formatSelect.value = lang
-//				} else {
-//					document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-//
-//				}
+			var dayForecast = new Date(Date.now()) 
+			dayForecast.setDate(dayForecast.getDate()+1)
+			var tomorrow_forecast = document.getElementById("first_date")
+			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+			tomorrow_forecast.innerHTML = date_output
 
-//			} else {
-//				document.cookie = "coin_code="+fiatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure" 
-//				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-//			}
+			var next_forecast = document.getElementById("second_date")
+			dayForecast.setDate(dayForecast.getDate()+1)
+			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+			next_forecast.innerHTML = date_output
+
 
 			document.getElementById("save_btn").onclick = function () {
 				var date = new Date(Date.now())
@@ -127,20 +109,10 @@
 				}
 				
 			}
-			var formatSelect = document.getElementById("select_lang")
-			var dayForecast = new Date(Date.now()) 
-			dayForecast.setDate(dayForecast.getDate()+1)
-			var tomorrow_forecast = document.getElementById("first_date")
-			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
-			tomorrow_forecast.innerHTML = date_output
-
-			var next_forecast = document.getElementById("second_date")
-			dayForecast.setDate(dayForecast.getDate()+1)
-			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
-			next_forecast.innerHTML = date_output
-
 
 			formatSelect.onchange = function() {
+				var date = new Date(Date.now())
+				date.setFullYear(date.getFullYear()+1)
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
 				var dayForecast = new Date(Date.now()) 
 				dayForecast.setDate(dayForecast.getDate()+1)
@@ -181,7 +153,7 @@
 				
 				var date = new Date(Date.now())
 				date.setFullYear(date.getFullYear()+1)
-				document.cookie = "coin_code="+this.value+"; Path=/; SameSite: None; Secure"
+				document.cookie = "coin_code="+this.value+"; Path=/; SameSite=None; Secure"
 				fetch("/base_info", options).then(res => res.json())
 					.then(res => {
 					fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč", "gbp": "£", "btc": "<img src=\"./pics/bitcoin-icon.svg\">" }
