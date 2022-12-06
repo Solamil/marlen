@@ -191,7 +191,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 		if len(param.Bg[0]) > 0 {
 			bg = param.Bg[0]
-			fmt.Println(bg)
 		}
 	}
 	prefix := strings.Split(lang, "-")[0]
@@ -234,7 +233,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 		
 	var i indexDisplay
-	i.Bg = "#"+bg
+	i.Bg = bg
 	i.Location = location
 	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
 	i.ForecastFirst = forecasts[1]
