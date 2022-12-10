@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
-	"html"
+//	"html"
 	"strconv"
 	"time"
 	"os/exec"
@@ -18,12 +18,6 @@ import (
 )
 
 type userBaseResponse struct {
-	CoinPrices struct {
-		Btc string `json:"btc"` 
-		Xmr string `json:"xmr"`
-		CoinCode string `json:"coin_code"`
-	} `json:"coins"`
-
 	Weather struct {
 		SunMoon string `json:"sun_moon"`
 		HumLowHigh []string `json:"hum_low_high"`
@@ -49,7 +43,6 @@ type cacheRecord struct {
 type urlParams struct {
 	Lang [1]string `json:"lang"`
 	Location [1]string `json:"location"`
-	CoinCode [1]string `json:"coin_code"`
 	Bg [1]string `json:"bg"`
 }
 
@@ -58,8 +51,6 @@ type indexDisplay struct {
 	Location string
 	WeatherInfo string
 	LocaleOptions string
-	CoinCodeOptions string
-	Coins string
 	Currency string
 	ForecastFirst string
 	ForecastSecond string
@@ -92,13 +83,11 @@ var currSymbols = map[string]string{
 }
 
 var baseResp userBaseResponse
-var coinPrices = &baseResp.CoinPrices
 var weather = &baseResp.Weather
 
 var indexTemplate *template.Template
 
 type userBaseRequest struct {
-	CoinCode string `json:"coin_code"`	
 	Param	 string `json:"param"`
 	Location string `json:"location"`
 }
@@ -106,12 +95,6 @@ type userBaseRequest struct {
 func main() {
 	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/style.css")
-	})
-	http.HandleFunc("/pics/bitcoin-icon.svg", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/bitcoin-icon.svg")
-	})
-	http.HandleFunc("/pics/monero-icon.svg", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/monero-icon.svg")
 	})
 	http.HandleFunc("/pics/git-icon.svg", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/git-icon.svg")
@@ -144,16 +127,9 @@ func main() {
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
 	var location string = "Zdar"
-	var coinCode string = "usd"
 	var bg string = "893531"
 	var lang string = "en-US"
 
-	if c, err := r.Cookie("coin_code"); err == nil {
-		value := strings.Split(c.String(), "=")[1]
-		coinCode = value 
-	} else if err != nil {
-		fmt.Println(err)
-	}
 	if c, err := r.Cookie("place"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
 		location, _ = url.QueryUnescape(value)
@@ -186,9 +162,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		if len(param.Lang[0]) > 0 {
 			lang = param.Lang[0]
 		}
-		if len(currSymbols[param.CoinCode[0]]) > 0 {
-			coinCode = param.CoinCode[0]
-		}
 		if len(param.Bg[0]) > 0 {
 			bg = param.Bg[0]
 		}
@@ -200,28 +173,10 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	forecasts := strings.Split(forecastStr, "\n")
 	sunMoonStr := get_sun_moon_info(location)
 	sunMoon := strings.Split(sunMoonStr, " ")
-	btcStr := get_crypto_curr(coinCode, "btc")
-	btc, _ := strconv.ParseFloat(btcStr, 32)
-	xmrStr := get_crypto_curr(coinCode, "xmr")
-	xmr, _ := strconv.ParseFloat(xmrStr, 32)
-	coins := fmt.Sprintf("%s %.2f%s %s %.2f%s", 
-			"<img src=\"/pics/bitcoin-icon.svg\">", btc, currSymbols[coinCode],
-			"<img src=\"/pics/monero-icon.svg\">", xmr, currSymbols[coinCode])
 
-	var coinCodeTags string = ""
-	var tag string = ""
-	for key, value := range currSymbols {
-
-		if key == coinCode {
-			tag = getHTMLOptionTag(key, value, true)
-		} else {
-			tag = getHTMLOptionTag(key, value, false)
-		}
-		coinCodeTags = strings.Join([]string{coinCodeTags, tag},"\n")  	
-	}
 
 	var localeTags string = ""
-	tag = ""
+	var tag string = ""
 	for key, value := range countryFlags {
 
 		if key == lang {
@@ -238,13 +193,11 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
 	i.ForecastFirst = forecasts[1]
 	i.ForecastSecond = forecasts[2]
-	i.Coins = coins
 	i.Currency = get_currency_rates()
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrSrc
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
-	i.CoinCodeOptions = coinCodeTags
 	indexTemplate.Execute(w, i)
 
 }
@@ -256,32 +209,17 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	var baseRequest userBaseRequest
 	json.Unmarshal(body, &baseRequest)
 
-	if baseRequest.CoinCode  == "" { 
-		baseRequest.CoinCode = "usd"
+	baseRequest.Location = baseRequest.Location
+	if baseRequest.Location == "" {
+		baseRequest.Location = "Zdar"
 	}
-	baseRequest.CoinCode = html.EscapeString(baseRequest.CoinCode)
-	coinPrices.CoinCode = baseRequest.CoinCode
-
-	coinPrices.Btc = get_crypto_curr(coinPrices.CoinCode, "btc") 
-	coinPrices.Xmr = get_crypto_curr(coinPrices.CoinCode, "xmr")
-
-	if len(coinPrices.CoinCode) > 1 && baseRequest.Param == "conversion" {
-		raw, _ := json.Marshal(coinPrices)
-		w.Write(raw)
-	} else {
-		baseRequest.Location = baseRequest.Location
-		if baseRequest.Location == "" {
-			baseRequest.Location = "Zdar"
-		}
-		get_weather(baseRequest.Location)
-		get_currency_rates()
-		raw, err := json.Marshal(&baseResp)
-		if err != nil {
-			fmt.Println(err)
-		}
-		w.Write(raw)
+	get_weather(baseRequest.Location)
+	get_currency_rates()
+	raw, err := json.Marshal(&baseResp)
+	if err != nil {
+		fmt.Println(err)
 	}
-
+	w.Write(raw)
 	
 }
 
@@ -290,26 +228,6 @@ func get_weather(location string) {
 	weather.HumLowHigh = strings.Split(forecast, "\n")
 	weather.Location = location
 	weather.SunMoon = get_sun_moon_info(location)
-}
-
-func get_crypto_curr(coinCode, name string) string {
-	signature := fmt.Sprintf(`%s:%s`, coinCode, name)
-	cacheSignature := hash(signature)
-	record, found := get(cacheSignature)
-	var answer string = ""
-	if found {
-		now := time.Now()
-		d := record.expiry
-		d = d.Add(time.Minute * 5)
-
-		if  record.value != "" && d.After(now) {
-			answer = record.value
-			return answer
-		}
-	}
-	value := get_coin_price(coinCode, name)
-	answer = store(cacheSignature, value)
-	return answer
 }
 
 func get_sun_moon_info(location string) string {
@@ -413,31 +331,6 @@ func exec_shellscript(shellscript ...string) string {
 	return outputStr
 }
 
-func get_coin_price(showRates, coinCode string) string {
-
-	url := fmt.Sprintf(`https://%s.rate.sx/1%s`, showRates, coinCode)
-	reqm, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		fmt.Println(err)
-		return "" 
-	}
-	reqm.Header.Set("Content-Type", "text/html")
-	content, err := http.DefaultClient.Do(reqm)
-
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	price, err := ioutil.ReadAll(content.Body)
-
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	priceStr := string(price)
-	priceStr = priceStr[:len(priceStr)-1]
-	return priceStr
-}
 func get_currency_rates() string {
 	now := time.Now()
 	var rates string = ""
