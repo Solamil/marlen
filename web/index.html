@@ -24,11 +24,6 @@
 			<input type="text" name="bg" id="background" value="{{.Bg}}" 
 				autocomplete=off style="width:60px" >
 		</form>	
-		<a id="coins" href="https://rate.sx/" target="_blank" style="float: right; display: inline-block; margin: 10px; text-decoration: none; color: beige">{{.Coins}}</a>
-
-		<select name="fiat_select" id="fiat_select" style="float: right; display: inline-block;">
-			{{.CoinCodeOptions}}
-		</select>
 
 		<p id="sun_moon" style="margin-top: 0px">{{.WeatherInfo}}</p>
 	</div>
@@ -144,40 +139,6 @@
 				weatherInput.placeholder = weatherInputDict[prefix]
 			}
 
-
-			var fiatSelect = document.getElementById("fiat_select")
-			fiatSelect.onchange = function() {
-				const options = {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify({
-						"coin_code": this.value,
-						"param": "conversion"
-					})
-				}
-				
-				var date = new Date(Date.now())
-				date.setFullYear(date.getFullYear()+1)
-				document.cookie = "coin_code="+this.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-				fetch("/base_info", options).then(res => res.json())
-					.then(res => {
-					fiatSymbol = { "usd": "$", "eur": "€", "czk": "Kč", "gbp": "£", "btc": "<img src=\"./pics/bitcoin-icon.svg\">" }
-					var coins = document.getElementById("coins")			
-
-					var countdecimals = 2
-					coinPrices = res
-					var btc = parseFloat(coinPrices.btc)
-					var xmr = parseFloat(coinPrices.xmr)
-
-					if (coinPrices.coin_code == "btc") {
-						 countdecimals = 6
-					}
-					coins.innerHTML = "<img src=\"./pics/bitcoin-icon.svg\"> "+btc.toFixed(countdecimals)+fiatSymbol[coinPrices.coin_code]+"  "+
-							 "<img src=\"./pics/monero-icon.svg\"> "+xmr.toFixed(countdecimals)+fiatSymbol[coinPrices.coin_code]
-				})
-			}
 
 		</script>
 
