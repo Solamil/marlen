@@ -10,10 +10,11 @@
 <body style="background-color:#{{.Bg}}">
 	<div class="status-bar">
 
+		<p id="sun_moon" style="display:inline-block; margin-top: 5px">{{.WeatherInfo}}</p>
 		<form action="/" method="GET" class="form" id="location_form"
-			style="display: inline-block; margin-left: 5px; margin-bottom: 0px">
+			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
 			<input type="submit" id="save_btn" style="position: absolute;
-                     left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
+		     left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<select name="lang" id="select_lang">
 				{{.LocaleOptions}}
 			</select>
@@ -25,7 +26,6 @@
 				autocomplete=off style="width:60px" >
 		</form>	
 
-		<p id="sun_moon" style="margin-top: 0px">{{.WeatherInfo}}</p>
 	</div>
 	<hr style="color: beige">
 	<nav id="nav">
