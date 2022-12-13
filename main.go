@@ -121,7 +121,7 @@ func main() {
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
-	http.HandleFunc("/base_info", base_handler)
+	http.HandleFunc("/json", base_handler)
 	http.ListenAndServe(":8901", nil)
 }
 
@@ -186,6 +186,11 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 		localeTags = strings.Join([]string{localeTags, tag}, "\n")  	
 	}
+
+	usdValue, _ := strconv.ParseFloat(getCnbInfo("USD")[0], 64)
+	eurValue, _ := strconv.ParseFloat(getCnbInfo("EUR")[0], 64)
+	gbpValue, _ := strconv.ParseFloat(getCnbInfo("GBP")[0], 64)
+	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
 		
 	var i indexDisplay
 	i.Bg = bg
@@ -193,7 +198,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
 	i.ForecastFirst = forecasts[1]
 	i.ForecastSecond = forecasts[2]
-	i.Currency = get_currency_rates()
+	i.Currency = currency
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrSrc
 	i.WttrInHolder = wttrInHolders[prefix]
@@ -201,6 +206,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	indexTemplate.Execute(w, i)
 
 }
+
 func base_handler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -214,7 +220,20 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 		baseRequest.Location = "Zdar"
 	}
 	get_weather(baseRequest.Location)
-	get_currency_rates()
+
+	var currPrices = userBaseResponse{}.CurrPrices
+	currPrices.Code = append(currPrices.Code, "GBP")
+	currPrices.Code = append(currPrices.Code, "EUR")
+	currPrices.Code = append(currPrices.Code, "USD")
+	currPrices.Volume = append(currPrices.Volume, "1")
+	currPrices.Volume = append(currPrices.Volume, "1")
+	currPrices.Volume = append(currPrices.Volume, "1")
+	currPrices.Value = append(currPrices.Value, getCnbInfo("GBP")[0])
+	currPrices.Value = append(currPrices.Value, getCnbInfo("EUR")[0])
+	currPrices.Value = append(currPrices.Value, getCnbInfo("USD")[0])
+	currPrices.CoinCode = "czk"
+	currPrices.Date = getCnbInfo("date")[0]
+	baseResp.CurrPrices = currPrices	
 	raw, err := json.Marshal(&baseResp)
 	if err != nil {
 		fmt.Println(err)
@@ -331,77 +350,10 @@ func exec_shellscript(shellscript ...string) string {
 	return outputStr
 }
 
-func get_currency_rates() string {
-	now := time.Now()
-	var rates string = ""
-	var answer string = ""
-	signature := "cnb-rates"
-	cacheSignature := hash(signature)
 
-	record, found := get(cacheSignature)
+func getCnbInfo(code string) []string {
+	url := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", code)
 
-	if found {
-		dateStr := string(now.Day())+"."+string(int(now.Month()))+"."+string(now.Year())
-		d := strings.Split(record.value, " ")[0]
-		
-		if d == dateStr || now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
-			rates = record.value
-		} else {
-			rates = getCnbRates()
-			rates = store(cacheSignature, rates)
-		}
-
-	} else {
-		rates = getCnbRates()
-		rates = store(cacheSignature, rates)
-	}
-	exchRates := strings.Split(rates, "\n")
-
-
-	gbpCurr := strings.Split(exchRates[33], "|")
-	gbpValue := gbpCurr[len(gbpCurr)-1]
-	gbpValue = strings.Replace(gbpValue, ",", ".", 1)
-	gbpCode := gbpCurr[len(gbpCurr)-2]
-	gbpVolume := gbpCurr[len(gbpCurr)-3]
-
-	eurCurr := strings.Split(exchRates[7], "|")
-	eurValue := eurCurr[len(eurCurr)-1]
-	eurValue = strings.Replace(eurValue, ",", ".", 1)
-	eurCode := eurCurr[len(eurCurr)-2]
-	eurVolume := eurCurr[len(eurCurr)-3]
-
-	usdCurr := strings.Split(exchRates[32], "|")
-	usdValue := usdCurr[len(usdCurr)-1]
-	usdValue = strings.Replace(usdValue, ",", ".", 1)
-	usdCode := usdCurr[len(usdCurr)-2]
-	usdVolume := usdCurr[len(usdCurr)-3]
-	usdValueFloat, _ := strconv.ParseFloat(usdValue, 32)
-	eurValueFloat, _ := strconv.ParseFloat(eurValue, 32)
-	gbpValueFloat, _ := strconv.ParseFloat(gbpValue, 32)
-	answer = fmt.Sprintf("%s$ %.2fKč %s€ %.2fKč %s£ %.2fKč", usdVolume, usdValueFloat,
-								 eurVolume, eurValueFloat,
-							         gbpVolume, gbpValueFloat)
-
-	var currPrices = userBaseResponse{}.CurrPrices
-	currPrices.Code = append(currPrices.Code, gbpCode)
-	currPrices.Code = append(currPrices.Code, eurCode)
-	currPrices.Code = append(currPrices.Code, usdCode)
-	currPrices.Volume = append(currPrices.Volume, gbpVolume)
-	currPrices.Volume = append(currPrices.Volume, eurVolume)
-	currPrices.Volume = append(currPrices.Volume, usdVolume)
-	currPrices.Value = append(currPrices.Value, gbpValue)
-	currPrices.Value = append(currPrices.Value, eurValue)
-	currPrices.Value = append(currPrices.Value, usdValue)
-//	currPrices.Json = json
-	currPrices.CoinCode = "czk"
-	currPrices.Date = strings.Split(exchRates[0], " ")[0]
-
-	baseResp.CurrPrices = currPrices	
-	return answer
-}
-
-func getCnbRates() string {
-	url := "https://cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt"
 	reqm, _ := http.NewRequest("GET", url, nil)
 
 	reqm.Header.Set("Content-Type", "text/html")
@@ -409,15 +361,15 @@ func getCnbRates() string {
 
 	if err != nil {
 		fmt.Println(err)
-		return ""
+		return []string{err.Error()}
 	}
 	b, err := ioutil.ReadAll(content.Body)
-
+	infos := strings.Split(string(b), "\n")
 	if err != nil {
 		fmt.Println(err)
-		return "" 
+		return []string{err.Error()}
 	}
-	return string(b)
+	return infos
 }
 
 func getHTMLOptionTag(value, symbol string, selected bool) string {
