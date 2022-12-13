@@ -121,7 +121,6 @@ func main() {
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
-	http.HandleFunc("/json", base_handler)
 	http.ListenAndServe(":8901", nil)
 }
 
@@ -137,12 +136,14 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		fmt.Println(err)
 	}
+
 	if c, err := r.Cookie("lang"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
 		lang = value	
 	} else if err != nil {
 		fmt.Println(err)
 	}
+
 	q, _ := url.PathUnescape(r.URL.RawQuery)
 	if len(q) != 0 {
 		m, err := url.ParseQuery(q)
@@ -205,42 +206,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.LocaleOptions = localeTags
 	indexTemplate.Execute(w, i)
 
-}
-
-func base_handler(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Println(err)
-	}
-	var baseRequest userBaseRequest
-	json.Unmarshal(body, &baseRequest)
-
-	baseRequest.Location = baseRequest.Location
-	if baseRequest.Location == "" {
-		baseRequest.Location = "Zdar"
-	}
-
-	forecast := get_forecast(baseRequest.Location)
-	weather.HumLowHigh = strings.Split(forecast, "\n")
-	weather.Location = baseRequest.Location
-	weather.SunMoon = get_sun_moon_info(baseRequest.Location)
-
-	var currPrices = userBaseResponse{}.CurrPrices
-	for _, value := range []string{"GBP", "EUR", "USD"} {
-		currPrices.Code = append(currPrices.Code, value)
-		currPrices.Volume = append(currPrices.Volume, "1")
-		currPrices.Value = append(currPrices.Value, getCnbInfo(value)[0])
-	}
-
-	currPrices.CoinCode = "czk"
-	currPrices.Date = getCnbInfo("date")[0]
-	baseResp.CurrPrices = currPrices	
-	raw, err := json.Marshal(&baseResp)
-	if err != nil {
-		fmt.Println(err)
-	}
-	w.Write(raw)
-	
 }
 
 func get_sun_moon_info(location string) string {
