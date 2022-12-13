@@ -40,7 +40,7 @@ type cacheRecord struct {
 }
 
 
-type urlParams struct {
+type indexUrlParams struct {
 	Lang [1]string `json:"lang"`
 	Location [1]string `json:"location"`
 	Bg [1]string `json:"bg"`
@@ -150,7 +150,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		var param *urlParams
+		var param *indexUrlParams
 		json.Unmarshal(js, &param)		
 		if len(param.Location[0]) > 0 {
 			location = param.Location[0]
