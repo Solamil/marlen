@@ -87,11 +87,6 @@ var weather = &baseResp.Weather
 
 var indexTemplate *template.Template
 
-type userBaseRequest struct {
-	Param	 string `json:"param"`
-	Location string `json:"location"`
-}
-
 func main() {
 	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/style.css")
