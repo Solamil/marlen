@@ -219,18 +219,19 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	if baseRequest.Location == "" {
 		baseRequest.Location = "Zdar"
 	}
-	get_weather(baseRequest.Location)
+
+	forecast := get_forecast(baseRequest.Location)
+	weather.HumLowHigh = strings.Split(forecast, "\n")
+	weather.Location = baseRequest.Location
+	weather.SunMoon = get_sun_moon_info(baseRequest.Location)
 
 	var currPrices = userBaseResponse{}.CurrPrices
-	currPrices.Code = append(currPrices.Code, "GBP")
-	currPrices.Code = append(currPrices.Code, "EUR")
-	currPrices.Code = append(currPrices.Code, "USD")
-	currPrices.Volume = append(currPrices.Volume, "1")
-	currPrices.Volume = append(currPrices.Volume, "1")
-	currPrices.Volume = append(currPrices.Volume, "1")
-	currPrices.Value = append(currPrices.Value, getCnbInfo("GBP")[0])
-	currPrices.Value = append(currPrices.Value, getCnbInfo("EUR")[0])
-	currPrices.Value = append(currPrices.Value, getCnbInfo("USD")[0])
+	for _, value := range []string{"GBP", "EUR", "USD"} {
+		currPrices.Code = append(currPrices.Code, value)
+		currPrices.Volume = append(currPrices.Volume, "1")
+		currPrices.Value = append(currPrices.Value, getCnbInfo(value)[0])
+	}
+
 	currPrices.CoinCode = "czk"
 	currPrices.Date = getCnbInfo("date")[0]
 	baseResp.CurrPrices = currPrices	
@@ -240,13 +241,6 @@ func base_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(raw)
 	
-}
-
-func get_weather(location string) {
-	forecast := get_forecast(location)
-	weather.HumLowHigh = strings.Split(forecast, "\n")
-	weather.Location = location
-	weather.SunMoon = get_sun_moon_info(location)
 }
 
 func get_sun_moon_info(location string) string {
@@ -331,25 +325,6 @@ func get_forecast(location string) string {
 	return answer
 
 }
-
-func exec_shellscript(shellscript ...string) string {
-	cmd := shellscript[0]
-	var param1 string
-	var param2 string
-	if shellscript[1] != "" {
-		param1 = shellscript[1]	
-	}
-	if shellscript[2] != "" {
-		param1 = shellscript[2]	
-	}
-	output, err := exec.Command("/bin/sh", cmd, param1, param2).Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-	outputStr := string(output)
-	return outputStr
-}
-
 
 func getCnbInfo(code string) []string {
 	url := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", code)
