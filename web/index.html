@@ -40,14 +40,14 @@
 			<p id="tomorrow_forecast" style="display: inline-block"><span id="first_date"></span> {{.ForecastFirst}}</p>
 			<p id="next_forecast" style="display: inline-block"><span id="second_date"></span> {{.ForecastSecond}}</p>
 		</div>
-		<div id="english">
+		<div id="english" style="display:inline-block; margin-left: 20px">
 			<h4 style="display:inline-block">English</h4>
 			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
 				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
 				<button type="submit" id="submit">OK</button>
 			</form>
 		</div>
-		<div id="deutsch">
+		<div id="deutsch" style="display: inline-block; margin-left: 20px">
 			<h4 style="display: inline-block">Deutsch</h4>
 			<form action="https://slovniky.lingea.cz/nemecko-cesky/" autocomplete="off" method="get" style="display:inline-block">
 				<input id="topic" name="word" type="text" maxlength="50" autocomplete="off">
