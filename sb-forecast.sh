@@ -1,10 +1,10 @@
 #!/bin/sh
+url=${1:-""}
 weatherreport="./weatherreport"
-place=${1:-""}
 line_temp=${2:-13}
 line_hum=${3:-16}
 place=$(echo "$place" | sed "s/ /%20/" )
-curl wttr.in/"$place" > $weatherreport
+curl "$url" > $weatherreport
 
 printf "%s" "$(sed "${line_hum}q;d" "$weatherreport" |
 	grep -wo "[0-9]*%" | sort -rn | sed "s/^/☔/g;1q" | tr -d '\n')"

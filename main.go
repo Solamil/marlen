@@ -112,8 +112,7 @@ func main() {
 	http.HandleFunc("/forecast.html", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/forecast.html")
 	})
-
-	indexTemplate, _ = template.ParseFiles("web/index.html")
+//	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
 	http.ListenAndServe(":8901", nil)
@@ -126,7 +125,8 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	if c, err := r.Cookie("place"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
-		location, _ = url.QueryUnescape(value)
+//		location, _ = url.QueryUnescape(value)
+		location = value
 //		fmt.Println(value)
 	} else if err != nil {
 		fmt.Println(err)
@@ -162,12 +162,16 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 			bg = param.Bg[0]
 		}
 	}
+	wttrin := fmt.Sprintf("https://wttr.in/%s", location)
 	prefix := strings.Split(lang, "-")[0]
-	wttrSrc := "https://wttr.in/"+location+"_0pq_transparency=255_background="+bg+"_lang="+prefix+".png"
-	wttrLink := "https://wttr.in/"+location+"?lang="+prefix
-	forecastStr := get_forecast(location)
+	wttrPng := fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png",
+				wttrin, bg, prefix)
+	wttrLink := fmt.Sprintf("%s?lang=%s", wttrin, prefix)
+	forecastStr := get_forecast(wttrin)
 	forecasts := strings.Split(forecastStr, "\n")
-	sunMoonStr := get_sun_moon_info(location)
+
+	sunMoonUrl := fmt.Sprintf(`%s?format="%s"`, wttrin, "%S+%s+%m")
+	sunMoonStr := get_daily_wttr_info(sunMoonUrl)
 	sunMoon := strings.Split(sunMoonStr, " ")
 
 
@@ -183,29 +187,32 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		localeTags = strings.Join([]string{localeTags, tag}, "\n")  	
 	}
 
-	usdValue, _ := strconv.ParseFloat(getCnbInfo("USD")[0], 64)
-	eurValue, _ := strconv.ParseFloat(getCnbInfo("EUR")[0], 64)
-	gbpValue, _ := strconv.ParseFloat(getCnbInfo("GBP")[0], 64)
+	urlCurr := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "USD")
+	usdValue, _ := strconv.ParseFloat(getCnbInfo(urlCurr)[0], 64)
+	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "EUR")
+	eurValue, _ := strconv.ParseFloat(getCnbInfo(urlCurr)[0], 64)
+	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "GBP")
+	gbpValue, _ := strconv.ParseFloat(getCnbInfo(urlCurr)[0], 64)
 	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
 		
 	var i indexDisplay
 	i.Bg = bg
-	i.Location = location
+	i.Location, _ = url.QueryUnescape(location)
 	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
 	i.ForecastFirst = forecasts[1]
 	i.ForecastSecond = forecasts[2]
 	i.Currency = currency
 	i.WttrLink = wttrLink
-	i.WttrSrc = wttrSrc
+	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
+	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
 }
 
-func get_sun_moon_info(location string) string {
-	format := "%S+%s+%m"	
-	signature := fmt.Sprintf(`%s:%s`, location, format)
+func get_daily_wttr_info(url string) string {
+	signature := fmt.Sprintf(`%s:%s`, url, "daily")
 	cacheSignature := hash(signature)
 	var answer string = ""
 	record, found := get(cacheSignature)	
@@ -217,13 +224,12 @@ func get_sun_moon_info(location string) string {
 			return answer
 		}
 	}
-	value := get_weather_info(format, location)
+	value := get_weather_info(url)
 	answer = store(cacheSignature, value)
 	return answer
 }
 
-func get_weather_info(format, location string) string {
-	url := fmt.Sprintf(`https://wttr.in/%s?format="%s"`, location, format)
+func get_weather_info(url string) string {
 	reqm, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
@@ -244,12 +250,12 @@ func get_weather_info(format, location string) string {
 		return ""
 	}
 	str_out := strings.ReplaceAll(string(out), "\"", "")
-
+	str_out = strings.ReplaceAll(string(str_out), "\n", "")
 	return string(str_out)
 }
 
-func get_forecast(location string) string {
-	signature := fmt.Sprintf(`%s:%s`, location, "forecast")
+func get_forecast(url string) string {
+	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
 	cacheSignature := hash(signature)
 	var answer string = ""
 	record, found := get(cacheSignature)
@@ -263,18 +269,18 @@ func get_forecast(location string) string {
 			return answer
 		}
 	}
-	output, err := exec.Command("/bin/sh", "sb-forecast.sh", location).Output()
+	output, err := exec.Command("/bin/sh", "sb-forecast.sh", url).Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high := strings.Replace(string(output), "\n", "", 1)
 
-	output, err = exec.Command("/bin/sh", "sb-forecast.sh", location, "23", "26").Output()
+	output, err = exec.Command("/bin/sh", "sb-forecast.sh", url, "23", "26").Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high_next := strings.Replace(string(output), "\n", "", 1)
-	output, err = exec.Command("/bin/sh", "sb-forecast.sh", location, "33", "36").Output()
+	output, err = exec.Command("/bin/sh", "sb-forecast.sh", url, "33", "36").Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
@@ -286,9 +292,7 @@ func get_forecast(location string) string {
 
 }
 
-func getCnbInfo(code string) []string {
-	url := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", code)
-
+func getCnbInfo(url string) []string {
 	reqm, _ := http.NewRequest("GET", url, nil)
 
 	reqm.Header.Set("Content-Type", "text/html")
@@ -296,7 +300,7 @@ func getCnbInfo(code string) []string {
 
 	if err != nil {
 		fmt.Println(err)
-		return []string{err.Error()}
+		return []string{err.Error(), ""}
 	}
 	b, err := ioutil.ReadAll(content.Body)
 	infos := strings.Split(string(b), "\n")
