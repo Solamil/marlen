@@ -24,6 +24,7 @@
 			<span>🎨</span>
 			<input type="text" name="bg" id="background" value="{{.Bg}}" 
 				autocomplete=off style="width:60px" >
+			<span id="relevant"></span>
 		</form>	
 
 	</div>
@@ -70,18 +71,26 @@
 
 		<script async="" src="./js/module-wttrin-widget.js"></script>
 		<script>
-
+			
 
 			var formatSelect = document.getElementById("select_lang")
-			var dayForecast = new Date(Date.now()) 
-			dayForecast.setDate(dayForecast.getDate()+1)
+			var day = new Date(Date.now()) 
+			var month = day.getMonth() + 1
+			if ((month == 12 && day.getDate() > 22) || month == 1) {
+				var relevant = document.getElementById("relevant")
+				if (day.getDate() == 1) {
+					relevant.innerHTML = relevant.innerHTML+"🎇"
+				}
+				relevant.innerHTML = relevant.innerHTML+"🎄"
+			}
+			day.setDate(day.getDate()+1)
 			var tomorrow_forecast = document.getElementById("first_date")
-			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(day)
 			tomorrow_forecast.innerHTML = date_output
 
 			var next_forecast = document.getElementById("second_date")
-			dayForecast.setDate(dayForecast.getDate()+1)
-			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+			day.setDate(day.getDate()+1)
+			date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(day)
 			next_forecast.innerHTML = date_output
 
 
@@ -114,15 +123,15 @@
 				var date = new Date(Date.now())
 				date.setFullYear(date.getFullYear()+1)
 				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
-				var dayForecast = new Date(Date.now()) 
-				dayForecast.setDate(dayForecast.getDate()+1)
+				var day = new Date(Date.now()) 
+				day.setDate(day.getDate()+1)
 				var tomorrow_forecast = document.getElementById("first_date")
-				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(day)
 				tomorrow_forecast.innerHTML = date_output
 
 				var next_forecast = document.getElementById("second_date")
-				dayForecast.setDate(dayForecast.getDate()+1)
-				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(dayForecast)
+				day.setDate(day.getDate()+1)
+				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(day)
 				next_forecast.innerHTML = date_output
 
 
