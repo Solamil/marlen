@@ -52,6 +52,7 @@ type indexDisplay struct {
 	WeatherInfo string
 	LocaleOptions string
 	Currency string
+	NameDay string
 	ForecastFirst string
 	ForecastSecond string
 	WttrLink string
@@ -123,6 +124,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var location string = "Zdar"
 	var bg string = "893531"
 	var lang string = "en-US"
+	var nameDay string = ""
 
 	if c, err := r.Cookie("place"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
@@ -169,7 +171,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	forecasts := strings.Split(forecastStr, "\n")
 	sunMoonStr := get_sun_moon_info(location)
 	sunMoon := strings.Split(sunMoonStr, " ")
-
+	
+	urlNameDay := fmt.Sprintf("https://svatek.michalkukla.xyz/today?country=%s", lang)
+	nameDay = getNameDay(urlNameDay)
 
 	var localeTags string = ""
 	var tag string = ""
@@ -189,6 +193,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
 		
 	var i indexDisplay
+	i.NameDay = nameDay 
 	i.Bg = bg
 	i.Location = location
 	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
@@ -305,6 +310,27 @@ func getCnbInfo(code string) []string {
 		return []string{err.Error()}
 	}
 	return infos
+}
+
+func getNameDay(url string) string {
+	var result string = ""
+
+	reqm, _ := http.NewRequest("GET", url, nil)
+
+	reqm.Header.Set("Content-Type", "text/html")
+	content, err := http.DefaultClient.Do(reqm)
+
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	b, err := ioutil.ReadAll(content.Body)
+	result = string(b)
+	if err != nil {
+		fmt.Println(err)
+		return "" 
+	}
+	return result
 }
 
 func getHTMLOptionTag(value, symbol string, selected bool) string {
