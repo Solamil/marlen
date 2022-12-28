@@ -112,7 +112,10 @@ func main() {
 	http.HandleFunc("/forecast.html", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/forecast.html")
 	})
-//	indexTemplate, _ = template.ParseFiles("web/index.html")
+	http.HandleFunc("/cover.html", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "cover.html")
+	})
+	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
 	http.ListenAndServe(":8901", nil)
@@ -178,7 +181,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var localeTags string = ""
 	var tag string = ""
 	for key, value := range countryFlags {
-
 		if key == lang {
 			tag = getHTMLOptionTag(key, value, true)
 		} else {
@@ -333,13 +335,4 @@ func get(signature [HASHSIZE]byte) (cacheRecord, bool) {
 
 func hash(signature string) [HASHSIZE]byte {
 	return md5.Sum([]byte(signature))
-}
-
-func download_sat_images() {
-	output, err := exec.Command("/bin/sh", "sat-img.sh").Output()
-	fmt.Println(output)
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-
 }
