@@ -180,7 +180,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	sunMoon := strings.Split(sunMoonStr, " ")
 	
 	urlNameDay := fmt.Sprintf("https://svatek.michalkukla.xyz/today?country=%s", lang)
-	nameDay = getNameDay(urlNameDay)
+	nameDay = get_name_day(urlNameDay)
 
 	var localeTags string = ""
 	var tag string = ""
@@ -194,11 +194,11 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	urlCurr := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "USD")
-	usdValue, _ := strconv.ParseFloat(getCnbInfo(urlCurr)[0], 64)
+	usdValue, _ := strconv.ParseFloat(get_cnb_info(urlCurr)[0], 64)
 	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "EUR")
-	eurValue, _ := strconv.ParseFloat(getCnbInfo(urlCurr)[0], 64)
+	eurValue, _ := strconv.ParseFloat(get_cnb_info(urlCurr)[0], 64)
 	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "GBP")
-	gbpValue, _ := strconv.ParseFloat(getCnbInfo(urlCurr)[0], 64)
+	gbpValue, _ := strconv.ParseFloat(get_cnb_info(urlCurr)[0], 64)
 	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
 		
 	var i indexDisplay
@@ -237,26 +237,8 @@ func get_daily_wttr_info(url string) string {
 }
 
 func get_weather_info(url string) string {
-	reqm, err := http.NewRequest("GET", url, nil)
-
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	reqm.Header.Set("Content-Type", "text/html")
-	content, err := http.DefaultClient.Do(reqm)
-
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	out, err := ioutil.ReadAll(content.Body)
-
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	str_out := strings.ReplaceAll(string(out), "\"", "")
+	value := new_request(url)
+	str_out := strings.ReplaceAll(string(value), "\"", "")
 	str_out = strings.ReplaceAll(string(str_out), "\n", "")
 	return string(str_out)
 }
@@ -265,9 +247,8 @@ func get_forecast(url string) string {
 	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
 	cacheSignature := hash(signature)
 	var answer string = ""
-	record, found := get(cacheSignature)
-
-	if found {
+	
+	if record, found := get(cacheSignature); found {
 		now := time.Now()
 		d := record.expiry
 		d = d.Add(time.Hour * 6)
@@ -299,28 +280,50 @@ func get_forecast(url string) string {
 
 }
 
-func getCnbInfo(url string) []string {
-	reqm, _ := http.NewRequest("GET", url, nil)
-
-	reqm.Header.Set("Content-Type", "text/html")
-	content, err := http.DefaultClient.Do(reqm)
-
-	if err != nil {
-		fmt.Println(err)
-		return []string{err.Error(), ""}
-	}
-	b, err := ioutil.ReadAll(content.Body)
-	infos := strings.Split(string(b), "\n")
-	if err != nil {
-		fmt.Println(err)
-		return []string{err.Error()}
-	}
-	return infos
+func get_cnb_info(url string) []string {
+//	signature := fmt.Sprintf(`%s:%s`, url, "cnb-rates")
+//	cacheSignature := hash(signature)
+//	var answer string = ""
+//
+//	if record, found := get(cacheSignature); found {
+//		now := time.Now()
+//		d := record.expiry
+//		if record.value != "" && d.Day() == now.Day() && d.Month() == now.Month() {
+//			fmt.Println("cached")
+//			answer = record.value
+//			answerList := strings.Split(answer, "\n")
+//			return answerList 
+//		}
+//	}
+	value := new_request(url)
+//	answer = store(cacheSignature,string(value))
+	answerList := strings.Split(string(value), "\n")
+	return answerList 
 }
 
-func getNameDay(url string) string {
-	var result string = ""
+func get_name_day(url string) string {
 
+	signature := fmt.Sprintf(`%s:%s`, url, "nameday")
+	cacheSignature := hash(signature)
+	var answer string = ""
+	
+	if record, found := get(cacheSignature); found {
+		now := time.Now()
+		d := record.expiry
+		if record.value != "" && d.Day() == now.Day() && d.Month() == now.Month() {
+			fmt.Println("cached")
+			answer = record.value
+			return answer
+		}
+	}
+
+	value := new_request(url)
+	answer = store(cacheSignature,string(value))
+	return answer 
+}
+
+func new_request(url string) string {
+	var answer string = ""
 	reqm, _ := http.NewRequest("GET", url, nil)
 
 	reqm.Header.Set("Content-Type", "text/html")
@@ -330,13 +333,13 @@ func getNameDay(url string) string {
 		fmt.Println(err)
 		return ""
 	}
-	b, err := ioutil.ReadAll(content.Body)
-	result = string(b)
+	value, err := ioutil.ReadAll(content.Body)
 	if err != nil {
 		fmt.Println(err)
 		return "" 
 	}
-	return result
+	answer = string(value)
+	return answer	
 }
 
 func getHTMLOptionTag(value, symbol string, selected bool) string {
