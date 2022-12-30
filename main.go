@@ -17,28 +17,11 @@ import (
 //	"os"
 )
 
-type userBaseResponse struct {
-	Weather struct {
-		SunMoon string `json:"sun_moon"`
-		HumLowHigh []string `json:"hum_low_high"`
-		Location string `json:"location"`
-	} `json:"weather"`
-
-	CurrPrices struct {
-		Code []string `json:"code"`
-		Volume []string `json:"volume"`
-		Value []string `json:"value"`
-		CoinCode string `json:"coin_code"`
-		Date string `json:"date"`
-	} `json:"currs"`
-}
-
 type cacheRecord struct {
 	value string
 	expiry time.Time
 
 }
-
 
 type indexUrlParams struct {
 	Lang [1]string `json:"lang"`
@@ -82,9 +65,6 @@ var currSymbols = map[string]string{
 	"czk": "Kč",
 	"btc": "BTC",
 }
-
-var baseResp userBaseResponse
-var weather = &baseResp.Weather
 
 var indexTemplate *template.Template
 
@@ -311,7 +291,6 @@ func get_name_day(url string) string {
 		now := time.Now()
 		d := record.expiry
 		if record.value != "" && d.Day() == now.Day() && d.Month() == now.Month() {
-			fmt.Println("cached")
 			answer = record.value
 			return answer
 		}
