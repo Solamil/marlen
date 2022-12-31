@@ -80,7 +80,7 @@ func TestGetCnbInfo(t *testing.T) {
 		fmt.Fprintln(w, "24.1731\n1")
 	}))
 	defer ts.Close()
-	got := getCnbInfo(ts.URL)
+	got := get_cnb_info(ts.URL)
 	if got[0] != exp[0] {
 		t.Errorf("Expected '%s' but, got '%s'", exp[0], got[0])
 	}
@@ -196,6 +196,18 @@ func TestForecast(t *testing.T) {
 	}))
 	defer ts.Close()
 	if got := get_forecast(ts.URL); got != exp {
+		t.Errorf("Expected '%s' but, got '%s'", exp, got)
+	}
+}
+
+func TestNameDay(t *testing.T) {
+	var exp = "David"
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, "David")
+	}))
+	defer ts.Close()
+	if got := get_name_day(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
 }
