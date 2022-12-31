@@ -228,11 +228,11 @@ func get_forecast(url string) string {
 	cacheSignature := hash(signature)
 	var answer string = ""
 	
-	if record, found := get(cacheSignature); found {
+	if record, found := get(cacheSignature); found && record.value != "" {
 		now := time.Now()
 		d := record.expiry
 		d = d.Add(time.Hour * 6)
-		if record.value != "" && d.After(now) {
+		if d.After(now) {
 			answer = record.value
 			return answer
 		}
@@ -261,14 +261,15 @@ func get_forecast(url string) string {
 }
 
 func get_cnb_info(url string) []string {
+
 //	signature := fmt.Sprintf(`%s:%s`, url, "cnb-rates")
 //	cacheSignature := hash(signature)
 //	var answer string = ""
 //
-//	if record, found := get(cacheSignature); found {
+//	if record, found := get(cacheSignature); found && record.value != "" {
 //		now := time.Now()
 //		d := record.expiry
-//		if record.value != "" && d.Day() == now.Day() && d.Month() == now.Month() {
+//		if d.Day() == now.Day() && d.Month() == now.Month() {
 //			fmt.Println("cached")
 //			answer = record.value
 //			answerList := strings.Split(answer, "\n")
@@ -287,10 +288,10 @@ func get_name_day(url string) string {
 	cacheSignature := hash(signature)
 	var answer string = ""
 	
-	if record, found := get(cacheSignature); found {
+	if record, found := get(cacheSignature); found && record.value != "" {
 		now := time.Now()
 		d := record.expiry
-		if record.value != "" && d.Day() == now.Day() && d.Month() == now.Month() {
+		if d.Day() == now.Day() && d.Month() == now.Month() && d.Year() == now.Year() {
 			answer = record.value
 			return answer
 		}
