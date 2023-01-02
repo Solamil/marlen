@@ -297,19 +297,21 @@ func get_name_day(url string) string {
 		}
 	}
 
-	value := new_request(url)
-	answer = store(cacheSignature,string(value))
+	if value := new_request(url); value != "" {
+		answer = store(cacheSignature,string(value))
+	}
 	return answer 
 }
 
 func new_request(url string) string {
 	var answer string = ""
+	client := &http.Client{Timeout: 2 * time.Second}
 	reqm, _ := http.NewRequest("GET", url, nil)
 
 	reqm.Header.Set("Content-Type", "text/html")
-	content, err := http.DefaultClient.Do(reqm)
+	content, err := client.Do(reqm)
 
-	if err != nil {
+	if err != nil || content.StatusCode >= http.StatusBadRequest {
 		fmt.Println(err)
 		return ""
 	}
