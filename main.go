@@ -185,16 +185,16 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	var usdValue, eurValue, gbpValue float64 = 0.0, 0.0, 0.0
 	urlCurr := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "USD")
-	if value := get_cnb_info(urlCurr); len(value) > 0 {
-		usdValue, _ = strconv.ParseFloat(value[0], 64)
+	if resp_list := get_cnb_info(urlCurr); len(resp_list) > 0 {
+		usdValue, _ = strconv.ParseFloat(resp_list[0], 64)
 	}
 	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "EUR")
-	if value := get_cnb_info(urlCurr); len(value) > 0 {
-		eurValue, _ = strconv.ParseFloat(value[0], 64)
+	if resp_list := get_cnb_info(urlCurr); len(resp_list) > 0 {
+		eurValue, _ = strconv.ParseFloat(resp_list[0], 64)
 	}
 	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "GBP")
-	if value := get_cnb_info(urlCurr); len(value) > 0 {
-		gbpValue, _ = strconv.ParseFloat(value[0], 64)
+	if resp_list := get_cnb_info(urlCurr); len(resp_list) > 0 {
+		gbpValue, _ = strconv.ParseFloat(resp_list[0], 64)
 	} 
 	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
 		
