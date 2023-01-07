@@ -107,6 +107,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var bg string = "893531"
 	var lang string = "en-US"
 	var nameDay string = ""
+	var weatherInfo string = ""
+	var forecastFirst string = ""
+	var forecastSecond string = ""
 
 	if c, err := r.Cookie("place"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
@@ -154,10 +157,18 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	wttrLink := fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	forecastStr := get_forecast(wttrin)
 	forecasts := strings.Split(forecastStr, "\n")
-
+	if len(forecasts) >= 3 {
+		forecastFirst = forecasts[1]
+		forecastSecond = forecasts[2]
+	}
 	sunMoonUrl := fmt.Sprintf(`%s?format="%s"`, wttrin, "%S+%s+%m")
-	sunMoonStr := get_daily_wttr_info(sunMoonUrl)
-	sunMoon := strings.Split(sunMoonStr, " ")
+	
+	if sunMoonStr := get_daily_wttr_info(sunMoonUrl); len(sunMoonStr) != 0 {
+		sunMoon := strings.Split(sunMoonStr, " ")
+		if len(sunMoon) == 3 && len(forecasts) > 0 {
+			weatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
+		}
+	}
 	
 	urlNameDay := fmt.Sprintf("https://svatek.michalkukla.xyz/today?country=%s", lang)
 	nameDay = get_name_day(urlNameDay)
@@ -172,22 +183,28 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 		localeTags = strings.Join([]string{localeTags, tag}, "\n")  	
 	}
-
+	var usdValue, eurValue, gbpValue float64 = 0.0, 0.0, 0.0
 	urlCurr := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "USD")
-	usdValue, _ := strconv.ParseFloat(get_cnb_info(urlCurr)[0], 64)
+	if value := get_cnb_info(urlCurr); len(value) > 0 {
+		usdValue, _ = strconv.ParseFloat(value[0], 64)
+	}
 	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "EUR")
-	eurValue, _ := strconv.ParseFloat(get_cnb_info(urlCurr)[0], 64)
+	if value := get_cnb_info(urlCurr); len(value) > 0 {
+		eurValue, _ = strconv.ParseFloat(value[0], 64)
+	}
 	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "GBP")
-	gbpValue, _ := strconv.ParseFloat(get_cnb_info(urlCurr)[0], 64)
+	if value := get_cnb_info(urlCurr); len(value) > 0 {
+		gbpValue, _ = strconv.ParseFloat(value[0], 64)
+	} 
 	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
 		
 	var i indexDisplay
 	i.NameDay = nameDay 
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
-	i.WeatherInfo = "🌅 "+sunMoon[0]+" 🌇"+sunMoon[1]+" "+sunMoon[2]+" "+forecasts[0]
-	i.ForecastFirst = forecasts[1]
-	i.ForecastSecond = forecasts[2]
+	i.WeatherInfo = weatherInfo 
+	i.ForecastFirst = forecastFirst
+	i.ForecastSecond = forecastSecond
 	i.Currency = currency
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrPng
@@ -217,21 +234,25 @@ func get_daily_wttr_info(url string) string {
 }
 
 func get_weather_info(url string) string {
+	var result string = ""
 	value := new_request(url)
-	str_out := strings.ReplaceAll(string(value), "\"", "")
-	str_out = strings.ReplaceAll(string(str_out), "\n", "")
-	return string(str_out)
+	if len(value) > 0 {
+		value = strings.ReplaceAll(value, "\"", "")
+		result = strings.ReplaceAll(value, "\n", "")
+	}
+	return result 
 }
 
 func get_forecast(url string) string {
 	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
 	cacheSignature := hash(signature)
 	var answer string = ""
-	
+	var lastRecord string = ""	
 	if record, found := get(cacheSignature); found && record.value != "" {
 		now := time.Now()
 		d := record.expiry
 		d = d.Add(time.Hour * 6)
+		lastRecord = record.value
 		if d.After(now) {
 			answer = record.value
 			return answer
@@ -253,15 +274,31 @@ func get_forecast(url string) string {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
+	var value string = ""
 
-	value := strings.Join([]string{hum_low_high, hum_low_high_next, hum_low_high_next2}, "\n")
-	answer = store(cacheSignature, value)
+	if len(hum_low_high) > 0 {
+		value = hum_low_high 
+	}
+	if len(hum_low_high_next) > 0 {
+		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next)
+	}
+	if len(hum_low_high_next2) > 0 {
+		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next2)
+	}
+	if len(value) > 0 {
+		answer = store(cacheSignature, value)
+	} else {
+		answer = lastRecord
+	}
+	
+//	value := strings.Join([]string{hum_low_high, hum_low_high_next, hum_low_high_next2}, "\n")
+//	answer = store(cacheSignature, value)
 	return answer
 
 }
 
 func get_cnb_info(url string) []string {
-
+	var result []string
 //	signature := fmt.Sprintf(`%s:%s`, url, "cnb-rates")
 //	cacheSignature := hash(signature)
 //	var answer string = ""
@@ -276,10 +313,13 @@ func get_cnb_info(url string) []string {
 //			return answerList 
 //		}
 //	}
+	
 	value := new_request(url)
 //	answer = store(cacheSignature,string(value))
-	answerList := strings.Split(string(value), "\n")
-	return answerList 
+	if len(value) > 0 {
+		result = strings.Split(value, "\n")
+	}
+	return result 
 }
 
 func get_name_day(url string) string {
