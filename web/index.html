@@ -29,11 +29,11 @@
 
 	</div>
 	<hr style="color: beige">
-	<nav id="nav">
+<!--	<nav id="nav">
 		<ul>
 			<li><a href="./forecast.html">🌧️📅</a></li>
 		</ul>
-	</nav>
+</nav> -->
 
 	<main  style="margin-top: 20px;">
 		<a href="https://svatek.michalkukla.xyz/" style="text-decoration: none; color:beige" >📆 {{.NameDay}}</p>
@@ -71,6 +71,8 @@
 		<a href='./pics/rain.gif' id="link_sat24"><image src='./pics/rain.webp' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
 		<!-- sun and clouds -->
 		<a href='./pics/clouds.gif' ><img src='./pics/clouds.webp' width=360 height=227 style="margin: 5px"></a>
+		<!-- forecast for next days -->
+		<a href='./forecast1.html' id="forecast_href"><img src='./pics/forecast_tmrw.webp' id="forecast" width=237 height=290 style="margin: 5px"></a>
 
 		<script async="" src="./js/module-wttrin-widget.js"></script>
 		<script>
@@ -137,6 +139,7 @@
 				}
 			}
 
+
 			formatSelect.onchange = function() {
 				var date = new Date(Date.now())
 				date.setFullYear(date.getFullYear()+1)
@@ -163,7 +166,6 @@
 				var weatherInput = document.getElementById("weather-input")
 				weatherInput.placeholder = weatherInputDict[prefix]
 			}
-
 
 		</script>
 
