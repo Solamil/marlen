@@ -22,31 +22,85 @@
 			<option value="en-US">🇺🇸</option>
 		</select>
 		<input type="date" id="calendar" style="margin-left:2%"/>
+		<select name="forecastType" id="forecast_type" style="display:inline-block; margin-left: 2%">
+			<option value="forecastPrecip">🌧️</option>
+			<option value="forecastTemp">🌡️</option>
+			<option value="forecastWind">🌬️</option>
+			<option value="forecastCloud">☁️</option>
+		</select>
 		<hr style="color:beige">
 	</div>
 	<main style="margin-top: 20px;">
 
 		<!-- https://en.sat24.com/image?type=forecastPrecip&region=europa&timestamp=202209251800 -->
 		<div style="padding-left: 5%">
-			<img id="legend" src="./pics/legend-forecastprecip.webp" loading=lazy>
 			<div id="forecastText" 
 				style="margin-left: 140px; margin-top: 600px; position:absolute; 
 					font-size:24px; color: white; padding: 5px; border-radius: 5px;
 					background-color: #442244">
 			</div>
 			<a href="" id="forecastHref">
-				<img id="forecast" src='' loading=lazy>
+				<img id="forecast" src='' loading=lazy >
 			</a>
+			<img id="legend" src="./pics/legend-forecastPrecip.webp" style="margin-top: 10px" loading=lazy alt="">
 		</div>
 		
 
 		<script>
-			const date = new Date(Date.now())
-			other = new Date(Date.now())
-			other.setDate(other.getDate()+1)
-			cal = document.getElementById("calendar")
+			var forecastType = document.getElementById("forecast_type")
+			var formatSelect = document.getElementById("select_lang")
+			if (document.cookie.length != 0) {
+				dateExp = new Date(Date.now())
+				dateExp.setFullYear(dateExp.getFullYear()+1)
+				var cookieList = document.cookie.split("; ")
+				var cookieForecastType = cookieList.find(e => e.startsWith("forecastType"))
+				if (cookieForecastType != undefined) {
+					var type = cookieForecastType.split("=")[1]
+					forecastType.value = type 
+				} else {
+					document.cookie = "forecastType="+forecastType.value+"; expires="+dateExp.toUTCString()+"; Path=/; SameSite=None; Secure"
+				}
 
+				var cookieLang = cookieList.find(e => e.startsWith("lang"))
+
+				if (cookieLang != undefined) {
+					var lang = cookieLang.split("=")[1]
+					formatSelect.value = lang
+				} else {
+					document.cookie = "lang="+formatSelect.value+"; expires="+dateExp.toUTCString()+"; Path=/; SameSite=None; Secure"
+
+				}
+
+			} else {
+				dateExp = new Date(Date.now())
+				dateExp.setFullYear(dateExp.getFullYear()+1)
+				document.cookie = "forecastType="+forecastType.value+"; expires="+dateExp.toUTCString()+"; Path=/; SameSite=None; Secure"
+				document.cookie = "lang="+formatSelect.value+"; expires="+dateExp.toUTCString()+"; Path=/; SameSite=None; Secure"
+			}
+			forecastType.onchange = function() {
+				dateExp = new Date(Date.now())
+				dateExp.setFullYear(dateExp.getFullYear()+1)
+				document.cookie = "forecastType="+forecastType.value+"; expires="+dateExp.toUTCString()+"; Path=/; SameSite=None; Secure"
+				var imgLegend = document.getElementById("legend")
+				imgLegend.src = "./pics/legend-"+this.value+".webp"
+
+			}
+			formatSelect.onchange = function() {
+				dateExp = new Date(Date.now())
+				dateExp.setFullYear(dateExp.getFullYear()+1)
+				document.cookie = "lang="+formatSelect.value+"; expires="+dateExp.toUTCString()+"; Path=/; SameSite=None; Secure"
+
+			}
+			var imgLegend = document.getElementById("legend")
+			imgLegend.src = "./pics/legend-"+forecastType.value+".webp"
+
+			const date = new Date(Date.now())
+			var other = new Date(Date.now())
+			other.setDate(other.getDate())
+			cal = document.getElementById("calendar")
 			cal.min = cal.value = other.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")
+			other.setDate(other.getDate()+1)
+			cal.value = other.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")
 
 			other.setDate(other.getDate()+4)
 			cal.max = other.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")
@@ -62,11 +116,10 @@
 			yearMonthDay = date.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")[0]
 			dateSat24 = yearMonthDay.replaceAll("-", "")
 
-			var formatSelect = document.getElementById("select_lang")
 			date_output = new Intl.DateTimeFormat(formatSelect.value, 
 				{weekday: "long", day:"numeric", month:"long"}).format(date)
 			document.getElementById("forecastText").innerHTML = date_output+" 00:00"
-			document.getElementById("forecast").src = "https://en.sat24.com/image?type=forecastPrecip&region=europa&timestamp="+dateSat24+"0000"
+			document.getElementById("forecast").src = "https://en.sat24.com/image?type="+forecastType.value+"&region=europa&timestamp="+dateSat24+"0000"
 			document.getElementById("forecastHref").href = document.getElementById("forecast").src
 
 			function sleep(ms) {
@@ -78,6 +131,7 @@
 				yearMonthDay = date.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")[0]
 				dateSat24 = yearMonthDay.replaceAll("-", "")
 				var hour = 0
+				var forecastType = document.getElementById("forecast_type")
 				var formatSelect = document.getElementById("select_lang")
 				document.getElementById("forecastText").innerHTML = date_output+" 0"+hour+":00"
 				for (var h = hour;  ; h += 3) {
@@ -93,7 +147,7 @@
 					if (h < 10) {
 						hour = "0"+hour
 					}
-					document.getElementById("forecast").src = "https://en.sat24.com/image?type=forecastPrecip&region=europa&timestamp="+dateSat24+hour+"00"
+					document.getElementById("forecast").src = "https://en.sat24.com/image?type="+forecastType.value+"&region=europa&timestamp="+dateSat24+hour+"00"
 					document.getElementById("forecastHref").href = document.getElementById("forecast").src
 					document.getElementById("forecastText").innerHTML = date_output+" "+hour+":00"
 					await sleep(2000)
