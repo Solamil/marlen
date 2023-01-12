@@ -135,7 +135,7 @@
 				var formatSelect = document.getElementById("select_lang")
 				document.getElementById("forecastText").innerHTML = date_output+" 0"+hour+":00"
 				for (var h = hour;  ; h += 3) {
-					date = new Date(cal.value)
+					date.setDate(cal.value)
 					yearMonthDay = date.toISOString().match("[0-9]{4}-[0-9]{2}-[0-9]{2}")[0]
 					dateSat24 = yearMonthDay.replaceAll("-", "")
 					date_output = new Intl.DateTimeFormat(formatSelect.value, 
