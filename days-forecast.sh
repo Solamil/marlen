@@ -27,6 +27,6 @@ done
 convert -delay 160 "${dir_images}/${prefix}${tomorrow}*${img_type}" "$out"
 
 cwebp -resize 300 400 "${dir_images}/${prefix}${tomorrow}0000.${img_type}" -o "$dir/forecast_tmrw.webp"
-rm ${dir_images}/*png
+rm -v ${dir_images}/*png
 
 # convert img0000.png -gravity South -pointsize 18 -fill yellow -annotate +0+0 "16.12.2022 00:00" img0001.png
