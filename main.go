@@ -90,20 +90,11 @@ func main() {
 	http.HandleFunc("/pics/forecast_tmrw.webp", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/forecast_tmrw.webp")
 	})
-	http.HandleFunc("/pics/legend-forecastPrecip.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/legend-forecastPrecip.webp")
-	})
-	http.HandleFunc("/pics/legend-forecastTemp.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/legend-forecastTemp.webp")
+	http.HandleFunc("/pics/forecast_tmrw.gif", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecast_tmrw.gif")
 	})
 	http.HandleFunc("/js/module-wttrin-widget.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/js/module-wttrin-widget.js")
-	})
-	http.HandleFunc("/forecast.html", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/forecast.html")
-	})
-	http.HandleFunc("/forecast1.html", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/forecast1.html")
 	})
 	http.HandleFunc("/cover.html", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "cover.html")
