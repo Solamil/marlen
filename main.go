@@ -376,14 +376,14 @@ func rss_feed(url string) string {
 		return ""
 	}
 	
-//	if err := doc.ReadFromFile("BwJLymVb_test.atom"); err != nil {
+//	if err := doc.ReadFromFile("BwJLymVb.atom"); err != nil {
 //		fmt.Println(err)		
 //		return ""
 //	}
 	root := doc.SelectElement("feed")
 	mainTitle := root.SelectElement("title").Text()
 	linkSite := root.SelectElement("link").SelectAttrValue("href", "")
-	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>\n<ul>", linkSite, mainTitle)
+	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>", linkSite, mainTitle)
 	for _, e := range root.SelectElements("entry") {
 		title := e.SelectElement("title").Text()
 		author := e.SelectElement("author")
@@ -396,7 +396,7 @@ func rss_feed(url string) string {
 		result = fmt.Sprintf("%s\n%s", result, line)
 
 	}
-	result = fmt.Sprintf("%s\n</ul>", result)
+	
 	result = store(cacheSignature, result)
 	return result
 }
