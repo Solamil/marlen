@@ -83,9 +83,6 @@ func main() {
 	http.HandleFunc("/pics/clouds.webp", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/clouds.webp")
 	})
-	http.HandleFunc("/pics/general_pavel.jpg", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/general_pavel.jpg")
-	})
 	http.HandleFunc("/pics/rain.gif", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/rain.gif")
 	})
