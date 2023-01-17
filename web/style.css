@@ -51,8 +51,8 @@ p{
  */
 }
 a{
-	text-decoration: none;
-	color: beige;
+	text-decoration: underline;
+	color: black;
 }
 a:hover{
 	color: grey;
@@ -123,7 +123,7 @@ footer{
 	margin: 30px;
 }
 .date{
-	color: gold;
+	color: grey;
 	font-size: small;
 	padding-right: 20px;
 	float: right;

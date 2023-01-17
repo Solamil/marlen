@@ -14,7 +14,6 @@ import (
 	"crypto/md5"
 	"text/template"
 	"github.com/hashicorp/golang-lru/v2"
-	"github.com/beevik/etree"
 //	"os"
 )
 
@@ -42,7 +41,6 @@ type indexDisplay struct {
 	WttrLink string
 	WttrSrc string
 	WttrInHolder string
-	RssFeed string
 }
 const CACHESIZE int = 10000
 const HASHSIZE int = 16
@@ -101,7 +99,6 @@ func main() {
 	http.HandleFunc("/cover.html", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "cover.html")
 	})
-	rss_feed("https://neovlivni.cz/feed/atom/")
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
@@ -116,7 +113,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var weatherInfo string = ""
 	var forecastFirst string = ""
 	var forecastSecond string = ""
-	var rssFeed string = ""
 
 	if c, err := r.Cookie("place"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
@@ -204,8 +200,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		gbpValue, _ = strconv.ParseFloat(resp_list[0], 64)
 	} 
 	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
-
-	rssFeed = rss_feed("https://neovlivni.cz/feed/atom/")
 		
 	var i indexDisplay
 	i.NameDay = nameDay 
@@ -219,7 +213,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
-	i.RssFeed = rssFeed
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
@@ -351,54 +344,6 @@ func get_name_day(url string) string {
 		answer = store(cacheSignature,string(value))
 	}
 	return answer 
-}
-func rss_feed(url string) string {
-	var result string = ""
-	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
-	cacheSignature := hash(signature)
-	if record, found := get(cacheSignature); found && record.value != "" {
-		now := time.Now()
-		d := record.expiry
-		d = d.Add(time.Hour * 6)
-		result = record.value
-		if d.After(now) {
-			return result 
-		}
-	}
-	resp := new_request(url)	
-	if resp == "" {
-		return result
-	}
-	doc := etree.NewDocument()
-
-	if err := doc.ReadFromString(resp); err != nil {
-		fmt.Println(err)		
-		return ""
-	}
-	
-//	if err := doc.ReadFromFile("BwJLymVb.atom"); err != nil {
-//		fmt.Println(err)		
-//		return ""
-//	}
-	root := doc.SelectElement("feed")
-	mainTitle := root.SelectElement("title").Text()
-	linkSite := root.SelectElement("link").SelectAttrValue("href", "")
-	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>", linkSite, mainTitle)
-	for _, e := range root.SelectElements("entry") {
-		title := e.SelectElement("title").Text()
-		author := e.SelectElement("author")
-		name := author.SelectElement("name").Text()
-		published := e.SelectElement("published").Text()
-		link := e.SelectElement("link").SelectAttrValue("href", "")
-//		t, _ := time.Parse(time.RFC3339, published)
-		date := fmt.Sprintf("<span class=\"date\">%s</span>", published)
-		line := fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\">%s ✏️%s 📜%s</a></li>",link, date, name, title)
-		result = fmt.Sprintf("%s\n%s", result, line)
-
-	}
-	
-	result = store(cacheSignature, result)
-	return result
 }
 
 func new_request(url string) string {
