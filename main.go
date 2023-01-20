@@ -33,6 +33,7 @@ type indexDisplay struct {
 	Bg string
 	Location string
 	WeatherInfo string
+	OtherInfo string
 	LocaleOptions string
 	Currency string
 	NameDay string
@@ -113,6 +114,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var weatherInfo string = ""
 	var forecastFirst string = ""
 	var forecastSecond string = ""
+	var otherInfo string = "🌐"
 
 	if c, err := r.Cookie("place"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
@@ -200,6 +202,10 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		gbpValue, _ = strconv.ParseFloat(resp_list[0], 64)
 	} 
 	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
+
+	if len(r.Header["X-Real-Ip"]) > 0 {
+		otherInfo = fmt.Sprintf("🌐 %s", r.Header["X-Real-Ip"][0])
+	}
 		
 	var i indexDisplay
 	i.NameDay = nameDay 
@@ -208,6 +214,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WeatherInfo = weatherInfo 
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
+	i.OtherInfo = otherInfo 
 	i.Currency = currency
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrPng
