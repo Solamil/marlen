@@ -88,11 +88,17 @@ func main() {
 	http.HandleFunc("/pics/clouds.gif", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/clouds.gif")
 	})
-	http.HandleFunc("/pics/forecast_tmrw.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecast_tmrw.webp")
+	http.HandleFunc("/pics/forecastPrecip_0days.webp", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastPrecip_0days.webp")
 	})
-	http.HandleFunc("/pics/forecast_tmrw.gif", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecast_tmrw.gif")
+	http.HandleFunc("/pics/forecastPrecip_0days.gif", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastPrecip_0days.gif")
+	})
+	http.HandleFunc("/pics/forecastPrecip_1days.webp", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastPrecip_1days.webp")
+	})
+	http.HandleFunc("/pics/forecastPrecip_1days.gif", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastPrecip_1days.gif")
 	})
 	http.HandleFunc("/js/module-wttrin-widget.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/js/module-wttrin-widget.js")

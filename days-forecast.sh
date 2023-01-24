@@ -1,11 +1,11 @@
 # today=$(date -d +"%Y%m%d")
 # hour=$(date -d +"%H")
 
-t="tomorrow"
+t="${1:-"1days"}"
 tomorrow=$(date -d "$t" "+%Y%m%d")
 formatted=$(date -d "$t" "+%d.%m. %A")
-forecastType=${1:-"forecastPrecip"}
-continent=${2:-"europa"}
+forecastType=${2:-"forecastPrecip"}
+continent=${3:-"europa"}
 url="https://en.sat24.com/image?type=${forecastType}&region=${continent}&timestamp="$tomorrow
 prefix="img"
 img_type="png"
@@ -13,7 +13,7 @@ dir="$HOME/repo/web/pics"
 [ -d "$dir" ] || dir="$HOME/.local/src/marlen/web/pics"
 #dir="web/pics"
 dir_images="${dir}/sat24"
-out="${dir}/forecast_tmrw.gif"
+out="${dir}/${forecastType}_${t}.gif"
 [ -d "$dir_images" ] || mkdir "$dir_images"
 
 for i in "00" "03" "06" "09" "12" "15" "18" "21"; do
@@ -27,7 +27,7 @@ done
 
 convert -delay 160 "${dir_images}/${prefix}${tomorrow}*${img_type}" "$out"
 
-cwebp -resize 300 400 "${dir_images}/${prefix}${tomorrow}0000.${img_type}" -o "$dir/forecast_tmrw.webp"
+cwebp -resize 300 400 "${dir_images}/${prefix}${tomorrow}0000.${img_type}" -o "$dir/${forecastType}_${t}.webp"
 rm -v "${dir_images}"/*png
 
 # convert img0000.png -gravity South -pointsize 18 -fill yellow -annotate +0+0 "16.12.2022 00:00" img0001.png
