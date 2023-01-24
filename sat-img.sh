@@ -1,6 +1,8 @@
 #!/bin/bash
-#repo_path="$HOME/repo"
-repo_pics_path="web/pics"
+repo_path="$HOME/repo"
+[ -d "$repo_path" ] || repo_path="$HOME/.local/src/marlen"
+repo_pics_path="${repo_path}/web/pics"
+
 the_server="https://api.sat24.com"
 pic_link="${the_server}/mostrecent/DE"
 gif_link="${the_server}/animated/DE"
