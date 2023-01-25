@@ -22,6 +22,7 @@ for i in "00" "03" "06" "09" "12" "15" "18" "21"; do
         if [ ! -f "$pic" ]; then
                 curl "${url}${clock}"  --output "$pic"
                 convert "$pic" -gravity South -pointsize 18 -undercolor white -fill black  -annotate +0+0 "${formatted} ${i}:00" "$pic"
+		convert "$pic" "${dir}/legend-${forecastType}.webp" -gravity North -composite "$pic"
         fi
 done
 

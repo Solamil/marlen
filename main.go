@@ -94,6 +94,18 @@ func main() {
 	http.HandleFunc("/pics/forecastPrecip_0days.gif", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/forecastPrecip_0days.gif")
 	})
+	http.HandleFunc("/pics/forecastTemp_0days.gif", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastTemp_0days.gif")
+	})
+	http.HandleFunc("/pics/forecastTemp_0days.webp", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastTemp_0days.webp")
+	})
+	http.HandleFunc("/pics/forecastWind_0days.gif", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastWind_0days.gif")
+	})
+	http.HandleFunc("/pics/forecastWind_0days.webp", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/pics/forecastWind_0days.webp")
+	})
 	http.HandleFunc("/pics/forecastPrecip_1days.webp", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/forecastPrecip_1days.webp")
 	})
