@@ -59,20 +59,17 @@
 				<button type="submit" id="submit">OK</button>
 			</form>
 		</div>
-		<div>
-			<div id="wttr-in-module" style="display: inline-block">
-				<a href='{{.WttrLink}}' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='{{.WttrSrc}}' loading=lazy alt="Current weather in"></a>
-				<form id="weather-form">
 
-					<button id="weather-btn-default" type="button" style="font-size: 16px;">🏠</button>
-					<input id="weather-input" class="form-control" type="text" placeholder="{{.WttrInHolder}}" aria-label="Weather in...">
-					<button id="weather-btn" type="button">OK</button>
-				</form>
-			</div>
-			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank"><img src='./pics/mhcam1.webp' id="forecast" width=340 height=200 style="margin: 5px; display:inline-block"></a>
+		<div id="wttr-in-module">
+		<a href='{{.WttrLink}}' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='{{.WttrSrc}}' loading=lazy alt="Current weather in"></a>
+			<form id="weather-form">
+
+				<button id="weather-btn-default" type="button" style="font-size: 16px;">🏠</button>
+				<input id="weather-input" class="form-control" type="text" placeholder="{{.WttrInHolder}}" aria-label="Weather in...">
+				<button id="weather-btn" type="button">OK</button>
+			</form>
 		</div>
 
-		
 		<!-- rain -->
 		<a href='./pics/rain.gif' id="link_sat24"><image src='./pics/rain.webp' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
 		<!-- sun and clouds -->

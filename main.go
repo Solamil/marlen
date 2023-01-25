@@ -100,9 +100,6 @@ func main() {
 	http.HandleFunc("/pics/forecastPrecip_1days.gif", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/pics/forecastPrecip_1days.gif")
 	})
-	http.HandleFunc("/pics/mhcam1.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/mhcam1.webp")
-	})
 	http.HandleFunc("/js/module-wttrin-widget.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/js/module-wttrin-widget.js")
 	})
