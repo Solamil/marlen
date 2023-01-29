@@ -1,4 +1,4 @@
-module github.com/Solamil/merlot
+module github.com/Solamil/marlen
 
 go 1.19
 
