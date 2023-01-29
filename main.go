@@ -315,7 +315,23 @@ func get_forecast(url string) string {
 }
 func get_holy_trinity(url string) string {
 	var result string = ""
-	result = new_request(url)
+	signature := fmt.Sprintf(`%s:%s`, url, "trinity")
+	cacheSignature := hash(signature)
+	if record, found := get(cacheSignature); found && record.value != "" {
+		now := time.Now()
+		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
+		d := record.expiry
+		if (now.Before(tUpdate) && now.Day() == d.Day() && now.Month() == d.Month() && now.Year() == d.Year())	|| 
+			d.After(tUpdate) {
+			result = record.value
+			return result
+		}
+		
+	}
+	
+	if value := new_request(url); len(value) > 0 {
+		result = store(cacheSignature, value)
+	}
 	return result
 }
 
