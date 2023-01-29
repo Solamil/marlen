@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"strings"
 //	"html"
-	"strconv"
+//	"strconv"
 	"time"
 	"os/exec"
 	"crypto/md5"
@@ -209,20 +209,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 		localeTags = strings.Join([]string{localeTags, tag}, "\n")  	
 	}
-	var usdValue, eurValue, gbpValue float64 = 0.0, 0.0, 0.0
-	urlCurr := fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "USD")
-	if resp_list := get_cnb_info(urlCurr); len(resp_list) > 0 {
-		usdValue, _ = strconv.ParseFloat(resp_list[0], 64)
-	}
-	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "EUR")
-	if resp_list := get_cnb_info(urlCurr); len(resp_list) > 0 {
-		eurValue, _ = strconv.ParseFloat(resp_list[0], 64)
-	}
-	urlCurr = fmt.Sprintf("https://czk.michalkukla.xyz/?code=%s", "GBP")
-	if resp_list := get_cnb_info(urlCurr); len(resp_list) > 0 {
-		gbpValue, _ = strconv.ParseFloat(resp_list[0], 64)
-	} 
-	currency := fmt.Sprintf("1$ %.2fKč 1€ %.2fKč 1£ %.2fKč",  usdValue, eurValue, gbpValue)
 
 	if len(r.Header["X-Real-Ip"]) > 0 {
 		otherInfo = fmt.Sprintf("🌐 %s", r.Header["X-Real-Ip"][0])
@@ -236,7 +222,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = otherInfo 
-	i.Currency = currency
+	i.Currency = get_holy_trinity("https://czk.michalkukla.xyz/holy_trinity?p")
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
@@ -327,30 +313,10 @@ func get_forecast(url string) string {
 	return answer
 
 }
-
-func get_cnb_info(url string) []string {
-	var result []string
-//	signature := fmt.Sprintf(`%s:%s`, url, "cnb-rates")
-//	cacheSignature := hash(signature)
-//	var answer string = ""
-//
-//	if record, found := get(cacheSignature); found && record.value != "" {
-//		now := time.Now()
-//		d := record.expiry
-//		if d.Day() == now.Day() && d.Month() == now.Month() {
-//			fmt.Println("cached")
-//			answer = record.value
-//			answerList := strings.Split(answer, "\n")
-//			return answerList 
-//		}
-//	}
-	
-	value := new_request(url)
-//	answer = store(cacheSignature,string(value))
-	if len(value) > 0 {
-		result = strings.Split(value, "\n")
-	}
-	return result 
+func get_holy_trinity(url string) string {
+	var result string = ""
+	result = new_request(url)
+	return result
 }
 
 func get_name_day(url string) string {
