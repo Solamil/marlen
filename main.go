@@ -59,13 +59,13 @@ var countryFlags = map[string]string{
 	"cs-CZ": "🇨🇿",
 }
 
-var currSymbols = map[string]string{
-	"usd": "$",
-	"eur": "€",
-	"gbp": "£",
-	"czk": "Kč",
-	"btc": "BTC",
-}
+// var currSymbols = map[string]string{
+// 	"usd": "$",
+// 	"eur": "€",
+// 	"gbp": "£",
+// 	"czk": "Kč",
+// 	"btc": "BTC",
+// }
 
 var indexTemplate *template.Template
 
@@ -274,11 +274,9 @@ func get_forecast(url string) string {
 		answer = lastRecord
 	}
 	
-//	value := strings.Join([]string{hum_low_high, hum_low_high_next, hum_low_high_next2}, "\n")
-//	answer = store(cacheSignature, value)
 	return answer
-
 }
+
 func get_holy_trinity(url string) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "trinity")
