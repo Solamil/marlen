@@ -73,19 +73,21 @@ func TestFailWeatherInfo(t *testing.T) {
 	}
 	
 }
-func TestGetCnbInfo(t *testing.T) {
-	var exp []string = []string{"24.1731", "1"}
+func TestHolyTrinity(t *testing.T) {
+	var exp string = "💵1€ 23.82Kč 1$ 21.93Kč 1£ 27.11Kč\n"
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintln(w, "24.1731\n1")
+		fmt.Fprintln(w, "💵1€ 23.82Kč 1$ 21.93Kč 1£ 27.11Kč")
 	}))
 	defer ts.Close()
-	got := get_cnb_info(ts.URL)
-	if got[0] != exp[0] {
-		t.Errorf("Expected '%s' but, got '%s'", exp[0], got[0])
+	got := get_holy_trinity(ts.URL)
+	if got != exp {
+		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
-	if got[1] != exp[1] {
-		t.Errorf("Expected '%s' but, got '%s'", exp[1], got[1])
+	//cached
+	got = get_holy_trinity(ts.URL)
+	if got != exp {
+		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
 }
 
