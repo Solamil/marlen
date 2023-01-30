@@ -168,11 +168,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var localeTags string = ""
 	var tag string = ""
 	for key, value := range countryFlags {
-		if key == lang {
-			tag = getHTMLOptionTag(key, value, true)
-		} else {
-			tag = getHTMLOptionTag(key, value, false)
-		}
+		tag = getHTMLOptionTag(key, value, (key == lang))
 		localeTags = strings.Join([]string{localeTags, tag}, "\n")  	
 	}
 
