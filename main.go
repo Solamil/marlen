@@ -46,7 +46,7 @@ type indexDisplay struct {
 const CACHESIZE int = 10000
 const HASHSIZE int = 16
 var cache, _ = lru.New[[HASHSIZE]byte, cacheRecord](CACHESIZE)
-
+var WEB_DIR string = "web"
 var wttrInHolders = map[string]string{
 	"en": "Weather in...",
 	"de": "Wetter für...",
@@ -70,57 +70,23 @@ var currSymbols = map[string]string{
 var indexTemplate *template.Template
 
 func main() {
-	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/style.css")
-	})
-	http.HandleFunc("/pics/git-icon.svg", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/git-icon.svg")
-	})
-	http.HandleFunc("/pics/rain.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/rain.webp")
-	})
-	http.HandleFunc("/pics/clouds.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/clouds.webp")
-	})
-	http.HandleFunc("/pics/rain.gif", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/rain.gif")
-	})
-	http.HandleFunc("/pics/clouds.gif", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/clouds.gif")
-	})
-	http.HandleFunc("/pics/forecastPrecip_0days.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastPrecip_0days.webp")
-	})
-	http.HandleFunc("/pics/forecastPrecip_0days.gif", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastPrecip_0days.gif")
-	})
-	http.HandleFunc("/pics/forecastTemp_0days.gif", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastTemp_0days.gif")
-	})
-	http.HandleFunc("/pics/forecastTemp_0days.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastTemp_0days.webp")
-	})
-	http.HandleFunc("/pics/forecastWind_0days.gif", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastWind_0days.gif")
-	})
-	http.HandleFunc("/pics/forecastWind_0days.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastWind_0days.webp")
-	})
-	http.HandleFunc("/pics/forecastPrecip_1days.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastPrecip_1days.webp")
-	})
-	http.HandleFunc("/pics/forecastPrecip_1days.gif", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/forecastPrecip_1days.gif")
-	})
-	http.HandleFunc("/pics/mhcam1.webp", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/pics/mhcam1.webp")
-	})
-	http.HandleFunc("/js/module-wttrin-widget.js", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/js/module-wttrin-widget.js")
-	})
-	http.HandleFunc("/cover.html", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "cover.html")
-	})
+	http.HandleFunc("/style.css", file_handler) 
+	http.HandleFunc("/pics/git-icon.svg", file_handler)
+	http.HandleFunc("/pics/rain.webp", file_handler) 
+	http.HandleFunc("/pics/clouds.webp", file_handler) 
+	http.HandleFunc("/pics/rain.gif", file_handler) 
+	http.HandleFunc("/pics/clouds.gif", file_handler) 
+	http.HandleFunc("/pics/forecastPrecip_0days.webp", file_handler)
+	http.HandleFunc("/pics/forecastPrecip_0days.gif", file_handler) 
+	http.HandleFunc("/pics/forecastTemp_0days.gif", file_handler)
+	http.HandleFunc("/pics/forecastTemp_0days.webp", file_handler)
+	http.HandleFunc("/pics/forecastWind_0days.gif", file_handler)
+	http.HandleFunc("/pics/forecastWind_0days.webp", file_handler)
+	http.HandleFunc("/pics/forecastPrecip_1days.webp", file_handler)
+	http.HandleFunc("/pics/forecastPrecip_1days.gif", file_handler)
+	http.HandleFunc("/pics/mhcam1.webp", file_handler)
+	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
+	http.HandleFunc("/cover.html", file_handler)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
@@ -230,6 +196,10 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
+}
+
+func file_handler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, WEB_DIR+r.URL.Path)
 }
 
 func get_daily_wttr_info(url string) string {
