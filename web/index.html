@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>a{text-decoration:none; color:beige}</style>
 </head>
 <body style="background-color:#{{.Bg}}">
 	<div class="status-bar">
@@ -38,8 +39,8 @@
 
 	<main  style="margin-top: 20px;">
 		<div class="cs-CZ">
-		<p style="display:inline-block"><a href="https://svatek.michalkukla.xyz/" style="text-decoration: none; color:beige" >📆 {{.NameDay}}</p>
-		<p style="display:inline-block"><a id="curr" href="https://czk.michalkukla.xyz/" style="text-decoration: none; color:beige">{{.Currency}}</a></p>
+		<p style="display:inline-block"><a href="https://svatek.michalkukla.xyz/">📆Dnes má svátek {{.NameDay}}</p>
+		<p style="display:inline-block"><a id="curr" href="https://czk.michalkukla.xyz/">{{.Currency}}</a></p>
 		</div>
 		<div id="text_forecast">
 			<p id="tomorrow_forecast" style="display: inline-block"><span id="first_date"></span> {{.ForecastFirst}}</p>

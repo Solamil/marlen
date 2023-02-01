@@ -173,7 +173,8 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(r.Header["X-Real-Ip"]) > 0 {
-		otherInfo = fmt.Sprintf("🌐 %s", r.Header["X-Real-Ip"][0])
+		otherInfo = fmt.Sprintf("<a target=\"_blank\" href=\"https://www.whois.com/whois/%s\">🌐 %s</a>", 
+					r.Header["X-Real-Ip"][0], r.Header["X-Real-Ip"][0])
 	}
 		
 	var i indexDisplay
