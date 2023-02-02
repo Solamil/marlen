@@ -2,11 +2,41 @@
 <html>
 <head>
 <title>Home Page</title>
-<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
+<!--<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />-->
+<!--<link rel="stylesheet" href="./style.css" type="text/css" media="screen" /> -->
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>a{text-decoration:none; color:beige}</style>
+<style>
+body{	max-width:800px; margin: auto; background-color: #893531; color:beige;}
+a{	text-decoration:none; color:beige}
+input{	margin: 0px; 
+	padding: 0px 0px 0px 2px;
+	border-radius:0px;
+	border: solid;
+	border-width: 0px 0px 1px 0px; 
+	border-color:beige;
+	text-decoration: none;
+	background:transparent;
+	outline: none;
+	color:beige
+}
+h2{	text-align: center; text-decoration: underline;	}
+h3{	text-align: center; }
+p{ 	margin: 10px; }
+footer{	margin-top: 2em;
+	text-align: center;
+	color: beige;
+	border: solid;
+	border-color: beige;
+	border-width: 2px 0px 0px 0px;
+}
+.date{
+	color: lightblue;
+	font-size: small;
+	padding-right: 20px;
+	float: right;
+}
+</style>
 </head>
 <body style="background-color:#{{.Bg}}">
 	<div class="status-bar">
@@ -70,18 +100,18 @@
 					<button id="weather-btn" type="button">OK</button>
 				</form>
 			</div>
-			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank"><img src='./pics/mhcam1.webp' id="forecast" width=340 height=200 style="margin: 5px; display:inline-block"></a>
+			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank"><img src='./pics/mhcam1.webp' id="forecast" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
 		</div>
 
 		
 		<!-- rain -->
 		<a href='./pics/rain.gif' id="link_sat24"><image src='./pics/rain.webp' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
 		<!-- sun and clouds -->
-		<a href='./pics/clouds.gif' ><img src='./pics/clouds.webp' width=360 height=227 style="margin: 5px"></a>
-		<a href='./pics/forecastPrecip_0days.gif' ><img src='./pics/forecastPrecip_0days.webp' width=237 height=290 style="margin: 5px"></a>
-		<a href='./pics/forecastTemp_0days.gif' ><img src='./pics/forecastTemp_0days.webp' width=237 height=290 style="margin: 5px"></a>
-		<a href='./pics/forecastWind_0days.gif' ><img src='./pics/forecastWind_0days.webp' width=237 height=290 style="margin: 5px"></a>
-		<a href='./pics/forecastPrecip_1days.gif' ><img src='./pics/forecastPrecip_1days.webp' width=237 height=290 style="margin: 5px"></a>
+		<a href='./pics/clouds.gif' ><img src='./pics/clouds.webp' loading=lazy width=360 height=227 style="margin: 5px"></a>
+		<a href='./pics/forecastPrecip_0days.gif' ><img src='./pics/forecastPrecip_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
+		<a href='./pics/forecastTemp_0days.gif' ><img src='./pics/forecastTemp_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
+		<a href='./pics/forecastWind_0days.gif' ><img src='./pics/forecastWind_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
+		<a href='./pics/forecastPrecip_1days.gif' ><img src='./pics/forecastPrecip_1days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
 		<p>The images present on this page may be subject to copyright.</p>
 		<div style="margin: 5px">
 				{{.RssFeed}}
@@ -194,7 +224,7 @@
 	<footer >
 		<p style="float:left"> <a href="https://github.com/Solamil/marlen"><img src="/pics/git-icon.svg"></a></p>
 		<p style="font-size: x-small">Personal Home Page</p>
-		<p style="font-size: x-small">🇨🇿🌳Marlen</p>
+		<p style="font-size: x-small">🌳Marlen</p>
 	</footer>
 </body>
 </html>

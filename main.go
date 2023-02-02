@@ -74,7 +74,6 @@ var countryFlags = map[string]string{
 var indexTemplate *template.Template
 
 func main() {
-	http.HandleFunc("/style.css", file_handler) 
 	http.HandleFunc("/pics/git-icon.svg", file_handler)
 	http.HandleFunc("/pics/rain.webp", file_handler) 
 	http.HandleFunc("/pics/clouds.webp", file_handler) 
