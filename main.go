@@ -15,7 +15,7 @@ import (
 	"text/template"
 	"github.com/hashicorp/golang-lru/v2"
 	"github.com/beevik/etree"
-//	"os"
+	"os"
 )
 
 type cacheRecord struct {
@@ -46,7 +46,9 @@ type indexDisplay struct {
 	RssFeed string
 }
 const CACHESIZE int = 10000
-const HASHSIZE int = 16
+const MIN_SIZE_FILE_CACHE = 80
+var CACHE_DIR string = "cache"
+const HASHSIZE int = md5.Size
 var cache, _ = lru.New[[HASHSIZE]byte, cacheRecord](CACHESIZE)
 var WEB_DIR string = "web"
 var wttrInHolders = map[string]string{
@@ -89,7 +91,6 @@ func main() {
 	http.HandleFunc("/pics/mhcam1.webp", file_handler)
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
-	rss_feed("https://neovlivni.cz/feed/atom/")
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/", index_handler)
@@ -181,7 +182,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 					r.Header["X-Real-Ip"][0], r.Header["X-Real-Ip"][0])
 	}
 
-	rssFeed = rss_feed("https://neovlivni.cz/feed/atom/")
+	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
 		
 	var i indexDisplay
 	i.NameDay = nameDay 
@@ -208,9 +209,8 @@ func file_handler(w http.ResponseWriter, r *http.Request) {
 
 func get_daily_wttr_info(url string) string {
 	signature := fmt.Sprintf(`%s:%s`, url, "daily")
-	cacheSignature := hash(signature)
 	var answer string = ""
-	record, found := get(cacheSignature)	
+	record, found := get(signature)	
 	if found {
 		yearNow, monthNow, dayNow := time.Now().Date()	
 		year, month, day := record.expiry.Date()	
@@ -220,7 +220,8 @@ func get_daily_wttr_info(url string) string {
 		}
 	}
 	value := get_weather_info(url)
-	answer = store(cacheSignature, value)
+	answer = value
+	store(signature, value)
 	return answer
 }
 
@@ -236,10 +237,9 @@ func get_weather_info(url string) string {
 
 func get_forecast(url string) string {
 	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
-	cacheSignature := hash(signature)
 	var answer string = ""
 	var lastRecord string = ""	
-	if record, found := get(cacheSignature); found && record.value != "" {
+	if record, found := get(signature); found && record.value != "" {
 		now := time.Now()
 		d := record.expiry
 		d = d.Add(time.Hour * 6)
@@ -277,7 +277,8 @@ func get_forecast(url string) string {
 		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next2)
 	}
 	if len(value) > 0 {
-		answer = store(cacheSignature, value)
+		answer = value
+		store(signature, value)
 	} else {
 		answer = lastRecord
 	}
@@ -288,8 +289,7 @@ func get_forecast(url string) string {
 func get_holy_trinity(url string) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "trinity")
-	cacheSignature := hash(signature)
-	if record, found := get(cacheSignature); found && record.value != "" {
+	if record, found := get(signature); found && record.value != "" {
 		now := time.Now()
 		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
 		d := record.expiry
@@ -302,7 +302,8 @@ func get_holy_trinity(url string) string {
 	}
 	
 	if value := new_request(url); len(value) > 0 {
-		result = store(cacheSignature, value)
+		result = value
+		store(signature, result)
 	}
 	return result
 }
@@ -310,10 +311,9 @@ func get_holy_trinity(url string) string {
 func get_name_day(url string) string {
 
 	signature := fmt.Sprintf(`%s:%s`, url, "nameday")
-	cacheSignature := hash(signature)
 	var answer string = ""
 	
-	if record, found := get(cacheSignature); found && record.value != "" {
+	if record, found := get(signature); found && record.value != "" {
 		now := time.Now()
 		d := record.expiry
 		if d.Day() == now.Day() && d.Month() == now.Month() && d.Year() == now.Year() {
@@ -323,15 +323,16 @@ func get_name_day(url string) string {
 	}
 
 	if value := new_request(url); value != "" {
-		answer = store(cacheSignature,string(value))
+		answer = string(value)
+		store(signature,answer)
+		
 	}
 	return answer 
 }
-func rss_feed(url string) string {
+func rss_feed_neovlivni(url string) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
-	cacheSignature := hash(signature)
-	if record, found := get(cacheSignature); found && record.value != "" {
+	if record, found := get(signature); found && record.value != "" {
 		now := time.Now()
 		d := record.expiry
 		d = d.Add(time.Hour * 6)
@@ -372,7 +373,7 @@ func rss_feed(url string) string {
 
 	}
 	
-	result = store(cacheSignature, result)
+	store(signature, result)
 	return result
 }
 
@@ -407,13 +408,55 @@ func getHTMLOptionTag(value, symbol string, selected bool) string {
 	return tag
 }
 
-func store(signature [HASHSIZE]byte, value string) string {
-	cache.Add(signature, cacheRecord{value, time.Now()})
-	return value
+func store(signature, value string) string {
+	cacheSignature := hash(signature)
+	if len(value) >= MIN_SIZE_FILE_CACHE {
+		value = storeInFile(signature, value)
+	}
+	cache.Add(cacheSignature, cacheRecord{value, time.Now()})
+	return fmt.Sprintf("%x", cacheSignature) 
 } 
 
-func get(signature [HASHSIZE]byte) (cacheRecord, bool) {
-	record, found := cache.Get(signature)
+func storeInFile(signature, value string) string {
+	if _, err := os.Stat(CACHE_DIR); os.IsNotExist(err) {
+		err = os.Mkdir(CACHE_DIR, 0755)
+		if err != nil {
+			fmt.Printf("error %s", err)
+		}	
+	}
+	filename := fmt.Sprintf("file:%x.txt", hash(signature))
+	file, err := os.OpenFile(CACHE_DIR+"/"+filename, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Printf("error %s", err)
+	}
+	defer file.Close()
+	if _, err := file.WriteString(value); err != nil {
+		fmt.Printf("error %s", err)
+	}
+	return filename 
+}
+
+func readFile(filename string) string {
+	result, err := os.ReadFile(filename)	
+	if os.IsNotExist(err) {
+		return ""
+	}
+	if err != nil {
+		fmt.Printf("error %s", err)
+		return ""
+	}
+	return string(result)
+}
+
+func get(signature string) (cacheRecord, bool) {
+	cacheSignature := hash(signature)
+	record, found := cache.Get(cacheSignature);
+	if found && record.value != "" {
+		if strings.Compare(record.value, fmt.Sprintf("file:%x.txt", cacheSignature)) == 0 {
+			filename := fmt.Sprintf("%s/file:%x.txt", CACHE_DIR, cacheSignature)
+			record.value = readFile(filename)	
+		}
+	}
 	return record, found
 }
 
