@@ -83,6 +83,10 @@
 		<a href='./pics/forecastWind_0days.gif' ><img src='./pics/forecastWind_0days.webp' width=237 height=290 style="margin: 5px"></a>
 		<a href='./pics/forecastPrecip_1days.gif' ><img src='./pics/forecastPrecip_1days.webp' width=237 height=290 style="margin: 5px"></a>
 		<p>The images present on this page may be subject to copyright.</p>
+		<div style="margin: 5px">
+				{{.RssFeed}}
+		</div>
+
 		<script async="" src="./js/module-wttrin-widget.js"></script>
 		<script>
 			
@@ -176,6 +180,14 @@
 				weatherInput.placeholder = weatherInputDict[prefix]
 			}
 
+			var dateSpanList = document.getElementsByClassName("date")
+			for (var i = 0; i < dateSpanList.length; i++) {
+				console.log(dateSpanList[i].innerHTML)
+				time = dateSpanList[i].innerHTML
+				var d = new Date(time)
+				var date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(d)
+				dateSpanList[i].innerHTML = date_output
+			}
 		</script>
 
 	</main>
