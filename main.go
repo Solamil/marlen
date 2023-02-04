@@ -358,7 +358,7 @@ func rss_feed_neovlivni(url string) string {
 	root := doc.SelectElement("feed")
 	mainTitle := root.SelectElement("title").Text()
 	linkSite := root.SelectElement("link").SelectAttrValue("href", "")
-	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>", linkSite, mainTitle)
+	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>\n<ul>", linkSite, mainTitle)
 	for _, e := range root.SelectElements("entry") {
 		title := e.SelectElement("title").Text()
 		author := e.SelectElement("author")
@@ -372,7 +372,7 @@ func rss_feed_neovlivni(url string) string {
 		result = fmt.Sprintf("%s\n%s", result, line)
 
 	}
-	
+	result = fmt.Sprintf("%s\n</ul>", result)	
 	store(signature, result)
 	return result
 }
