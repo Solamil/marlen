@@ -368,7 +368,8 @@ func rss_feed_neovlivni(url string) string {
 		link := e.SelectElement("link").SelectAttrValue("href", "")
 //		t, _ := time.Parse(time.RFC3339, published)
 		date := fmt.Sprintf("<span class=\"date\">%s</span>", published)
-		line := fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\">%s ✏️%s 📜%s</a></li>",link, date, name, title)
+// 	✏️ &#9999;📜&#128220;
+		line := fmt.Sprintf(`<li><a href="%s" target="_blank">%s &#9999;%s &#128220;%s</a></li>`,link, date, name, title)
 		result = fmt.Sprintf("%s\n%s", result, line)
 
 	}

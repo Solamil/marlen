@@ -7,28 +7,40 @@ import (
 	"testing"
 	"time"
 	"os"
+	"crypto/md5"
 	"io/ioutil"
 )
 
 func TestCache(t *testing.T) {
-	const hashsize int = 16
+	const hashsize int = md5.Size
+	CACHE_DIR = "test_cache"
 	tests := []struct {
 		value string
-		expSignature [hashsize]byte
+		signature string 
+		expFound bool
 	}{
-		{"Test hash", [hashsize]byte{19, 151, 200, 224, 151, 66, 63, 32, 153, 210, 159, 199, 33, 67, 179, 230}},
+		{"Test hash", "TestCache", true},
+		{`Test hash kdsafk sdkfakj j kfdksfkfkdskfkajdfsk jdskafjk ksjdfakdsf
+		  dskfajksdfjakdfj dskafkdsjfkasdfk`, "TestCache1", true},
+		{"", "TestCache2", true},
 	}
 	if HASHSIZE != hashsize {
 		t.Errorf("Hash size is %d, but it is tested to %d.", HASHSIZE, hashsize)	
 	}
 	for _, test := range tests {
-		if got := hash(test.value); got != test.expSignature {
-			t.Errorf("at input '%s' expected '%b', but got '%s'", test.value, test.expSignature, got)
-		}
-		store(test.expSignature, test.value)
+		store(test.signature, test.value)
 
-		if got, found := get(test.expSignature); got.value != test.value && found {
-			t.Errorf("at input '%b' expected '%s', but got '%s'", test.expSignature, test.value, got.value)
+		if got, found := get(test.signature); got.value != test.value {
+			t.Errorf("Expected '%s', but got '%s'", test.value, got.value)
+			if found != test.expFound {
+				t.Errorf("Expected '%t', but got '%t'", test.expFound, found)
+			}
+		}
+		if len(test.value) >= MIN_SIZE_FILE_CACHE {
+			filename := fmt.Sprintf("%s/file:%x.txt", CACHE_DIR, hash(test.signature))
+			if err := os.Remove(filename); err != nil {
+				t.Errorf("error %s", err)
+			}
 		}
 	}
 }
@@ -89,6 +101,30 @@ func TestHolyTrinity(t *testing.T) {
 	if got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
+}
+
+func TestRssFeedNeovlivni(t *testing.T) {
+	var exp string = `<h3><a href="https://neovlivni.cz" target="_blank">Neovlivní – investigativní deník o vlivu a lidech</a></h3>
+<li><a href="https://neovlivni.cz/druhe-kolo-babis-vs-pavel-nerudova-vyzvala-k-podpore-generala/" target="_blank"><span class="date">2023-01-14T15:05:52Z</span> &#9999;-neo - &#128220;Druhé kolo: Babiš vs. Pavel. Nerudová vyzvala k podpoře generála</a></li>
+<li><a href="https://neovlivni.cz/sabina-slonkova-zbabeleho-a-neschopneho-prezidenta-nepotrebujeme/" target="_blank"><span class="date">2023-01-13T06:10:19Z</span> &#9999;Sabina Slonková &#128220;Sabina Slonková: Zbabělého a neschopného prezidenta nepotřebujeme</a></li>
+<li><a href="https://neovlivni.cz/klany-kolem-putina-jsou-jako-mafie-zalezi-na-tom-ktery-vyhraje/" target="_blank"><span class="date">2023-01-12T05:50:51Z</span> &#9999;Editor &#128220;Klany kolem Putina jsou jako mafie. Záleží na tom, který vyhraje</a></li>
+<li><a href="https://neovlivni.cz/ucetni-skladka-ci-nepodpora-co-v-kampani-nezaznelo-ale-presto-vyvolalo-vasne/" target="_blank"><span class="date">2023-01-11T06:50:02Z</span> &#9999;Pavel Vrabec &#128220;Účetní, skládka či nepodpora. Co v kampani nezaznělo, ale přesto vyvolalo vášně</a></li>
+<li><a href="https://neovlivni.cz/na-okraj-schuzky-s-macronem-co-maji-francouzi-na-babise/" target="_blank"><span class="date">2023-01-11T05:46:46Z</span> &#9999;Editor &#128220;Za kulisy schůzky s Macronem: Co mají Francouzi na Babiše</a></li>`
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/xml")
+		neoFile, err := os.Open("BwJLymVb_test.atom")
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer neoFile.Close()
+		byteWeather, _ := ioutil.ReadAll(neoFile)
+		w.Write(byteWeather)		
+	}))
+	got := rss_feed_neovlivni(ts.URL)
+	if got != exp {
+		t.Errorf("Expected '%s' but, got '%s'", exp, got)
+	}
+
 }
 
 func TestIndexHandler(t *testing.T) {
@@ -211,5 +247,20 @@ func TestNameDay(t *testing.T) {
 	defer ts.Close()
 	if got := get_name_day(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
+	}
+}
+func TestCleanUpCache(t *testing.T) {
+	CACHE_DIR = "test_cache"
+	dirRead, _ := os.Open(CACHE_DIR)
+	dirFiles, _ := dirRead.Readdir(0)
+	for index := range(dirFiles) {
+		file := dirFiles[index]
+		filename := file.Name()
+		if err := os.Remove(CACHE_DIR+"/"+filename); err != nil {
+			t.Errorf("error %s", err)
+		}
+	}
+	if err := os.Remove(CACHE_DIR+"/"); err != nil {
+		t.Errorf("error %s", err)
 	}
 }
