@@ -43,8 +43,11 @@ type indexDisplay struct {
 	WttrLink string
 	WttrSrc string
 	WttrInHolder string
+}
+type feedsDisplay struct {
 	RssFeed string
 }
+
 const CACHESIZE int = 10000
 const MIN_SIZE_FILE_CACHE = 80
 var CACHE_DIR string = "cache"
@@ -72,6 +75,7 @@ var countryFlags = map[string]string{
 // }
 
 var indexTemplate *template.Template
+var feedsTemplate *template.Template
 
 func main() {
 	http.HandleFunc("/pics/git-icon.svg", file_handler)
@@ -92,6 +96,7 @@ func main() {
 	http.HandleFunc("/cover.html", file_handler)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
+	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
 	http.ListenAndServe(":8901", nil)
 }
@@ -105,7 +110,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var forecastFirst string = ""
 	var forecastSecond string = ""
 	var otherInfo string = "🌐"
-	var rssFeed string = ""
 
 	if c, err := r.Cookie("place"); err == nil {
 		value := strings.Split(c.String(), "=")[1]
@@ -181,7 +185,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 					r.Header["X-Real-Ip"][0], r.Header["X-Real-Ip"][0])
 	}
 
-	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
 		
 	var i indexDisplay
 	i.NameDay = nameDay 
@@ -196,10 +199,18 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
-	i.RssFeed = rssFeed
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
+}
+
+func feeds_handler(w http.ResponseWriter, r *http.Request) {
+	var rssFeed string = ""
+	var i feedsDisplay
+	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
+	i.RssFeed = rssFeed
+	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
+	feedsTemplate.Execute(w, i)
 }
 
 func file_handler(w http.ResponseWriter, r *http.Request) {

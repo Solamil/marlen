@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Feeds</title>
+<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{	max-width:800px; margin: auto; background-color: #893531; color:beige;}
+a{	text-decoration:none; color:beige}
+ul li a:hover{	color: gray}
+h2{	text-align: center; text-decoration: underline;	}
+h3{	text-align: center; }
+p{ 	margin: 10px; }
+footer{	margin-top: 2em;
+	text-align: center;
+	color: beige;
+	border: solid;
+	border-color: beige;
+	border-width: 2px 0px 0px 0px;
+}
+.date{  color: lightblue;
+	font-size: small;
+	padding-right: 20px;
+	float: right;
+}
+</style>
+</head>
+<body style="background-color:#442244">
+
+	<div style="margin: 5px">
+			{{.RssFeed}}
+	</div>
+	<script>
+		var dateSpanList = document.getElementsByClassName("date")
+		for (var i = 0; i < dateSpanList.length; i++) {
+			console.log(dateSpanList[i].innerHTML)
+			time = dateSpanList[i].innerHTML
+			var d = new Date(time)
+			var date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(d)
+			dateSpanList[i].innerHTML = date_output
+		}
+	</script>
+</body>
