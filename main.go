@@ -436,12 +436,8 @@ func storeInFile(signature, value string) string {
 		}	
 	}
 	filename := fmt.Sprintf("file:%x.txt", hash(signature))
-	file, err := os.OpenFile(CACHE_DIR+"/"+filename, os.O_WRONLY|os.O_CREATE, 0644)
+	err := os.WriteFile(CACHE_DIR+"/"+filename, []byte(value), 0644)
 	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-	defer file.Close()
-	if _, err := file.WriteString(value); err != nil {
 		fmt.Printf("error %s", err)
 	}
 	return filename 
