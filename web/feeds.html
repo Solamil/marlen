@@ -2,8 +2,6 @@
 <html>
 <head>
 <title>Feeds</title>
-<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="./style.css" type="text/css" media="screen" />
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -33,12 +31,22 @@ footer{	margin-top: 2em;
 			{{.RssFeed}}
 	</div>
 	<script>
+		var lang = "cs-CZ"
+		if (document.cookie.length > 0) {
+			
+			var cookieList = document.cookie.split("; ")
+                        var cookieLang = cookieList.find(e => e.startsWith("lang"))
+
+			if (cookieLang != undefined) {
+			       lang = cookieLang.split("=")[1]
+			}
+		}
 		var dateSpanList = document.getElementsByClassName("date")
 		for (var i = 0; i < dateSpanList.length; i++) {
 			console.log(dateSpanList[i].innerHTML)
 			time = dateSpanList[i].innerHTML
 			var d = new Date(time)
-			var date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(d)
+			var date_output = new Intl.DateTimeFormat(lang, {weekday: "long", day:"numeric", month:"long"}).format(d)
 			dateSpanList[i].innerHTML = date_output
 		}
 	</script>
