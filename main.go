@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
+	"context"
 //	"html"
 //	"strconv"
 	"time"
@@ -390,20 +391,25 @@ func rss_feed_neovlivni(url string) string {
 
 func new_request(url string) string {
 	var answer string = ""
+	t := time.Now().Add(2 * time.Second)
+	ctx, cancel := context.WithDeadline(context.Background(), t)
+	defer cancel()
 	client := &http.Client{Timeout: 2 * time.Second}
-	reqm, _ := http.NewRequest("GET", url, nil)
-
+	reqm, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 	reqm.Header.Set("Content-Type", "text/html")
 	content, err := client.Do(reqm)
 
-	if err != nil || content.StatusCode >= http.StatusBadRequest {
+	if err != nil {
 		fmt.Println(err)
-		return ""
+		if content != nil {
+			fmt.Println("statusCode: ", content.StatusCode)
+		}
+		return answer 
 	}
 	value, err := ioutil.ReadAll(content.Body)
 	if err != nil {
 		fmt.Println(err)
-		return "" 
+		return answer 
 	}
 	answer = string(value)
 	return answer	
