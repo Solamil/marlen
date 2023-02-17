@@ -251,6 +251,26 @@ func TestNameDay(t *testing.T) {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
 }
+
+func TestBtcXmr(t *testing.T) {
+	var exp = `1<img src="./pics/bitcoin-icon.svg" loading=lazy> 2345.43$
+			      1<img src="./pics/monero-icon.svg" loading=lazy> 2345.43$`
+	
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, "2345.432132\n")
+	}))
+	defer ts.Close()
+	
+	if got := getBtcXmr(ts.URL); got != exp {
+		t.Errorf("Expected '%s' but, got '%s'", exp, got)
+	}
+//	try cache
+	if got := getBtcXmr(ts.URL); got != exp {
+		t.Errorf("Expected '%s' but, got '%s'", exp, got)
+	}
+}
+
 func TestCleanUpCache(t *testing.T) {
 	CACHE_DIR = "test_cache"
 	dirRead, _ := os.Open(CACHE_DIR)
