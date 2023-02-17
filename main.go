@@ -9,7 +9,7 @@ import (
 	"strings"
 	"context"
 //	"html"
-//	"strconv"
+	"strconv"
 	"time"
 	"os/exec"
 	"crypto/md5"
@@ -44,6 +44,7 @@ type indexDisplay struct {
 	WttrLink string
 	WttrSrc string
 	WttrInHolder string
+	CryptoCurrency string
 }
 type feedsDisplay struct {
 	RssFeed string
@@ -93,6 +94,8 @@ func main() {
 	http.HandleFunc("/pics/forecastPrecip_1days.webp", file_handler)
 	http.HandleFunc("/pics/forecastPrecip_1days.gif", file_handler)
 	http.HandleFunc("/pics/mhcam1.webp", file_handler)
+	http.HandleFunc("/pics/bitcoin-icon.svg", file_handler)
+	http.HandleFunc("/pics/monero-icon.svg", file_handler)
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
@@ -200,6 +203,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
+	i.CryptoCurrency = getBtcXmr("https://rate.sx")
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
@@ -340,6 +344,7 @@ func get_name_day(url string) string {
 	}
 	return answer 
 }
+
 func rss_feed_neovlivni(url string) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
@@ -385,6 +390,37 @@ func rss_feed_neovlivni(url string) string {
 
 	}
 	result = fmt.Sprintf("%s\n</ul>", result)	
+	store(signature, result)
+	return result
+}
+
+func getBtcXmr(url string) string {
+	var result string = ""
+	btcStr := getCryptoCurrency(url, "btc")
+	btc, _ := strconv.ParseFloat(btcStr, 64)
+	xmrStr := getCryptoCurrency(url, "xmr")
+	xmr, _ := strconv.ParseFloat(xmrStr, 64)
+	result = fmt.Sprintf(`1<img src="./pics/bitcoin-icon.svg" loading=lazy> %.2f$
+			      1<img src="./pics/monero-icon.svg" loading=lazy> %.2f$`,
+		      		btc, xmr)
+	return result
+}
+
+func getCryptoCurrency(url, code string) string {
+	var result string = ""
+	signature := fmt.Sprintf("%s:%s", url, code)
+	if record, found := get(signature); record.value != "" && found {
+		now := time.Now()
+		d := record.expiry
+		d = d.Add(time.Hour * 2)
+		result = record.value
+		if d.After(now) {
+			return result
+		}
+	}
+	url = fmt.Sprintf("%s/1%s", url, code)
+	resp := new_request(url)
+	result = strings.Split(resp, "\n")[0]
 	store(signature, result)
 	return result
 }
