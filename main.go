@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"encoding/json"
 	"io/ioutil"
 	"strings"
-	"context"
+//	"context"
 //	"html"
 	"strconv"
 	"time"
@@ -427,14 +428,22 @@ func getCryptoCurrency(url, code string) string {
 
 func new_request(url string) string {
 	var answer string = ""
-	t := time.Now().Add(2 * time.Second)
-	ctx, cancel := context.WithDeadline(context.Background(), t)
-	defer cancel()
-	client := &http.Client{Timeout: 2 * time.Second}
-	reqm, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+//	t := time.Now().Add(2 * time.Second)
+//	ctx, cancel := context.WithCancel(context.TODO())
+	client := &http.Client{
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+			Timeout:   2 * time.Second,
+			KeepAlive: 2 * time.Second,
+			}).Dial,
+		TLSHandshakeTimeout:   2 * time.Second,
+		ResponseHeaderTimeout: 2 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+		},
+	}
+	reqm, _ := http.NewRequest("GET", url, nil)
 	reqm.Header.Set("Content-Type", "text/html")
 	content, err := client.Do(reqm)
-
 	if err != nil {
 		fmt.Println(err)
 		if content != nil {
