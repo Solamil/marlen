@@ -48,6 +48,7 @@ type indexDisplay struct {
 	CryptoCurrency string
 }
 type feedsDisplay struct {
+	Bg string
 	RssFeed string
 }
 
@@ -212,8 +213,18 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	var rssFeed string = ""
+	var bg string = "442244"
 	var i feedsDisplay
-	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
+	var ctkUrl string = "https://www.ceskenoviny.cz/sluzby/rss"
+	ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5)
+	ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5)
+	ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5)
+	ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 2)
+	neovlivni := rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
+	render_feeds := fmt.Sprintf(`%s <br> %s <br> %s <br> %s <br> %s`, neovlivni, ctkCr, ctkSvet, ctkEko, ctkSport)
+	rssFeed = render_feeds
+//	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
+	i.Bg = bg
 	i.RssFeed = rssFeed
 	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
 	feedsTemplate.Execute(w, i)
@@ -422,6 +433,60 @@ func getCryptoCurrency(url, code string) string {
 	url = fmt.Sprintf("%s/1%s", url, code)
 	resp := new_request(url)
 	result = strings.Split(resp, "\n")[0]
+	store(signature, result)
+	return result
+}
+
+func rss_feed_ctk(url string, nTitles int) string {
+	var result string = ""
+	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
+	if record, found := get(signature); found && record.value != "" {
+		now := time.Now()
+		d := record.expiry
+		d = d.Add(time.Hour * 2)
+		result = record.value
+		if d.After(now) {
+			return result 
+		}
+	}
+	doc := etree.NewDocument()
+//	if err := doc.ReadFromFile("cr.rss"); err != nil {
+//		fmt.Println(err)		
+//		return ""
+//	}
+	resp := new_request(url)
+	if resp == "" {
+		return result
+	}
+	if err := doc.ReadFromString(resp); err != nil {
+		fmt.Println(err)		
+		return ""
+	}
+
+	root := doc.SelectElement("rss").SelectElement("channel")
+	mainTitle := root.SelectElement("title").Text()
+	linkSite := root.SelectElement("link").Text()
+	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>\n<ul>", linkSite, mainTitle)
+	if nTitles < 1 {
+		nTitles = 5
+	}
+	var size int = nTitles	
+	for i, e := range root.SelectElements("item") {
+		if i >= size {
+			break
+		}
+		title := e.SelectElement("title").Text()
+		published := e.SelectElement("pubDate").Text()
+		description := e.SelectElement("description").Text()
+		link := e.SelectElement("link").Text()
+//		t, _ := time.Parse(time.RFC3339, published)
+		date := fmt.Sprintf("<span class=\"date\">%s</span>", published)
+// 	✏️ &#9999;📜&#128220;
+		line := fmt.Sprintf(`<li><a href="%s" target="_blank">%s &#128220;%s 
+				</a><p>%s<p></li>`,link, date, title, description)
+		result = fmt.Sprintf("%s\n%s", result, line)
+	}
+	result = fmt.Sprintf("%s\n</ul>", result)	
 	store(signature, result)
 	return result
 }

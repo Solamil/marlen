@@ -5,8 +5,9 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{	max-width:800px; margin: auto; background-color: #893531; color:beige;}
+body{	max-width:800px; margin: auto; background-color: #442244; color:beige;}
 a{	text-decoration:none; color:beige}
+li{ 	margin: 5px; }
 ul li a:hover{	color: gray}
 h2{	text-align: center; text-decoration: underline;	}
 h3{	text-align: center; }
@@ -25,11 +26,10 @@ footer{	margin-top: 2em;
 }
 </style>
 </head>
-<body style="background-color:#442244">
+<body style="background-color:#{{.Bg}}">
 
-	<div style="margin: 5px">
-			{{.RssFeed}}
-	</div>
+	{{.RssFeed}}
+
 	<script>
 		var lang = "cs-CZ"
 		if (document.cookie.length > 0) {
@@ -43,7 +43,6 @@ footer{	margin-top: 2em;
 		}
 		var dateSpanList = document.getElementsByClassName("date")
 		for (var i = 0; i < dateSpanList.length; i++) {
-			console.log(dateSpanList[i].innerHTML)
 			time = dateSpanList[i].innerHTML
 			var d = new Date(time)
 			var date_output = new Intl.DateTimeFormat(lang, {weekday: "long", day:"numeric", month:"long"}).format(d)
