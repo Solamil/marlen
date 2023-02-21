@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{	max-width:800px; margin: auto; background-color: #442244; color:beige;}
-a{	text-decoration:none; color:beige}
+a{	text-decoration:none; color:beige }
 li{ 	margin: 5px; }
 ul li a:hover{	color: gray}
 h2{	text-align: center; text-decoration: underline;	}
@@ -19,6 +19,7 @@ footer{	margin-top: 2em;
 	border-color: beige;
 	border-width: 2px 0px 0px 0px;
 }
+.ctk{	color: gold; }
 .date{  color: lightblue;
 	font-size: small;
 	padding-right: 20px;
@@ -27,7 +28,7 @@ footer{	margin-top: 2em;
 </style>
 </head>
 <body style="background-color:#{{.Bg}}">
-
+	<p><a href="./index.html">🏠</a></p>
 	{{.RssFeed}}
 
 	<script>
@@ -49,4 +50,5 @@ footer{	margin-top: 2em;
 			dateSpanList[i].innerHTML = date_output
 		}
 	</script>
+	<p><a href="./index.html">🏠</a></p>
 </body>

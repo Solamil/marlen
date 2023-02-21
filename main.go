@@ -216,12 +216,12 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	var bg string = "442244"
 	var i feedsDisplay
 	var ctkUrl string = "https://www.ceskenoviny.cz/sluzby/rss"
-	ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5)
-	ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5)
-	ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5)
-	ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 2)
+	ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5, true)
+	ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5, true)
+	ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true)
+	ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 3, false)
 	neovlivni := rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
-	render_feeds := fmt.Sprintf(`%s <br> %s <br> %s <br> %s <br> %s`, neovlivni, ctkCr, ctkSvet, ctkEko, ctkSport)
+	render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr> %s <br><hr> %s <br><hr> %s`, neovlivni, ctkCr, ctkSvet, ctkEko, ctkSport)
 	rssFeed = render_feeds
 //	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
 	i.Bg = bg
@@ -437,7 +437,7 @@ func getCryptoCurrency(url, code string) string {
 	return result
 }
 
-func rss_feed_ctk(url string, nTitles int) string {
+func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
 	if record, found := get(signature); found && record.value != "" {
@@ -466,8 +466,8 @@ func rss_feed_ctk(url string, nTitles int) string {
 	root := doc.SelectElement("rss").SelectElement("channel")
 	mainTitle := root.SelectElement("title").Text()
 	linkSite := root.SelectElement("link").Text()
-	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>\n<ul>", linkSite, mainTitle)
-	if nTitles < 1 {
+	result = fmt.Sprintf("<div>\n<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>\n<ul>", linkSite, mainTitle)
+	if nTitles < 1 || nTitles > 100 {
 		nTitles = 5
 	}
 	var size int = nTitles	
@@ -477,16 +477,22 @@ func rss_feed_ctk(url string, nTitles int) string {
 		}
 		title := e.SelectElement("title").Text()
 		published := e.SelectElement("pubDate").Text()
-		description := e.SelectElement("description").Text()
 		link := e.SelectElement("link").Text()
 //		t, _ := time.Parse(time.RFC3339, published)
 		date := fmt.Sprintf("<span class=\"date\">%s</span>", published)
 // 	✏️ &#9999;📜&#128220;
-		line := fmt.Sprintf(`<li><a href="%s" target="_blank">%s &#128220;%s 
-				</a><p>%s<p></li>`,link, date, title, description)
+		var line string = ""
+		if showDescription {
+			description := e.SelectElement("description").Text()
+			line = fmt.Sprintf(`<li><h4><a href="%s" target="_blank" class="ctk">%s &#128220;%s 
+					</a></h4><p>%s<p></li>`,link, date, title, description)
+		} else {
+			line = fmt.Sprintf(`<li><h4><a href="%s" target="_blank" class="ctk">%s &#128220;%s 
+					</a></h4></li>`,link, date, title)
+		}
 		result = fmt.Sprintf("%s\n%s", result, line)
 	}
-	result = fmt.Sprintf("%s\n</ul>", result)	
+	result = fmt.Sprintf("%s\n</ul></div>", result)	
 	store(signature, result)
 	return result
 }
