@@ -1,0 +1,14 @@
+<div>
+<h3><a href="https://www.ceskenoviny.cz" target="_blank">Zprávy z ČR</a></h3>
+<ul>
+<li><h4><a href="https://www.ceskenoviny.cz/zpravy/k-predvidatelnosti-chodu-snemovny-by-prispelo-omezeni-obstrukci-zni-z-koalice/2328513?utm_source=rss&utm_medium=feed" target="_blank" class="ctk"><span class="date">Mon, 20 Feb 2023 12:48:00 +0100</span> &#128220;K předvídatelnosti chodu Sněmovny by přispělo omezení obstrukcí, zní z koalice
+                                        </a></h4></li>
+<li><h4><a href="https://www.ceskenoviny.cz/zpravy/zvoleny-prezident-pavel-bude-v-tydnu-jednat-s-jureckou-a-rychetskym/2328329?utm_source=rss&utm_medium=feed" target="_blank" class="ctk"><span class="date">Mon, 20 Feb 2023 11:51:00 +0100</span> &#128220;Zvolený prezident Pavel bude v týdnu jednat s Jurečkou a Rychetským
+                                        </a></h4></li>
+<li><h4><a href="https://www.ceskenoviny.cz/zpravy/policie-zadrzela-dva-muze-ktere-obvinila-z-unosu-a-smrti-mladeho-muze/2328464?utm_source=rss&utm_medium=feed" target="_blank" class="ctk"><span class="date">Mon, 20 Feb 2023 11:34:00 +0100</span> &#128220;Policie zadržela dva muže, které obvinila z únosu a smrti mladého muže
+                                        </a></h4></li>
+<li><h4><a href="https://www.ceskenoviny.cz/zpravy/nejvyssi-spravni-soud-zrusil-klicove-pasaze-rozsudku-o-klimaticke-zalobe/2328478?utm_source=rss&utm_medium=feed" target="_blank" class="ctk"><span class="date">Mon, 20 Feb 2023 11:50:00 +0100</span> &#128220;Nejvyšší správní soud zrušil klíčové pasáže rozsudku o klimatické žalobě
+                                        </a></h4></li>
+<li><h4><a href="https://www.ceskenoviny.cz/zpravy/ridici-ktery-u-kunovic-usmrtil-dva-silnicare-navrhl-zalobce-tri-roky-vezeni/2328481?utm_source=rss&utm_medium=feed" target="_blank" class="ctk"><span class="date">Mon, 20 Feb 2023 11:54:00 +0100</span> &#128220;Řidiči, který u Kunovic usmrtil dva silničáře, navrhl žalobce tři roky vězení
+                                        </a></h4></li>
+</ul></div>

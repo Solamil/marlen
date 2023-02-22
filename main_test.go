@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http/httptest"
 	"testing"
+	"strings"
 	"time"
 	"os"
 	"crypto/md5"
@@ -268,6 +269,42 @@ func TestBtcXmr(t *testing.T) {
 //	try cache
 	if got := getBtcXmr(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
+	}
+}
+
+func TestRssCtk(t *testing.T) {
+	var exp string = ""
+	tests := []struct {
+		file string
+		nTitles int
+		showDescription bool 
+	}{
+		{"ctk_test.txt", -1, true},
+		{"ctk_test1.txt", 101, false},
+	}
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		ctkRssFile, err := os.Open("cr_test.rss")
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+		defer ctkRssFile.Close()
+		byteRss, _ := ioutil.ReadAll(ctkRssFile)
+		w.Write(byteRss)		
+	}))
+	defer ts.Close()
+
+	for _, test := range tests {
+		testFile, err := os.ReadFile(test.file)
+		if err != nil {
+			t.Errorf("Error: %s", err)	
+		}
+		exp = strings.TrimSuffix(string(testFile), "\n")
+		got := rss_feed_ctk(ts.URL, test.nTitles, test.showDescription)
+		if strings.Compare(got, exp) == 0 {
+			t.Errorf("Expected '%s' but, got '%s'", exp, got)
+		}
 	}
 }
 
