@@ -46,7 +46,7 @@ footer{	margin-top: 2em;
 		for (var i = 0; i < dateSpanList.length; i++) {
 			time = dateSpanList[i].innerHTML
 			var d = new Date(time)
-			var date_output = new Intl.DateTimeFormat(lang, {weekday: "long", day:"numeric", month:"long"}).format(d)
+			var date_output = new Intl.DateTimeFormat(lang, {weekday: "long", day:"numeric", month:"long", hour: "numeric", minute: "numeric"}).format(d)
 			dateSpanList[i].innerHTML = date_output
 		}
 	</script>
