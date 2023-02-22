@@ -487,8 +487,8 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 			line = fmt.Sprintf(`<li><h4><a href="%s" target="_blank" class="ctk">%s &#128220;%s 
 					</a></h4><p>%s<p></li>`,link, date, title, description)
 		} else {
-			line = fmt.Sprintf(`<li><h4><a href="%s" target="_blank" class="ctk">%s &#128220;%s 
-					</a></h4></li>`,link, date, title)
+			line = fmt.Sprintf(`<li><a href="%s" target="_blank">%s &#128220;%s 
+					</a></li>`,link, date, title)
 		}
 		result = fmt.Sprintf("%s\n%s", result, line)
 	}
