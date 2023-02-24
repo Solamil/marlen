@@ -125,7 +125,11 @@ func TestRssFeedNeovlivni(t *testing.T) {
 	if strings.Compare(got, exp) != 0 {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
-
+	// cached
+	got = rss_feed_neovlivni(ts.URL)
+	if strings.Compare(got, exp) != 0 {
+		t.Errorf("Expected '%s' but, got '%s'", exp, got)
+	}
 }
 
 func TestIndexHandler(t *testing.T) {
@@ -300,6 +304,11 @@ func TestRssCtk(t *testing.T) {
 		}
 		exp = strings.TrimSuffix(string(testFile), "\n")
 		got := rss_feed_ctk(ts.URL, test.nTitles, test.showDescription)
+		if strings.Compare(got, exp) != 0 {
+			t.Errorf("Expected '%s' but, got '%s' '%t'", exp, got, test.showDescription)
+		}
+		//cached
+		got = rss_feed_ctk(ts.URL, test.nTitles, test.showDescription)
 		if strings.Compare(got, exp) != 0 {
 			t.Errorf("Expected '%s' but, got '%s' '%t'", exp, got, test.showDescription)
 		}
