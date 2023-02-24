@@ -484,11 +484,13 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 		var line string = ""
 		if showDescription {
 			description := e.SelectElement("description").Text()
-			line = fmt.Sprintf(`<li><h4><a href="%s" target="_blank" class="ctk">%s &#128220;%s 
-					</a></h4><p>%s<p></li>`,link, date, title, description)
+			line = fmt.Sprintf("<li><h4><a href=\"%s\" target=\"_blank\" class=\"ctk\">%s &#128220;%s"+
+				"</a></h4>\n"+
+				"<p>%s<p>\n"+
+				"</li>",link, date, title, description)
 		} else {
-			line = fmt.Sprintf(`<li><a href="%s" target="_blank">%s &#128220;%s 
-					</a></li>`,link, date, title)
+			line = fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\">%s &#128220;%s</a>\n"+
+				"</li>",link, date, title)
 		}
 		result = fmt.Sprintf("%s\n%s", result, line)
 	}

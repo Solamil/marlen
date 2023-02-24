@@ -279,31 +279,30 @@ func TestRssCtk(t *testing.T) {
 		nTitles int
 		showDescription bool 
 	}{
-		{"ctk_test.txt", -1, true},
 		{"ctk_test1.txt", 101, false},
+		{"ctk_test.txt", -1, true},
 	}
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		ctkRssFile, err := os.Open("cr_test.rss")
-		if err != nil {
-			t.Errorf("Error: %s", err)
-		}
-		defer ctkRssFile.Close()
-		byteRss, _ := ioutil.ReadAll(ctkRssFile)
-		w.Write(byteRss)		
-	}))
-	defer ts.Close()
-
 	for _, test := range tests {
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/xml")
+			ctkRssFile, err := os.Open("cr_test.rss")
+			if err != nil {
+				t.Errorf("Error: %s", err)
+			}
+			defer ctkRssFile.Close()
+			byteRss, _ := ioutil.ReadAll(ctkRssFile)
+			w.Write(byteRss)		
+		}))
+		defer ts.Close()
 		testFile, err := os.ReadFile(test.file)
 		if err != nil {
 			t.Errorf("Error: %s", err)	
 		}
 		exp = strings.TrimSuffix(string(testFile), "\n")
 		got := rss_feed_ctk(ts.URL, test.nTitles, test.showDescription)
-		if strings.Compare(got, exp) == 0 {
-			t.Errorf("Expected '%s' but, got '%s'", exp, got)
+		if strings.Compare(got, exp) != 0 {
+			t.Errorf("Expected '%s' but, got '%s' '%t'", exp, got, test.showDescription)
 		}
 	}
 }
