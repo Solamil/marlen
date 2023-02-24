@@ -105,17 +105,10 @@ func TestHolyTrinity(t *testing.T) {
 }
 
 func TestRssFeedNeovlivni(t *testing.T) {
-	var exp string = `<h3><a href="https://neovlivni.cz" target="_blank">Neovlivní – investigativní deník o vlivu a lidech</a></h3>
-<ul>
-<li><a href="https://neovlivni.cz/druhe-kolo-babis-vs-pavel-nerudova-vyzvala-k-podpore-generala/" target="_blank"><span class="date">2023-01-14T15:05:52Z</span> &#9999;-neo - &#128220;Druhé kolo: Babiš vs. Pavel. Nerudová vyzvala k podpoře generála</a></li>
-<li><a href="https://neovlivni.cz/sabina-slonkova-zbabeleho-a-neschopneho-prezidenta-nepotrebujeme/" target="_blank"><span class="date">2023-01-13T06:10:19Z</span> &#9999;Sabina Slonková &#128220;Sabina Slonková: Zbabělého a neschopného prezidenta nepotřebujeme</a></li>
-<li><a href="https://neovlivni.cz/klany-kolem-putina-jsou-jako-mafie-zalezi-na-tom-ktery-vyhraje/" target="_blank"><span class="date">2023-01-12T05:50:51Z</span> &#9999;Editor &#128220;Klany kolem Putina jsou jako mafie. Záleží na tom, který vyhraje</a></li>
-<li><a href="https://neovlivni.cz/ucetni-skladka-ci-nepodpora-co-v-kampani-nezaznelo-ale-presto-vyvolalo-vasne/" target="_blank"><span class="date">2023-01-11T06:50:02Z</span> &#9999;Pavel Vrabec &#128220;Účetní, skládka či nepodpora. Co v kampani nezaznělo, ale přesto vyvolalo vášně</a></li>
-<li><a href="https://neovlivni.cz/na-okraj-schuzky-s-macronem-co-maji-francouzi-na-babise/" target="_blank"><span class="date">2023-01-11T05:46:46Z</span> &#9999;Editor &#128220;Za kulisy schůzky s Macronem: Co mají Francouzi na Babiše</a></li>
-</ul>`
+	var exp string = ""
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/xml")
-		neoFile, err := os.Open("BwJLymVb_test.atom")
+		neoFile, err := os.Open("neovlivni_test.atom")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -123,8 +116,13 @@ func TestRssFeedNeovlivni(t *testing.T) {
 		byteWeather, _ := ioutil.ReadAll(neoFile)
 		w.Write(byteWeather)		
 	}))
+	testFile, err := os.ReadFile("neovlivni_test.txt")
+	if err != nil {
+		t.Errorf("Error: %s", err)	
+	}
+	exp = strings.TrimSuffix(string(testFile), "\n")
 	got := rss_feed_neovlivni(ts.URL)
-	if got != exp {
+	if strings.Compare(got, exp) != 0 {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
 
@@ -282,6 +280,7 @@ func TestRssCtk(t *testing.T) {
 		{"ctk_test1.txt", 101, false},
 		{"ctk_test.txt", -1, true},
 	}
+
 
 	for _, test := range tests {
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
