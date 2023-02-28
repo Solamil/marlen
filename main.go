@@ -100,6 +100,7 @@ func main() {
 	http.HandleFunc("/pics/monero-icon.svg", file_handler)
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
+	http.HandleFunc("/f1-schedule.txt", file_handler)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
