@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Traffic</title>
+<!--<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />-->
+<!--<link rel="stylesheet" href="./style.css" type="text/css" media="screen" /> -->
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{	max-width:800px; margin: auto; background-color: #004677; color:beige;}
+a{	text-decoration:none; color:beige}
+img{ 	margin-bottom: 60px;
+}
+h2{	text-align: center; text-decoration: underline;	}
+h3{	text-align: center; }
+hr{ color: beige }
+p{ 	margin: 10px; }
+</style>
+</head>
+<body style="background-color:#{{.Bg}}">
+
+	<p><a href="./index.html">🏠</a></p>
+	<h3><a href="https://dopravniinfo.cz/">Dopravní informace - silnice I/35</a></h3>
+	<hr>
+
+	<main  style="margin-top: 20px;">
+		
+		<h4>Paceřák, směr Praha.</h4>
+		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' >
+			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' loading=lazy>
+		</a>
+		<h4>Paceřák, směr Liberec.</h4>
+ 		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' >
+			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' loading=lazy>
+		</a>
+		<h4>Sjezd na Jablonec a výjezd z Jablonce na Prahu, směr Liberec.</h4>
+		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' >
+			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' loading=lazy>
+		</a>
+		<h4>Výjezd od Jablonce, směr Praha.</h4>
+		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' >
+			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' loading=lazy>
+		</a>
+		<h4>Stoupání za výjezdem od Jablonce, směr Liberec.</h4>
+		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' >
+			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' loading=lazy>
+		</a>
+		<p>⚠️The images present on this page may be subject to copyright.</p>
+		<p>Zdroj: <a href="https://dopravniinfo.cz/">dopravniinfo.cz</a>
+
+	</main>
+	<hr>	
+	<p><a href="./index.html">🏠</a></p>
+</body>
+</html>
