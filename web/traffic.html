@@ -9,12 +9,18 @@
 <style>
 body{	max-width:800px; margin: auto; background-color: #004677; color:beige;}
 a{	text-decoration:none; color:beige}
-img{ 	margin-bottom: 60px;
+img{ 	width: 370px;
+	height: 220px;
 }
 h2{	text-align: center; text-decoration: underline;	}
 h3{	text-align: center; }
-hr{ color: beige }
+hr{ 	color: gold; }
 p{ 	margin: 10px; }
+div{	
+	margin: 10px;
+	display: inline-block;
+	width:370px;
+}
 </style>
 </head>
 <body style="background-color:#{{.Bg}}">
@@ -24,27 +30,53 @@ p{ 	margin: 10px; }
 	<hr>
 
 	<main  style="margin-top: 20px;">
+		<div>
+			<h4>Paceřák, směr Liberec.</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' loading=lazy>
+			</a>
+		</div>	
+
+		<div>
+			<h4>Paceřák, směr Praha.</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' loading=lazy>
+			</a>
+		</div>	
+
+		<div>
+			<h4>Sjezd na Jablonec, směr Liberec.</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' loading=lazy>
+			</a>
+		</div>	
 		
-		<h4>Paceřák, směr Praha.</h4>
-		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' >
-			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' loading=lazy>
-		</a>
-		<h4>Paceřák, směr Liberec.</h4>
- 		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' >
-			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' loading=lazy>
-		</a>
-		<h4>Sjezd na Jablonec a výjezd z Jablonce na Prahu, směr Liberec.</h4>
-		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' >
-			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' loading=lazy>
-		</a>
-		<h4>Výjezd od Jablonce, směr Praha.</h4>
-		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' >
-			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' loading=lazy>
-		</a>
-		<h4>Stoupání za výjezdem od Jablonce, směr Liberec.</h4>
-		<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' >
-			<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' loading=lazy>
-		</a>
+		<div>
+			<h4>Výjezd od Jablonce, směr Praha.</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' loading=lazy>
+			</a>
+		</div>
+
+		<div style="display: block;">
+			<h4>Stoupání za výjezdem od Jablonce, směr Liberec.</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' loading=lazy>
+			</a>
+		</div>
+
+		<div>
+			<h4>Směr Liberec</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2941&rnd=BbPXfKrg' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2941&rnd=BbPXfKrg' loading=lazy>
+			</a>
+		</div>
+		<div>
+			<h4>Směr Praha</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2942&rnd=BbPXfKrg' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2942&rnd=BbPXfKrg' loading=lazy>
+			</a>
+		</div>
 		<p>⚠️The images present on this page may be subject to copyright.</p>
 		<p>Zdroj: <a href="https://dopravniinfo.cz/">dopravniinfo.cz</a>
 
