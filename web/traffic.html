@@ -11,6 +11,7 @@ body{	max-width:800px; margin: auto; background-color: #004677; color:beige;}
 a{	text-decoration:none; color:beige}
 img{ 	width: 370px;
 	height: 220px;
+	border: 2px solid white;
 }
 h2{	text-align: center; text-decoration: underline;	}
 h3{	text-align: center; }
@@ -26,55 +27,94 @@ div{
 <body style="background-color:#{{.Bg}}">
 
 	<p><a href="./index.html">🏠</a></p>
-	<h3><a href="https://dopravniinfo.cz/">Dopravní informace - silnice I/35</a></h3>
+	<h3><a href="https://dopravniinfo.cz/">Dopravní informace</a></h3>
 	<hr>
 
 	<main  style="margin-top: 20px;">
 		<div>
-			<h4>Paceřák, směr Liberec.</h4>
+			<h4>Most přes řeku Jizeru</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3986&rnd=zJDg3Mbq' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3986&rnd=zJDg3Mbq' loading=lazy>
+			</a>
+		</div>
+		<h3>I/35, Turnov - Liberec</h3>
+		<hr>
+		<div>
+			<h4>40,29 km, směr Chrastava</h4>
+			<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' >
+				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 40,29 km, směr Chrastava">
+			</a>
+		</div>
+		<div>
+			<h4>40,44 km, směr Praha</h4>
+			<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' >
+				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 40,44 km, směr Praha">
+			</a>
+		</div>
+
+		<div>
+			<h4>Paceřák, směr Chrastava.</h4>
 			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' >
-				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' loading=lazy>
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3007' loading=lazy alt="Kamera - Paceřák, směr Chrastava.">
 			</a>
 		</div>	
 
 		<div>
 			<h4>Paceřák, směr Praha.</h4>
 			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' >
-				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' loading=lazy>
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3008' loading=lazy alt="Kamera - Paceřák, směr Praha.">
 			</a>
 		</div>	
 
 		<div>
-			<h4>Sjezd na Jablonec, směr Liberec.</h4>
+			<h4>Sjezd na Jablonec, směr Chrastava.</h4>
 			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' >
-				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' loading=lazy>
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3005' loading=lazy alt="Kamera - Sjezd na Jablonec, směr Chrastava.">
 			</a>
 		</div>	
 		
 		<div>
 			<h4>Výjezd od Jablonce, směr Praha.</h4>
 			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' >
-				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' loading=lazy>
-			</a>
-		</div>
-
-		<div style="display: block;">
-			<h4>Stoupání za výjezdem od Jablonce, směr Liberec.</h4>
-			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' >
-				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' loading=lazy>
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3006' loading=lazy alt="Kamera - Výjezd od Jablonce, směr Praha.">
 			</a>
 		</div>
 
 		<div>
-			<h4>Směr Liberec</h4>
+			<h4>Stoupání za výjezdem od Jablonce, směr Chrastava.</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3003' loading=lazy alt="Kamera - Stoupání za výjezdem od Jablonce, směr Chrastava.">
+			</a>
+		</div>
+		<div>
+			<h4>Před sjezdem na Jablonec, směr Praha.</h4>
+			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3954&rnd=jbgY4JtP' >
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=3954' loading=lazy alt="Kamera - Před sjezdem na Jablonec, směr Praha.">
+			</a>
+		</div>
+
+		<div>
+			<h4>Směr Chrastava</h4>
 			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2941&rnd=BbPXfKrg' >
-				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2941&rnd=BbPXfKrg' loading=lazy>
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2941' loading=lazy alt="Kamera - Směr Chrastava">
 			</a>
 		</div>
 		<div>
 			<h4>Směr Praha</h4>
 			<a href='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2942&rnd=BbPXfKrg' >
-				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2942&rnd=BbPXfKrg' loading=lazy>
+				<img src='https://api.dopravniinfo.cz/CameraImage.ashx?camera=2942' loading=lazy alt="Kamera - Směr Praha">
+			</a>
+		</div>
+		<div>
+			<h4>26,8 km, směr Chrastava</h4>
+			<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=257' >
+				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=257' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 26,8 km, směr Chrastava">
+			</a>
+		</div>
+		<div>
+			<h4>27,17 km, směr Praha</h4>
+			<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=309' >
+				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=309' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 27,17 km, směr Praha">
 			</a>
 		</div>
 		<p>⚠️The images present on this page may be subject to copyright.</p>
