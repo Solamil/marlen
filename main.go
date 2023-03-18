@@ -82,7 +82,6 @@ var indexTemplate *template.Template
 var feedsTemplate *template.Template
 
 func main() {
-	http.HandleFunc("/pics/git-icon.svg", file_handler)
 	http.HandleFunc("/pics/rain.webp", file_handler) 
 	http.HandleFunc("/pics/clouds.webp", file_handler) 
 	http.HandleFunc("/pics/rain.gif", file_handler) 
@@ -96,8 +95,6 @@ func main() {
 	http.HandleFunc("/pics/forecastPrecip_1days.webp", file_handler)
 	http.HandleFunc("/pics/forecastPrecip_1days.gif", file_handler)
 	http.HandleFunc("/pics/mhcam1.webp", file_handler)
-	http.HandleFunc("/pics/bitcoin-icon.svg", file_handler)
-	http.HandleFunc("/pics/monero-icon.svg", file_handler)
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
 	http.HandleFunc("/f1-schedule.txt", file_handler)
@@ -415,8 +412,8 @@ func getBtcXmr(url string) string {
 	btc, _ := strconv.ParseFloat(btcStr, 64)
 	xmrStr := getCryptoCurrency(url, "xmr")
 	xmr, _ := strconv.ParseFloat(xmrStr, 64)
-	result = fmt.Sprintf(`1<img src="./pics/bitcoin-icon.svg" loading=lazy> %.2f$
-			      1<img src="./pics/monero-icon.svg" loading=lazy> %.2f$`,
+	result = fmt.Sprintf(`1<b style="color: gold;">BTC</b> %.2f$
+			      1<b style="color: #999;">XMR</b> %.2f$`,
 		      		btc, xmr)
 	return result
 }
