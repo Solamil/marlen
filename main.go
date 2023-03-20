@@ -133,6 +133,13 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	if c, err := r.Cookie("bgColor"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		bg = value	
+	} else if err != nil {
+		fmt.Println(err)
+	}
+
 	q, _ := url.PathUnescape(r.URL.RawQuery)
 	if len(q) != 0 {
 		m, err := url.ParseQuery(q)
