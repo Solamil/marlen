@@ -22,6 +22,9 @@ input{	margin: 0px;
 	outline: none;
 	color:beige
 }
+img{ 	border: 2px solid beige;
+	border-radius: 2px;
+}
 h2{	text-align: center; text-decoration: underline;	}
 h3{	text-align: center; }
 p{ 	margin: 10px; }
@@ -96,7 +99,7 @@ footer{	margin-top: 2em;
 		</div>
 		<div>
 			<div id="wttr-in-module" style="display: inline-block">
-				<a href='{{.WttrLink}}' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='{{.WttrSrc}}' loading=lazy alt="Current weather in"></a>
+				<a href='{{.WttrLink}}' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='{{.WttrSrc}}' loading=lazy style="border: 0px" alt="Current weather in"></a>
 				<form id="weather-form">
 
 					<button id="weather-btn-default" type="button" style="font-size: 16px;">🏠</button>
@@ -120,9 +123,9 @@ footer{	margin-top: 2em;
 		<div style="display: inline-block; margin: 5px;">
 			<a href="./traffic.html">
 				<p>40,29 km, směr Chrastava</p>
-				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' loading=lazy style="height: 90px;" alt="Tabule 40,29 km, směr Chrastava">
+				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' loading=lazy style="height: 90px; border: 0px;" alt="Tabule 40,29 km, směr Chrastava">
 				<p>40,44 km, směr Praha</p>
-				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' loading=lazy style="height: 90px;" alt="Tabule 40,44 km, směr Praha">
+				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' loading=lazy style="height: 90px; border: 0px;" alt="Tabule 40,44 km, směr Praha">
 			</a>
 		</div>
 		<!--<a href='./traffic.html' ><img src='./pics/CameraImage3008.webp' loading=lazy width=400 height=220 style="margin: 5px" alt="Dopravní Informace"></a>-->
