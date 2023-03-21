@@ -412,8 +412,8 @@ func getBtcXmr(url string) string {
 	btc, _ := strconv.ParseFloat(btcStr, 64)
 	xmrStr := getCryptoCurrency(url, "xmr")
 	xmr, _ := strconv.ParseFloat(xmrStr, 64)
-	result = fmt.Sprintf(`1<b style="color: gold;">BTC</b> %.2f$
-			      1<b style="color: #999;">XMR</b> %.2f$`,
+	result = fmt.Sprintf("1<b style=\"color: gold;\">BTC</b> %.2f$"+
+			      "1<b style=\"color: #999;\">XMR</b> %.2f$",
 		      		btc, xmr)
 	return result
 }

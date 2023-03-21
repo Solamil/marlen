@@ -256,8 +256,8 @@ func TestNameDay(t *testing.T) {
 }
 
 func TestBtcXmr(t *testing.T) {
-	var exp = `1<img src="./pics/bitcoin-icon.svg" loading=lazy> 2345.43$
-			      1<img src="./pics/monero-icon.svg" loading=lazy> 2345.43$`
+	var exp = "1<b style=\"color: gold;\">BTC</b> 2345.43$"+
+		  "1<b style=\"color: #999;\">XMR</b> 2345.43$"
 	
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
