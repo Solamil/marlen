@@ -4,7 +4,7 @@ name: Test PR
 on:
   # Triggers the workflow on push to features/** (including merged PRs)
   push:
-    branches: [ features/** cosmetic ]
+    branches: [ features/**, cosmetic ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
     - name: Updating webserver.
       uses: appleboy/ssh-action@master
       env:
-        BRANCH : ${{ github.ref_name }}
+        BRANCH: ${{ github.ref_name }}
       with:
         host: michalkukla.xyz 
         username: marlen
