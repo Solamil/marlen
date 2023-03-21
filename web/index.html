@@ -57,7 +57,7 @@ footer{	margin-top: 2em;
 			<span>🏠</span>
 			<input type="text" name="location" id="location_input" value="{{.Location}}" 
 				autocomplete=off >
-			<span>🎨</span>
+			<span><a href="https://www.color-hex.com/" target="_blank">🎨</a></span>
 			<input type="text" name="bg" id="background" value="{{.Bg}}" 
 				autocomplete=off style="width:60px" >
 			<span id="relevant"></span>
@@ -196,6 +196,9 @@ footer{	margin-top: 2em;
 
 				}
 			}
+			document.getElementById("background").oninput = function() {
+				document.getElementsByTagName("body")[0].style.backgroundColor = "#"+this.value
+			}
 
 
 			formatSelect.onchange = function() {
@@ -229,7 +232,7 @@ footer{	margin-top: 2em;
 	</main>
 	<footer style="font-size: x-small">
 		<p>Personal Home Page</p>
-		<p>🌳Marlen, <a href="https://github.com/Solamil/marlen" style="text-decoration: underline">Github</a>
+		<p>🌳Marlen, <a href="https://github.com/Solamil/marlen" style="text-decoration: underline" target="_blank">Github</a>
 		</p>
 	</footer>
 </body>
