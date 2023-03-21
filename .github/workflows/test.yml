@@ -2,8 +2,8 @@ name: Test PR
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push to features/** (including merged PRs)
-  push:
+  # Triggers the workflow on PR to features/** or cosmetic
+  pull_request:
     branches: [ features/**, cosmetic ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -18,10 +18,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - name: Updating webserver.
+    - name: Tests.
       uses: appleboy/ssh-action@master
       env:
         BRANCH: ${{ github.ref_name }}
+        GOROOT: "/usr/local/go"
+        PATH: "$GOROOT/bin:$PATH"
       with:
         host: michalkukla.xyz 
         username: marlen
@@ -29,12 +31,13 @@ jobs:
         passphrase: ${{ secrets.marlen_ssh_pass }}
         port: ${{ secrets.marlen_port }}
         script_stop: true
-        envs: BRANCH
+        envs: BRANCH,GOROOT,PATH
         script: |
           cd repo 
           git stash
-          git pull --force origin $BRANCH
+          git fetch origin $BRANCH
           git checkout $BRANCH
           go test -coverprofile cover.out main.go main_test.go
           git checkout main
+          git branch -r -d remotes/$BRANCH
           git branch -D $BRANCH
