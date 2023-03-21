@@ -1,10 +1,10 @@
-name: CI
+name: Test PR
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push to master (including merged PRs)
+  # Triggers the workflow on push to features/** (including merged PRs)
   push:
-    branches: [ main ]
+    branches: [ features/** cosmetic ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -20,6 +20,8 @@ jobs:
     steps:
     - name: Updating webserver.
       uses: appleboy/ssh-action@master
+      env:
+        BRANCH : ${{ github.ref_name }}
       with:
         host: michalkukla.xyz 
         username: marlen
@@ -27,8 +29,12 @@ jobs:
         passphrase: ${{ secrets.marlen_ssh_pass }}
         port: ${{ secrets.marlen_port }}
         script_stop: true
+        envs: BRANCH
         script: |
           cd repo 
           git stash
-          git pull --force origin main
-          sh ./restart.sh
+          git pull --force origin $BRANCH
+          git checkout $BRANCH
+          go test -coverprofile cover.out main.go main_test.go
+          git checkout main
+          git branch -D $BRANCH
