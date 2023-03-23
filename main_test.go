@@ -1,24 +1,24 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
-	"net/http/httptest"
-	"testing"
-	"strings"
-	"time"
-	"os"
 	"crypto/md5"
-	"io/ioutil"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"strings"
+	"testing"
+	"time"
 )
 
 func TestCache(t *testing.T) {
 	const hashsize int = md5.Size
 	CACHE_DIR = "test_cache"
 	tests := []struct {
-		value string
-		signature string 
-		expFound bool
+		value     string
+		signature string
+		expFound  bool
 	}{
 		{"Test hash", "TestCache", true},
 		{`Test hash kdsafk sdkfakj j kfdksfkfkdskfkajdfsk jdskafjk ksjdfakdsf
@@ -26,7 +26,7 @@ func TestCache(t *testing.T) {
 		{"", "TestCache2", true},
 	}
 	if HASHSIZE != hashsize {
-		t.Errorf("Hash size is %d, but it is tested to %d.", HASHSIZE, hashsize)	
+		t.Errorf("Hash size is %d, but it is tested to %d.", HASHSIZE, hashsize)
 	}
 	for _, test := range tests {
 		store(test.signature, test.value)
@@ -48,12 +48,12 @@ func TestCache(t *testing.T) {
 
 func TestOptionTag(t *testing.T) {
 	tests := []struct {
-		value string
+		value    string
 		selected bool
-		exp string
+		exp      string
 	}{
-		{"Hello", false, "<option value=\"Hello\">Hello</option>" },
-		{"World", true, "<option value=\"World\" selected>World</option>" },
+		{"Hello", false, "<option value=\"Hello\">Hello</option>"},
+		{"World", true, "<option value=\"World\" selected>World</option>"},
 	}
 	for _, test := range tests {
 		if got := getHTMLOptionTag(test.value, test.value, test.selected); got != test.exp {
@@ -72,9 +72,9 @@ func TestWeatherInfo(t *testing.T) {
 
 	if got := get_weather_info(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
-		
+
 	}
-	
+
 }
 
 func TestFailWeatherInfo(t *testing.T) {
@@ -82,9 +82,9 @@ func TestFailWeatherInfo(t *testing.T) {
 
 	if got := get_weather_info("localhost:8080"); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
-		
+
 	}
-	
+
 }
 func TestHolyTrinity(t *testing.T) {
 	var exp string = "💵1€ 23.82Kč 1$ 21.93Kč 1£ 27.11Kč\n"
@@ -108,17 +108,17 @@ func TestRssFeedNeovlivni(t *testing.T) {
 	var exp string = ""
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/xml")
-		neoFile, err := os.Open("neovlivni_test.atom")
+		neoFile, err := os.Open("test-data/neovlivni_test.atom")
 		if err != nil {
 			fmt.Println(err)
 		}
 		defer neoFile.Close()
-		byteWeather, _ := ioutil.ReadAll(neoFile)
-		w.Write(byteWeather)		
+		byteWeather, _ := io.ReadAll(neoFile)
+		w.Write(byteWeather)
 	}))
-	testFile, err := os.ReadFile("neovlivni_test.txt")
+	testFile, err := os.ReadFile("test-data/neovlivni_test.txt")
 	if err != nil {
-		t.Errorf("Error: %s", err)	
+		t.Errorf("Error: %s", err)
 	}
 	exp = strings.TrimSuffix(string(testFile), "\n")
 	got := rss_feed_neovlivni(ts.URL)
@@ -148,10 +148,10 @@ func TestIndexHandler(t *testing.T) {
 }
 
 func TestCookieIndexHandler(t *testing.T) {
- 	req, err := http.NewRequest("GET", "/", nil)
- 	if err != nil {
- 		t.Fatal(err)
- 	}
+	req, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 	date := time.Now()
 	var place http.Cookie
 	place.Name = "place"
@@ -220,7 +220,7 @@ func TestDailyWttrInfo(t *testing.T) {
 	if got := get_daily_wttr_info(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
-//	reading from cache
+	//	reading from cache
 	if got := get_daily_wttr_info(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
@@ -229,13 +229,13 @@ func TestForecast(t *testing.T) {
 	var exp string = "☔0% 🥶-12° 🌞-5°\n☔0% 🥶-8° 🌞0°\n☔0% 🥶-7° 🌞0°"
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		weatherFile, err := os.Open("weatherreport_test")
+		weatherFile, err := os.Open("test-data/weatherreport_test")
 		if err != nil {
 			fmt.Println(err)
 		}
 		defer weatherFile.Close()
-		byteWeather, _ := ioutil.ReadAll(weatherFile)
-		w.Write(byteWeather)		
+		byteWeather, _ := io.ReadAll(weatherFile)
+		w.Write(byteWeather)
 	}))
 	defer ts.Close()
 	if got := get_forecast(ts.URL); got != exp {
@@ -256,19 +256,19 @@ func TestNameDay(t *testing.T) {
 }
 
 func TestBtcXmr(t *testing.T) {
-	var exp = "1<b style=\"color: gold;\">BTC</b> 2345.43$"+
-		  "1<b style=\"color: #999;\">XMR</b> 2345.43$"
-	
+	var exp = "1<b style=\"color: gold;\">BTC</b> 2345.43$" +
+		"1<b style=\"color: #999;\">XMR</b> 2345.43$"
+
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, "2345.432132\n")
 	}))
 	defer ts.Close()
-	
+
 	if got := getBtcXmr(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
-//	try cache
+	//	try cache
 	if got := getBtcXmr(ts.URL); got != exp {
 		t.Errorf("Expected '%s' but, got '%s'", exp, got)
 	}
@@ -277,30 +277,29 @@ func TestBtcXmr(t *testing.T) {
 func TestRssCtk(t *testing.T) {
 	var exp string = ""
 	tests := []struct {
-		file string
-		nTitles int
-		showDescription bool 
+		file            string
+		nTitles         int
+		showDescription bool
 	}{
-		{"ctk_test1.txt", 101, false},
-		{"ctk_test.txt", -1, true},
+		{"test-data/ctk_test1.txt", 101, false},
+		{"test-data/ctk_test.txt", -1, true},
 	}
-
 
 	for _, test := range tests {
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/xml")
-			ctkRssFile, err := os.Open("cr_test.rss")
+			ctkRssFile, err := os.Open("test-data/cr_test.rss")
 			if err != nil {
 				t.Errorf("Error: %s", err)
 			}
 			defer ctkRssFile.Close()
-			byteRss, _ := ioutil.ReadAll(ctkRssFile)
-			w.Write(byteRss)		
+			byteRss, _ := io.ReadAll(ctkRssFile)
+			w.Write(byteRss)
 		}))
 		defer ts.Close()
 		testFile, err := os.ReadFile(test.file)
 		if err != nil {
-			t.Errorf("Error: %s", err)	
+			t.Errorf("Error: %s", err)
 		}
 		exp = strings.TrimSuffix(string(testFile), "\n")
 		got := rss_feed_ctk(ts.URL, test.nTitles, test.showDescription)
@@ -319,14 +318,14 @@ func TestCleanUpCache(t *testing.T) {
 	CACHE_DIR = "test_cache"
 	dirRead, _ := os.Open(CACHE_DIR)
 	dirFiles, _ := dirRead.Readdir(0)
-	for index := range(dirFiles) {
+	for index := range dirFiles {
 		file := dirFiles[index]
 		filename := file.Name()
-		if err := os.Remove(CACHE_DIR+"/"+filename); err != nil {
+		if err := os.Remove(CACHE_DIR + "/" + filename); err != nil {
 			t.Errorf("error %s", err)
 		}
 	}
-	if err := os.Remove(CACHE_DIR+"/"); err != nil {
+	if err := os.Remove(CACHE_DIR + "/"); err != nil {
 		t.Errorf("error %s", err)
 	}
 }
