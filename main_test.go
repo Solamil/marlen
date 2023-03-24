@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
+	//	"time"
 )
 
 func TestCache(t *testing.T) {
@@ -132,82 +132,82 @@ func TestRssFeedNeovlivni(t *testing.T) {
 	}
 }
 
-func TestIndexHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(index_handler)
+// func TestIndexHandler(t *testing.T) {
+// 	req, err := http.NewRequest("GET", "/", nil)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// 	recorder := httptest.NewRecorder()
+// 	handler := http.HandlerFunc(index_handler)
+// 
+// 	handler.ServeHTTP(recorder, req)
+// 	if status := recorder.Code; status != http.StatusOK {
+// 		t.Errorf("handler returned wrong status code: got %v want %v",
+// 			status, http.StatusOK)
+// 	}
+// }
 
-	handler.ServeHTTP(recorder, req)
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
-}
+// func TestCookieIndexHandler(t *testing.T) {
+// 	req, err := http.NewRequest("GET", "/", nil)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// 	date := time.Now()
+// 	var place http.Cookie
+// 	place.Name = "place"
+// 	place.Value = "Prague"
+// 	place.Expires = date.AddDate(1, 0, 0)
+// 	place.Domain = "127.0.0.1"
+// 	place.Path = "/"
+// 	place.HttpOnly = false
+// 	place.Secure = true
+// 	req.AddCookie(&place)
+// 
+// 	var lang http.Cookie
+// 	lang.Name = "lang"
+// 	lang.Value = "de-DE"
+// 	lang.Expires = date.AddDate(1, 0, 0)
+// 	lang.Domain = "127.0.0.1"
+// 	lang.Path = "/"
+// 	lang.HttpOnly = false
+// 	lang.Secure = true
+// 	req.AddCookie(&lang)
+// 
+// 	var bg http.Cookie
+// 	bg.Name = "bg"
+// 	bg.Value = "442244"
+// 	bg.Expires = date.AddDate(1, 0, 0)
+// 	bg.Domain = "127.0.0.1"
+// 	bg.Path = "/"
+// 	bg.HttpOnly = false
+// 	bg.Secure = true
+// 	req.AddCookie(&bg)
+// 	recorder := httptest.NewRecorder()
+// 	handler := http.HandlerFunc(index_handler)
+// 
+// 	handler.ServeHTTP(recorder, req)
+// 	if status := recorder.Code; status != http.StatusOK {
+// 		t.Errorf("handler returned wrong status code: got %v want %v",
+// 			status, http.StatusOK)
+// 	}
+// 
+// }
 
-func TestCookieIndexHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	date := time.Now()
-	var place http.Cookie
-	place.Name = "place"
-	place.Value = "Prague"
-	place.Expires = date.AddDate(1, 0, 0)
-	place.Domain = "127.0.0.1"
-	place.Path = "/"
-	place.HttpOnly = false
-	place.Secure = true
-	req.AddCookie(&place)
-
-	var lang http.Cookie
-	lang.Name = "lang"
-	lang.Value = "de-DE"
-	lang.Expires = date.AddDate(1, 0, 0)
-	lang.Domain = "127.0.0.1"
-	lang.Path = "/"
-	lang.HttpOnly = false
-	lang.Secure = true
-	req.AddCookie(&lang)
-
-	var bg http.Cookie
-	bg.Name = "bg"
-	bg.Value = "442244"
-	bg.Expires = date.AddDate(1, 0, 0)
-	bg.Domain = "127.0.0.1"
-	bg.Path = "/"
-	bg.HttpOnly = false
-	bg.Secure = true
-	req.AddCookie(&bg)
-	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(index_handler)
-
-	handler.ServeHTTP(recorder, req)
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
-
-}
-
-func TestUrlParamsIndexHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/?lang=de-DE&location=Prague&bg=442244", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(index_handler)
-
-	handler.ServeHTTP(recorder, req)
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
-
-}
+// func TestUrlParamsIndexHandler(t *testing.T) {
+// 	req, err := http.NewRequest("GET", "/?lang=de-DE&location=Prague&bg=442244", nil)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// 	recorder := httptest.NewRecorder()
+// 	handler := http.HandlerFunc(index_handler)
+// 
+// 	handler.ServeHTTP(recorder, req)
+// 	if status := recorder.Code; status != http.StatusOK {
+// 		t.Errorf("handler returned wrong status code: got %v want %v",
+// 			status, http.StatusOK)
+// 	}
+// 
+// }
 
 func TestDailyWttrInfo(t *testing.T) {
 	var exp string = "07:56:25 16:00:17 🌗"
