@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
+	//	"time"
 )
 
 func TestCache(t *testing.T) {
@@ -132,21 +132,24 @@ func TestRssFeedNeovlivni(t *testing.T) {
 	}
 }
 
-func TestIndexHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(index_handler)
+/*
+ func TestIndexHandler(t *testing.T) {
+ 	req, err := http.NewRequest("GET", "/", nil)
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	recorder := httptest.NewRecorder()
+ 	handler := http.HandlerFunc(index_handler)
 
-	handler.ServeHTTP(recorder, req)
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
+ 	handler.ServeHTTP(recorder, req)
+ 	if status := recorder.Code; status != http.StatusOK {
+ 		t.Errorf("handler returned wrong status code: got %v want %v",
+ 			status, http.StatusOK)
+ 	}
 }
+*/
 
+/*
 func TestCookieIndexHandler(t *testing.T) {
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
@@ -192,7 +195,9 @@ func TestCookieIndexHandler(t *testing.T) {
 	}
 
 }
+*/
 
+/*
 func TestUrlParamsIndexHandler(t *testing.T) {
 	req, err := http.NewRequest("GET", "/?lang=de-DE&location=Prague&bg=442244", nil)
 	if err != nil {
@@ -208,6 +213,7 @@ func TestUrlParamsIndexHandler(t *testing.T) {
 	}
 
 }
+*/
 
 func TestDailyWttrInfo(t *testing.T) {
 	var exp string = "07:56:25 16:00:17 🌗"

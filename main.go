@@ -271,6 +271,8 @@ func get_weather_info(url string) string {
 
 func get_forecast(url string) string {
 	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
+	shell := "/bin/sh"
+	scriptFile := "./scripts/sb-forecast.sh"
 	var answer string = ""
 	var lastRecord string = ""
 	if record, found := get(signature); found && record.value != "" {
@@ -283,18 +285,18 @@ func get_forecast(url string) string {
 			return answer
 		}
 	}
-	output, err := exec.Command("/bin/sh", "sb-forecast.sh", url).Output()
+	output, err := exec.Command(shell, scriptFile, url).Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high := strings.Replace(string(output), "\n", "", 1)
 
-	output, err = exec.Command("/bin/sh", "sb-forecast.sh", url, "23", "26").Output()
+	output, err = exec.Command(shell, scriptFile, url, "23", "26").Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
 	hum_low_high_next := strings.Replace(string(output), "\n", "", 1)
-	output, err = exec.Command("/bin/sh", "sb-forecast.sh", url, "33", "36").Output()
+	output, err = exec.Command(shell, scriptFile, url, "33", "36").Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
