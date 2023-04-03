@@ -532,6 +532,8 @@ func new_request(url string) string {
 			fmt.Println("statusCode: ", content.StatusCode)
 		}
 		return answer
+	} else if content.StatusCode >= 400 {
+		return answer 
 	}
 	value, err := io.ReadAll(content.Body)
 	if err != nil {
