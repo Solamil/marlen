@@ -184,7 +184,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	urlNameDay := fmt.Sprintf("https://svatek.michalkukla.xyz/today?country=%s", lang)
+	urlNameDay := "https://svatek.michalkukla.xyz/today?pp"
 	nameDay = get_name_day(urlNameDay)
 
 	var localeTags string = ""
@@ -359,7 +359,7 @@ func get_name_day(url string) string {
 	}
 
 	if value := new_request(url); value != "" {
-		answer = string(value)
+		answer = value
 		store(signature, answer)
 
 	}
