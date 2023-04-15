@@ -45,7 +45,7 @@ footer{	margin-top: 2em;
 <body style="background-color:#{{.Bg}}">
 	<div class="status-bar">
 
-		<p id="sun_moon" style="display:inline-block; margin-top: 5px">{{.WeatherInfo}}</p>
+		<p style="display:inline-block; margin-top: 5px">{{.WeatherInfo}}</p>
 		<form action="/" method="GET" class="form" id="location_form"
 			style="display:inline-block; margin-left: 5px; margin-bottom: 0px">
 			<input type="submit" id="save_btn" style="position: absolute;
@@ -61,16 +61,16 @@ footer{	margin-top: 2em;
 				autocomplete=off style="width:60px" >
 			<span id="relevant"></span>
 		</form>	
-		<p id="otherInfo" style="margin-top: 5px">{{.OtherInfo}}</p>
+		<p style="margin-top: 5px">{{.OtherInfo}}</p>
 
 	</div>
 	<hr style="color: beige">
-	<nav id="nav">
+	<nav>
 			<ul>
 				<li><a href="./feeds.html">📜</a></li>
 				<li><a href="./traffic.html">🚗</a></li>
-				<li><a href="https://michalkukla.xyz/f1-schedule.txt">🏎️📆</a></li>
-				<li><a href="https://michalkukla.xyz/motogp-schedule.txt">🏍️📆</a></li>
+				<li><a href="https://michalkukla.xyz/f1">🏎️📆</a></li>
+				<li><a href="https://michalkukla.xyz/motogp">🏍️📆</a></li>
 			</ul>
 	</nav>
 
@@ -129,9 +129,9 @@ footer{	margin-top: 2em;
 		</div>
 		<!--<a href='./traffic.html' ><img src='./pics/CameraImage3008.webp' loading=lazy width=400 height=220 style="margin: 5px" alt="Dopravní Informace"></a>-->
 		<div style="display: inline-block; margin: 5px;">
+			<a href="https://michalkukla.xyz/motogp"><h3>MotoGP kalendář</h3></a>
+			<a href="https://michalkukla.xyz/f1"><h3>F1 kalendář</h3></a>
 			<a href="./feeds.html"><h3>📜 Články</h3></a>
-			<!--<a href="https://michalkukla.xyz/f1-schedule.txt"><h3>F1 kalendář</h3></a> -->
-			<!--<a href="https://michalkukla.xyz/motogp-schedule.txt"><h3>MotoGP kalendář</h3></a> -->
 		</div>
 		<p>⚠️The images present on this page may be subject to copyright.</p>
 
