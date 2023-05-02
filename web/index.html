@@ -77,13 +77,13 @@ footer{	margin-top: 2em;
 	<main  style="margin-top: 20px;">
 		<a href='https://kalendar.beda.cz/' target="_blank"><img src='https://kalendar.beda.cz/pic/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
 		<div class="cs-CZ" style="display: inline-block">
-			<a href="https://svatek.michalkukla.xyz/"><p style="max-width: 550px;">{{.NameDay}}</p></a>
+			<p style="max-width: 550px;"><a href="https://svatek.michalkukla.xyz/">{{.NameDay}}</a></p>
 			<p style="display:inline-block"><a id="curr" href="https://czk.michalkukla.xyz/">{{.Currency}}</a></p>
 			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">{{.CryptoCurrency}}</a></p>
-			<div id="text_forecast">
-				<p id="tomorrow_forecast" style="display: inline-block"><span id="first_date"></span> {{.ForecastFirst}}</p>
-				<p id="next_forecast" style="display: inline-block"><span id="second_date"></span> {{.ForecastSecond}}</p>
-			</div>
+		</div>
+		<div id="text_forecast">
+			<p id="tomorrow_forecast" style="display: inline-block"><span id="first_date"></span> {{.ForecastFirst}}</p>
+			<p id="next_forecast" style="display: inline-block"><span id="second_date"></span> {{.ForecastSecond}}</p>
 		</div>
 		<div class="cs-CZ" id="english" style="display:inline-block; margin:20px;">
 			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
