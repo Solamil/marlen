@@ -244,13 +244,17 @@ func file_handler(w http.ResponseWriter, r *http.Request) {
 func get_daily_wttr_info(url string) string {
 	signature := fmt.Sprintf(`%s:%s`, url, "daily")
 	var answer string = ""
-	record, found := get(signature)
-	if found {
-		yearNow, monthNow, dayNow := time.Now().Date()
+
+	if record, found := get(signature); found {
+		now := time.Now()
+		yearNow, monthNow, dayNow := now.Date()
 		year, month, day := record.expiry.Date()
+		d := record.expiry
 		if record.value != "" && dayNow == day && monthNow == month && yearNow == year {
 			answer = record.value
 			return answer
+		} else if d = d.Add(time.Minute * 35); record.value == "" && d.After(now) {
+			answer = record.value
 		}
 	}
 	value := get_weather_info(url)
@@ -325,22 +329,24 @@ func get_forecast(url string) string {
 func get_holy_trinity(url string) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "trinity")
-	if record, found := get(signature); found && record.value != "" {
+	if record, found := get(signature); found {
 		now := time.Now()
 		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
 		d := record.expiry
-		if (now.Before(tUpdate) && now.Day() == d.Day() && now.Month() == d.Month() && now.Year() == d.Year()) ||
-			d.After(tUpdate) {
+		if record.value != "" && ((now.Before(tUpdate) && now.Day() == d.Day() && now.Month() == d.Month() && now.Year() == d.Year()) ||
+			d.After(tUpdate)) {
+			result = record.value
+			return result
+		} else if d = d.Add(time.Minute * 35); record.value == "" && d.After(now) {
 			result = record.value
 			return result
 		}
 
 	}
 
-	if value := new_request(url); len(value) > 0 {
-		result = value
-		store(signature, result)
-	}
+	value := new_request(url)
+	result = value
+	store(signature, result)
 	return result
 }
 
@@ -349,13 +355,18 @@ func get_name_day(url string) string {
 	signature := fmt.Sprintf(`%s:%s`, url, "nameday")
 	var answer string = ""
 
-	if record, found := get(signature); found && record.value != "" {
+	if record, found := get(signature); found {
 		now := time.Now()
 		d := record.expiry
-		if d.Day() == now.Day() && d.Month() == now.Month() && d.Year() == now.Year() {
+		if record.value != "" &&
+			d.Day() == now.Day() && d.Month() == now.Month() && d.Year() == now.Year() {
+			answer = record.value
+			return answer
+		} else if d = d.Add(time.Minute * 35); record.value == "" && d.After(now) {
 			answer = record.value
 			return answer
 		}
+
 	}
 
 	if value := new_request(url); value != "" {
@@ -430,10 +441,14 @@ func getBtcXmr(url string) string {
 func getCryptoCurrency(url, code string) string {
 	var result string = ""
 	signature := fmt.Sprintf("%s:%s", url, code)
-	if record, found := get(signature); record.value != "" && found {
+	if record, found := get(signature); found {
 		now := time.Now()
 		d := record.expiry
-		d = d.Add(time.Hour * 2)
+		if record.value != "" {
+			d = d.Add(time.Hour * 2)
+		} else {
+			d = d.Add(time.Minute * 35)
+		}
 		result = record.value
 		if d.After(now) {
 			return result
