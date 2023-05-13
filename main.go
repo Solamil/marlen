@@ -255,6 +255,7 @@ func get_daily_wttr_info(url string) string {
 			return answer
 		} else if d = d.Add(time.Minute * 35); record.value == "" && d.After(now) {
 			answer = record.value
+			return answer
 		}
 	}
 	value := get_weather_info(url)
@@ -278,12 +279,14 @@ func get_forecast(url string) string {
 	shell := "/bin/sh"
 	scriptFile := "./scripts/sb-forecast.sh"
 	var answer string = ""
-	var lastRecord string = ""
-	if record, found := get(signature); found && record.value != "" {
+	if record, found := get(signature); found {
 		now := time.Now()
 		d := record.expiry
-		d = d.Add(time.Hour * 6)
-		lastRecord = record.value
+		if record.value != "" {
+			d = d.Add(time.Hour * 6)
+		} else {
+			d = d.Add(time.Minute * 35)
+		}
 		if d.After(now) {
 			answer = record.value
 			return answer
@@ -316,12 +319,8 @@ func get_forecast(url string) string {
 	if len(hum_low_high_next2) > 0 {
 		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next2)
 	}
-	if len(value) > 0 {
-		answer = value
-		store(signature, value)
-	} else {
-		answer = lastRecord
-	}
+	answer = value
+	store(signature, value)
 
 	return answer
 }
@@ -464,10 +463,14 @@ func getCryptoCurrency(url, code string) string {
 func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
-	if record, found := get(signature); found && record.value != "" {
+	if record, found := get(signature); found {
 		now := time.Now()
 		d := record.expiry
-		d = d.Add(time.Hour * 2)
+		if record.value != "" {
+			d = d.Add(time.Hour * 2)
+		} else {
+			d = d.Add(time.Minute * 35)
+		}
 		result = record.value
 		if d.After(now) {
 			return result
@@ -480,6 +483,7 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 	//	}
 	resp := new_request(url)
 	if resp == "" {
+		store(signature, result)
 		return result
 	}
 	if err := doc.ReadFromString(resp); err != nil {
