@@ -29,6 +29,11 @@ if (cookieLang != undefined) {
 	lang = cookieLang.split("=")[1];
 	langCode = lang.split("-")[0];
 }
+var cookieBgColor = cookieList.find(e => e.startsWith("bgColor"));
+var bgColor = "893531"
+if (cookieBgColor != undefined) {
+	bgColor = cookieBgColor.split("=")[1]
+}
 
-var weatherOptions = '0pq_transparency=255_background=893531_lang='+langCode;
+var weatherOptions = '0pq_transparency=255_background='+bgColor+'_lang='+langCode;
 var weatherImgAlt = 'Current weather in ';
