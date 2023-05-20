@@ -212,7 +212,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
-	i.CryptoCurrency = getBtcXmr("https://rate.sx")
+	i.CryptoCurrency = "" //	getBtcXmr("https://rate.sx")
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
