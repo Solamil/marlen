@@ -79,13 +79,32 @@ footer{	margin-top: 2em;
 		</div>
 		<div class="cs-CZ" id="english" style="display:inline-block; margin:20px;">
 			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" method="get" style="display:inline-block">
-				<input id="topic" name="word" type="text" placeholder="English" maxlength="50" autocomplete="off">
+				<input id="topic" name="word" type="text" placeholder="🇬🇧" maxlength="50" autocomplete="off">
 				<button type="submit" id="submit">OK</button>
 			</form>
 		</div>
 		<div class="cs-CZ" id="deutsch" style="display: inline-block; margin:20px;">
 			<form action="https://slovniky.lingea.cz/nemecko-cesky/" autocomplete="off" method="get" style="display:inline-block">
-				<input id="topic" name="word" type="text" placeholder="Deutsch" maxlength="50" autocomplete="off">
+				<input id="topic" name="word" type="text" placeholder="🇩🇪" maxlength="50" autocomplete="off">
+				<button type="submit" id="submit">OK</button>
+			</form>
+		</div>
+		<div style="display: inline-block; margin:20px;">
+			<a href="https://go.dev/" target="_blank"><img src="https://pkg.go.dev/static/shared/logo/go-white.svg" loading=lazy width=32px height=16px style="margin-right: 4px;border-width: 0px 0px 0px 0px;"></a>
+			<form action="https://pkg.go.dev/search?" autocomplete="off" method="get" style="display:inline-block">
+				<input id="topic" name="q" type="text" maxlength="50">
+				<button type="submit" id="submit">OK</button>
+			</form>
+		</div>
+		<div style="display: inline-block; margin:20px;">
+			<a href="https://github.com/" target="_blank"><img src="https://github.githubassets.com/favicons/favicon.svg" loading=lazy width=16px height=16px style="margin-right: 4px;border-width: 0px 0px 0px 0px;"></a>
+			<form action="https://github.com/search?" autocomplete="off" method="get" style="display:inline-block">
+				<input id="topic" name="q" type="text" maxlength="50">
+				<select name="type">
+					<option value="users">users</option>
+					<option value="repositories">repositories</option>
+					<option value="code">code</option>
+				</select>
 				<button type="submit" id="submit">OK</button>
 			</form>
 		</div>
