@@ -45,7 +45,7 @@ type indexDisplay struct {
 	WttrSrc        string
 	WttrInHolder   string
 	CryptoCurrency string
-	Tannoy	       string
+	Tannoy         string
 }
 type feedsDisplay struct {
 	Bg      string
@@ -562,7 +562,7 @@ func rss_feed_tannoy(url string, nTitles int, showDescription bool) string {
 
 	root := doc.SelectElement("rss")
 	mainTitle := "📣Hlášení rozhlasu"
-	linkSite := "https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu" 
+	linkSite := "https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu"
 	result = fmt.Sprintf("<div class=\"tannoy\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4>\n", linkSite, mainTitle)
 	if nTitles < 1 || nTitles > 10 {
 		nTitles = 3
@@ -588,7 +588,7 @@ func rss_feed_tannoy(url string, nTitles int, showDescription bool) string {
 				"</details>", new_title, description)
 		} else {
 			line = fmt.Sprintf("<a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s</a>\n",
-						link, new_title)
+				link, new_title)
 		}
 		result = fmt.Sprintf("%s\n%s", result, line)
 		i++
