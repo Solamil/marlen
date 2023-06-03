@@ -46,6 +46,7 @@ type indexDisplay struct {
 	WttrInHolder   string
 	CryptoCurrency string
 	Tannoy         string
+	LocalNews      string
 }
 type feedsDisplay struct {
 	Bg      string
@@ -214,7 +215,8 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
 	i.CryptoCurrency = "" //	getBtcXmr("https://rate.sx")
-	i.Tannoy = rss_feed_tannoy("https://www.mnhradiste.cz/rss", 2, true)
+	i.Tannoy = rss_feed_localplace("https://www.mnhradiste.cz/rss", 2, true, true)
+	i.LocalNews = rss_feed_localplace("https://www.mnhradiste.cz/rss", 5, false, true)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
@@ -529,9 +531,12 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 	return result
 }
 
-func rss_feed_tannoy(url string, nTitles int, showDescription bool) string {
+func rss_feed_localplace(url string, nTitles int, tannoy, showDescription bool) string {
 	var result string = ""
-	signature := fmt.Sprintf(`%s:%s`, url, "rssTannoy")
+	var signature string = fmt.Sprintf(`%s:%s`, url, "rssTannoy")
+	if !tannoy {
+		signature = fmt.Sprintf(`%s:%s`, url, "rssArticles")
+	}
 	if record, found := get(signature); found {
 		now := time.Now()
 		d := record.expiry
@@ -550,7 +555,23 @@ func rss_feed_tannoy(url string, nTitles int, showDescription bool) string {
 	//		fmt.Println(err)
 	//		return ""
 	//	}
-	resp := new_request(url)
+	var resp string = ""
+	signatureResp := fmt.Sprintf(`%s:%s`, url, "rssResp")
+	if record, found := get(signatureResp); found {
+		now := time.Now()
+		d := record.expiry
+		if record.value != "" {
+			d = d.Add(time.Hour * 6)
+		} else {
+			d = d.Add(time.Minute * 35)
+		}
+		if d.After(now) {
+			resp = record.value
+		}
+	} else {
+		resp = new_request(url)
+		store(signatureResp, resp)
+	}
 	if resp == "" {
 		store(signature, result)
 		return result
@@ -561,39 +582,75 @@ func rss_feed_tannoy(url string, nTitles int, showDescription bool) string {
 	}
 
 	root := doc.SelectElement("rss")
-	mainTitle := "📣Hlášení rozhlasu"
-	linkSite := "https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu"
-	result = fmt.Sprintf("<div class=\"tannoy\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4>\n", linkSite, mainTitle)
-	if nTitles < 1 || nTitles > 10 {
-		nTitles = 3
+	if !tannoy {
+		mainTitle := "📜Články města"
+		linkSite := "https://www.mnhradiste.cz/"
+		result = fmt.Sprintf("<div class=\"articles\" style=\"margin: 5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4>\n"+
+			"<ul>", linkSite, mainTitle)
+		if nTitles < 1 || nTitles > 10 {
+			nTitles = 3
+		}
+		var size int = nTitles
+		var i int = 0
+		for _, e := range root.SelectElements("item") {
+			if i >= size {
+				break
+			}
+			title := e.SelectElement("title").Text()
+			_, new_title, found := strings.Cut(title, "Hlášení rozhlasu")
+			if found {
+				continue
+			}
+			link := e.SelectElement("link").Text()
+			var line string = ""
+			if showDescription {
+				//	description := e.SelectElement("description").Text()
+				line = fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\">%s</a></li>"+
+					"\n", link, title)
+			} else {
+				line = fmt.Sprintf("<a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s</a>\n",
+					link, new_title)
+			}
+			result = fmt.Sprintf("%s\n%s", result, line)
+			i++
+		}
+		result = fmt.Sprintf("%s\n</ul></div>", result)
+	} else {
+		mainTitle := "📣Hlášení rozhlasu"
+		linkSite := "https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu"
+		result = fmt.Sprintf("<div class=\"tannoy\" style=\"margin:5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4>\n", linkSite, mainTitle)
+		if nTitles < 1 || nTitles > 10 {
+			nTitles = 3
+		}
+		var size int = nTitles
+		var i int = 0
+		for _, e := range root.SelectElements("item") {
+			if i >= size {
+				break
+			}
+			title := e.SelectElement("title").Text()
+			_, new_title, found := strings.Cut(title, "Hlášení rozhlasu")
+			if !found {
+				continue
+			}
+			link := e.SelectElement("link").Text()
+			var line string = ""
+			if showDescription {
+				description := e.SelectElement("description").Text()
+				line = fmt.Sprintf("<details style=\"margin-left:30px;\"><summary>%s</summary>"+
+					"\n"+
+					"<p>%s</p>\n"+
+					"</details>", new_title, description)
+			} else {
+				line = fmt.Sprintf("<a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s</a>\n",
+					link, new_title)
+			}
+			result = fmt.Sprintf("%s\n%s", result, line)
+			i++
+		}
+		result = fmt.Sprintf("%s\n</div>", result)
+
 	}
-	var size int = nTitles
-	var i int = 0
-	for _, e := range root.SelectElements("item") {
-		if i >= size {
-			break
-		}
-		title := e.SelectElement("title").Text()
-		_, new_title, found := strings.Cut(title, "Hlášení rozhlasu")
-		if !found {
-			continue
-		}
-		link := e.SelectElement("link").Text()
-		var line string = ""
-		if showDescription {
-			description := e.SelectElement("description").Text()
-			line = fmt.Sprintf("<details><summary>%s</summary>"+
-				"\n"+
-				"<p>%s</p>\n"+
-				"</details>", new_title, description)
-		} else {
-			line = fmt.Sprintf("<a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s</a>\n",
-				link, new_title)
-		}
-		result = fmt.Sprintf("%s\n%s", result, line)
-		i++
-	}
-	result = fmt.Sprintf("%s\n</div>", result)
 	store(signature, result)
 	return result
 }
