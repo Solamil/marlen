@@ -566,7 +566,7 @@ func rss_feed_localplace(url string, nTitles int, tannoy, showDescription bool) 
 			d = d.Add(time.Minute * 35)
 		}
 		if d.After(now) {
-			resp = record.value 
+			resp = record.value
 		}
 	} else {
 		resp = new_request(url)
@@ -583,10 +583,10 @@ func rss_feed_localplace(url string, nTitles int, tannoy, showDescription bool) 
 
 	root := doc.SelectElement("rss")
 	if !tannoy {
-		mainTitle := "📜Články města"	
+		mainTitle := "📜Články města"
 		linkSite := "https://www.mnhradiste.cz/"
 		result = fmt.Sprintf("<div class=\"articles\" style=\"margin: 5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4>\n"+
-				     "<ul>", linkSite, mainTitle)
+			"<ul>", linkSite, mainTitle)
 		if nTitles < 1 || nTitles > 10 {
 			nTitles = 3
 		}
