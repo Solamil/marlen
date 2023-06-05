@@ -541,7 +541,7 @@ func rss_feed_localplace(url string, nTitles int, tannoy, showDescription bool) 
 		now := time.Now()
 		d := record.expiry
 		if record.value != "" {
-			d = d.Add(time.Hour * 6)
+			d = d.Add(time.Hour * 2)
 		} else {
 			d = d.Add(time.Minute * 35)
 		}
@@ -561,12 +561,15 @@ func rss_feed_localplace(url string, nTitles int, tannoy, showDescription bool) 
 		now := time.Now()
 		d := record.expiry
 		if record.value != "" {
-			d = d.Add(time.Hour * 6)
+			d = d.Add(time.Hour * 2)
 		} else {
 			d = d.Add(time.Minute * 35)
 		}
 		if d.After(now) {
 			resp = record.value
+		} else {
+			resp = new_request(url)
+			store(signatureResp, resp)
 		}
 	} else {
 		resp = new_request(url)
