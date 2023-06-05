@@ -567,6 +567,9 @@ func rss_feed_localplace(url string, nTitles int, tannoy, showDescription bool) 
 		}
 		if d.After(now) {
 			resp = record.value
+		} else {
+			resp = new_request(url)
+			store(signatureResp, resp)
 		}
 	} else {
 		resp = new_request(url)
