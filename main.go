@@ -107,7 +107,7 @@ func main() {
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
-	http.ListenAndServe(":8901", nil)
+	http.ListenAndServe(":7901", nil)
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
@@ -186,7 +186,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	urlNameDay := "https://svatek.michalkukla.xyz/today?pp"
+	urlNameDay := "http://localhost:7903/today?pp"
 	nameDay = get_name_day(urlNameDay)
 
 	var localeTags string = ""
@@ -209,7 +209,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = otherInfo
-	i.Currency = get_holy_trinity("https://czk.michalkukla.xyz/holy_trinity?p")
+	i.Currency = get_holy_trinity("http://localhost:7902/holy_trinity?p")
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]

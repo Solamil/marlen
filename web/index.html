@@ -70,14 +70,15 @@ footer{	margin-top: 2em;
 		<ul>
 			<li><a href="https://github.com/" target="_blank">Github</a></li>
 			<li><a href="https://mnhradiste.cz/" target="_blank">🏛️</a></li>
+			<li><a href="https://www.chmi.cz/files/portal/docs/meteo/rad/inca-cz/short.html" target="_blank">🌤️</a></li>
 		</ul>
 	</nav>
 
 	<main  style="margin-top: 20px;">
 		<a href='https://kalendar.beda.cz/' target="_blank"><img src='https://kalendar.beda.cz/pic/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
 		<div class="cs-CZ" style="display: inline-block">
-			<p style="max-width: 550px;"><a href="https://svatek.michalkukla.xyz/">{{.NameDay}}</a></p>
-			<p style="display:inline-block"><a id="curr" href="https://czk.michalkukla.xyz/">{{.Currency}}</a></p>
+			<p style="max-width: 550px;"><a href="http://svatek.jabbapoint.local/">{{.NameDay}}</a></p>
+			<p style="display:inline-block"><a id="curr" href="http://czk.jabbapoint.local/">{{.Currency}}</a></p>
 			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">{{.CryptoCurrency}}</a></p>
 		</div>
 		<div id="text_forecast">
@@ -136,8 +137,8 @@ footer{	margin-top: 2em;
 		</div>
 		<!--<a href='./traffic.html' ><img src='./pics/CameraImage3008.webp' loading=lazy width=400 height=220 style="margin: 5px" alt="Dopravní Informace"></a>-->
 		<div style="display: inline-block;">
-			<a href="https://michalkukla.xyz/motogp"><h3 style="display: inline-block; margin: 10px;">MotoGP kalendář</h3></a>
-			<a href="https://michalkukla.xyz/f1"><h3 style="display: inline-block; margin: 10px;">F1 kalendář</h3></a>
+			<a href="http://jabbapoint.local/motogp.html"><h3 style="display: inline-block; margin: 10px;">MotoGP kalendář</h3></a>
+			<a href="http://jabbapoint.local/f1.html"><h3 style="display: inline-block; margin: 10px;">F1 kalendář</h3></a>
 			<a href="./feeds.html"><h3 style="display: inline-block; margin: 10px;">📜 Články</h3></a>
 		</div>
 		<p>⚠️The images present on this page may be subject to copyright.</p>
@@ -175,7 +176,7 @@ footer{	margin-top: 2em;
 				var inputLocation = document.getElementById("location_input")	
 				if (inputLocation.value != ""){
 					place = encodeURIComponent(inputLocation.value)
-					document.cookie = "place="+encodeURI(inputLocation.value)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+					document.cookie = "place="+encodeURI(inputLocation.value)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None"
 					var weatherImg = document.getElementById("weather-img")
 					var formatSelect = document.getElementById("select_lang")
 					var bgColor = document.getElementById("background")
@@ -188,7 +189,7 @@ footer{	margin-top: 2em;
 					var weatherInput = document.getElementById("weather-input")
 					weatherInput.placeholder = weatherInputDict[prefix]
 
-					document.cookie = "bgColor="+encodeURI(bgColor.value)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+					document.cookie = "bgColor="+encodeURI(bgColor.value)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None"
 
 				}
 				
@@ -217,7 +218,7 @@ footer{	margin-top: 2em;
 			formatSelect.onchange = function() {
 				var date = new Date(Date.now())
 				date.setFullYear(date.getFullYear()+1)
-				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None; Secure"
+				document.cookie = "lang="+formatSelect.value+"; expires="+date.toUTCString()+"; Path=/; SameSite=None"
 				var day = new Date(Date.now()) 
 				day.setDate(day.getDate()+1)
 				date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long"}).format(day)
