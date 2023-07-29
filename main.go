@@ -214,7 +214,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
-	i.CryptoCurrency = "" //	getBtcXmr("https://rate.sx")
+	i.CryptoCurrency = getBtcXmr("https://rate.sx")
 	i.Tannoy = rss_feed_localplace("https://www.mnhradiste.cz/rss", 2, true, true)
 	i.LocalNews = rss_feed_localplace("https://www.mnhradiste.cz/rss", 5, false, true)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
@@ -448,9 +448,9 @@ func getCryptoCurrency(url, code string) string {
 		now := time.Now()
 		d := record.expiry
 		if record.value != "" {
-			d = d.Add(time.Hour * 2)
+			d = d.Add(time.Hour * 6)
 		} else {
-			d = d.Add(time.Minute * 35)
+			d = d.Add(time.Minute * 3)
 		}
 		result = record.value
 		if d.After(now) {
