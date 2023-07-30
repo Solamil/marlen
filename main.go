@@ -232,7 +232,9 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true)
 	ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 3, false)
 	neovlivni := rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
-	render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr> %s <br><hr> %s <br><hr> %s`, neovlivni, ctkCr, ctkSvet, ctkEko, ctkSport)
+	hrad := rss_feed_ctk("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false)
+	render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr>
+		    %s <br><hr> %s <br><hr> %s <br><hr> %s`, neovlivni, hrad, ctkCr, ctkSvet, ctkEko, ctkSport )
 	rssFeed = render_feeds
 	//	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
 	i.Bg = bg
@@ -674,6 +676,7 @@ func new_request(url string) string {
 		},
 	}
 	reqm, _ := http.NewRequest("GET", url, nil)
+	reqm.Header.Set("User-Agent", "Mozilla")
 	reqm.Header.Set("Content-Type", "text/html")
 	content, err := client.Do(reqm)
 	if err != nil {
