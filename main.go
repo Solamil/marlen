@@ -224,19 +224,56 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	var rssFeed string = ""
+	var lang string = "cs-CZ"
 	var bg string = "442244"
 	var i feedsDisplay
-	var ctkUrl string = "https://www.ceskenoviny.cz/sluzby/rss"
-	ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5, true)
-	ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5, true)
-	ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true)
-	ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 3, false)
-	neovlivni := rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
-	hrad := rss_feed_ctk("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false)
-	render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr>
-		    %s <br><hr> %s <br><hr> %s <br><hr> %s`, neovlivni, hrad, ctkCr, ctkSvet, ctkEko, ctkSport )
-	rssFeed = render_feeds
-	//	rssFeed = rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
+
+	if c, err := r.Cookie("lang"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		lang = value
+	} else if err != nil {
+		fmt.Println(err)
+	}
+	q, _ := url.PathUnescape(r.URL.RawQuery)
+	if len(q) != 0 {
+		m, err := url.ParseQuery(q)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		js, err := json.Marshal(m)
+		if err != nil {
+			fmt.Println(err)
+		}
+		var param *indexUrlParams
+		json.Unmarshal(js, &param)
+		//	if len(param.Location[0]) > 0 {
+		//		location = param.Location[0]
+		//	}
+		if len(param.Lang[0]) > 0 {
+			lang = param.Lang[0]
+		}
+		if len(param.Bg[0]) > 0 {
+			bg = param.Bg[0]
+		}
+	}
+	if lang == "cs-CZ" {
+		var ctkUrl string = "https://www.ceskenoviny.cz/sluzby/rss"
+		ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5, true)
+		ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5, true)
+		ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true)
+		ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 3, false)
+		neovlivni := rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
+		hrad := rss_feed_ctk("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false)
+		render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr>
+			    %s <br><hr> %s <br><hr> %s <br><hr> %s`, neovlivni, hrad, ctkCr, ctkSvet, ctkEko, ctkSport )
+		rssFeed = render_feeds
+	} else if lang == "de-DE" {
+		taggeshau := rss_feed_ctk("https://www.tagesschau.de/ausland/index~rss2.xml", 5, true)
+		
+		render_feeds := fmt.Sprintf(`%s <br><hr>`, taggeshau )
+		rssFeed = render_feeds
+	}
 	i.Bg = bg
 	i.RssFeed = rssFeed
 	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
