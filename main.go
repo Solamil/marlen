@@ -417,10 +417,14 @@ func rss_feed_neovlivni(url string) string {
 		title := e.SelectElement("title").Text()
 		author := e.SelectElement("author")
 		name := author.SelectElement("name").Text()
-		published := e.SelectElement("published").Text()
+		date := ""
+		if e.SelectElement("published") != nil {
+			published := e.SelectElement("published").Text()
+			date = fmt.Sprintf("<span class=\"date\">%s</span>", published)
+
+		}
 		link := e.SelectElement("link").SelectAttrValue("href", "")
 		//		t, _ := time.Parse(time.RFC3339, published)
-		date := fmt.Sprintf("<span class=\"date\">%s</span>", published)
 		// 	✏️ &#9999;📜&#128220;
 		line := fmt.Sprintf(`<li><a href="%s" target="_blank">%s &#9999;%s &#128220;%s</a></li>`, link, date, name, title)
 		result = fmt.Sprintf("%s\n%s", result, line)
@@ -510,10 +514,13 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 			break
 		}
 		title := e.SelectElement("title").Text()
-		published := e.SelectElement("pubDate").Text()
+		date := ""
+		if e.SelectElement("pubDate") != nil {
+			published := e.SelectElement("pubDate").Text()
+			date = fmt.Sprintf("<span class=\"date\">%s</span>", published)
+		}
 		link := e.SelectElement("link").Text()
 		//		t, _ := time.Parse(time.RFC3339, published)
-		date := fmt.Sprintf("<span class=\"date\">%s</span>", published)
 		// 	✏️ &#9999;📜&#128220;
 		var line string = ""
 		if showDescription {
