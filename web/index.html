@@ -69,7 +69,7 @@ footer{	margin-top: 2em;
 	<nav>
 		<ul>
 			<li><a href="https://github.com/" target="_blank">Github</a></li>
-			<li><a href="https://mnhradiste.cz/" target="_blank">🏛️</a></li>
+			<li><a href="https://mnhradiste.cz/" target="_blank"><img src="https://www.mnhradiste.cz/images/logo.png" height=38 width=30 style="border: none;" loading=lazy></a></li>
 			<li><a href="https://www.chmi.cz/files/portal/docs/meteo/rad/inca-cz/short.html" target="_blank">🌤️</a></li>
 		</ul>
 	</nav>
@@ -114,7 +114,12 @@ footer{	margin-top: 2em;
 					<button id="weather-btn" type="button">OK</button>
 				</form>
 			</div>
-			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank"><img src='./pics/mhcam1.webp' id="forecast" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
+			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank" id="panorama_link"><img src='./pics/mhcam1.webp' id="panorama_img" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
+			<select name="camera" id="select_panorama">
+				<option value="./pics/mhcam1.webp;https://www.mnhradiste.cz/kamera/mhcam1.jpg">Mnichovo Hradiště</option>
+				<option value="https://webkamery.gc-system.cz/thumb.php?img=_data/stribro/stribro.jpg&thumb_width=320;https://webkamery.gc-system.cz/_data/stribro/stribro.jpg">Stříbro</option>
+				<option value="https://apl.brno.cz/kamery/mal3/image.jpg;https://apl.brno.cz/kamery/mal3/image.jpg">Brno</option>
+			</select>
 		</div>
 
 		
@@ -141,7 +146,6 @@ footer{	margin-top: 2em;
 			<a href="http://jabbapoint.local/f1.html"><h3 style="display: inline-block; margin: 10px;">F1 kalendář</h3></a>
 			<a href="./feeds.html?lang=cs-CZ"><h3 style="display: inline-block; margin: 10px;">📜 Články</h3></a>
 		</div>
-		<p>⚠️The images present on this page may be subject to copyright.</p>
 
 		{{.LocalNews}}
 		{{.Tannoy}}
@@ -149,6 +153,21 @@ footer{	margin-top: 2em;
 		<script async="" src="./js/module-wttrin-widget.js"></script>
 		<script>
 			
+			var panSelect = document.getElementById("select_panorama")
+			var panValues = panSelect.value.split(";")
+			var panImg = document.getElementById("panorama_img")	
+			panImg.src = panValues[0]
+			var panLink = document.getElementById("panorama_link")
+			panLink.href = panValues[1]
+
+			panSelect.onchange = function() {
+				var panValues = panSelect.value.split(";")
+				var panImg = document.getElementById("panorama_img")	
+				panImg.src = panValues[0]
+				var panLink = document.getElementById("panorama_link")
+				panLink.href = panValues[1]
+
+			}
 
 			var formatSelect = document.getElementById("select_lang")
 			var day = new Date(Date.now()) 
@@ -241,6 +260,7 @@ footer{	margin-top: 2em;
 				var weatherInput = document.getElementById("weather-input")
 				weatherInput.placeholder = weatherInputDict[prefix]
 			}
+
 		</script>
 
 	</main>
