@@ -62,6 +62,12 @@ var CACHE_DIR string = "cache"
 
 const HASHSIZE int = md5.Size
 
+var svatekUrl string = "http://localhost:7903/today?pp"
+var holytrinityUrl string = "http://localhost:7902/holy_trinity?p"
+var wttrUrl string = "https://wttr.in"
+var fakemoneyUrl string = "https://rate.sx"
+var localtownUrl string = "https://www.mnhradiste.cz/rss"
+
 var cache, _ = lru.New[[HASHSIZE]byte, cacheRecord](CACHESIZE)
 var WEB_DIR string = "web"
 var wttrInHolders = map[string]string{
@@ -168,7 +174,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 			bg = param.Bg[0]
 		}
 	}
-	wttrin := fmt.Sprintf("https://wttr.in/%s", location)
+	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	prefix := strings.Split(lang, "-")[0]
 	wttrPng := fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png",
 		wttrin, bg, prefix)
@@ -188,8 +194,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	urlNameDay := "http://localhost:7903/today?pp"
-	nameDay = get_name_day(urlNameDay)
+	nameDay = get_name_day(svatekUrl)
 
 	var localeTags string = ""
 	var tag string = ""
@@ -211,14 +216,14 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = otherInfo
-	i.Currency = get_holy_trinity("http://localhost:7902/holy_trinity?p")
+	i.Currency = get_holy_trinity(holytrinityUrl)
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = localeTags
-	i.CryptoCurrency = getBtcXmr("https://rate.sx")
-	i.Tannoy = rss_feed_localplace("https://www.mnhradiste.cz/rss", 2, true, true)
-	i.LocalNews = rss_feed_localplace("https://www.mnhradiste.cz/rss", 5, false, true)
+	i.CryptoCurrency = getBtcXmr(fakemoneyUrl)
+	i.Tannoy = rss_feed_localplace(localtownUrl, 2, true, true)
+	i.LocalNews = rss_feed_localplace(localtownUrl, 5, false, true)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
