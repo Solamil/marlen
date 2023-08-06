@@ -56,6 +56,8 @@ type feedsDisplay struct {
 const CACHESIZE int = 10000
 const MIN_SIZE_FILE_CACHE = 80
 
+const PORT int = 7901
+
 var CACHE_DIR string = "cache"
 
 const HASHSIZE int = md5.Size
@@ -107,7 +109,7 @@ func main() {
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
-	http.ListenAndServe(":7901", nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
