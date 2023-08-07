@@ -54,7 +54,7 @@ type feedsDisplay struct {
 }
 
 const CACHESIZE int = 10000
-const MIN_SIZE_FILE_CACHE = 80
+const MIN_SIZE_FILE_CACHE int = 80
 
 const PORT int = 7901
 
@@ -122,58 +122,12 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	var location string = "Zdar"
 	var bg string = "893531"
 	var lang string = "en-US"
-	var nameDay string = ""
 	var weatherInfo string = ""
 	var forecastFirst string = ""
 	var forecastSecond string = ""
-	var otherInfo string = "🌐"
 
-	if c, err := r.Cookie("place"); err == nil {
-		value := strings.Split(c.String(), "=")[1]
-		//		location, _ = url.QueryUnescape(value)
-		location = value
-		//		fmt.Println(value)
-	} else if err != nil {
-		fmt.Println(err)
-	}
+	handle_req_params(r, &location, &lang, &bg)
 
-	if c, err := r.Cookie("lang"); err == nil {
-		value := strings.Split(c.String(), "=")[1]
-		lang = value
-	} else if err != nil {
-		fmt.Println(err)
-	}
-
-	if c, err := r.Cookie("bgColor"); err == nil {
-		value := strings.Split(c.String(), "=")[1]
-		bg = value
-	} else if err != nil {
-		fmt.Println(err)
-	}
-
-	q, _ := url.PathUnescape(r.URL.RawQuery)
-	if len(q) != 0 {
-		m, err := url.ParseQuery(q)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		js, err := json.Marshal(m)
-		if err != nil {
-			fmt.Println(err)
-		}
-		var param *indexUrlParams
-		json.Unmarshal(js, &param)
-		if len(param.Location[0]) > 0 {
-			location = param.Location[0]
-		}
-		if len(param.Lang[0]) > 0 {
-			lang = param.Lang[0]
-		}
-		if len(param.Bg[0]) > 0 {
-			bg = param.Bg[0]
-		}
-	}
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	prefix := strings.Split(lang, "-")[0]
 	wttrPng := fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png",
@@ -184,6 +138,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	if len(forecasts) >= 3 {
 		forecastFirst = forecasts[1]
 		forecastSecond = forecasts[2]
+		weatherInfo = forecasts[0]
 	}
 	sunMoonUrl := fmt.Sprintf(`%s?format="%s"`, wttrin, "%S+%s+%m")
 
@@ -191,36 +146,22 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		sunMoon := strings.Split(sunMoonStr, " ")
 		if len(sunMoon) == 3 && len(forecasts) > 0 {
 			weatherInfo = "🌅 " + sunMoon[0] + " 🌇" + sunMoon[1] + " " + sunMoon[2] + " " + forecasts[0]
-		}
-	}
-
-	nameDay = get_name_day(svatekUrl)
-
-	var localeTags string = ""
-	var tag string = ""
-	for key, value := range countryFlags {
-		tag = getHTMLOptionTag(key, value, (key == lang))
-		localeTags = strings.Join([]string{localeTags, tag}, "\n")
-	}
-
-	if len(r.Header["X-Real-Ip"]) > 0 {
-		otherInfo = fmt.Sprintf("<a target=\"_blank\" href=\"https://www.whois.com/whois/%s\">🌐 %s</a>",
-			r.Header["X-Real-Ip"][0], r.Header["X-Real-Ip"][0])
+		} 
 	}
 
 	var i indexDisplay
-	i.NameDay = nameDay
+	i.NameDay = get_name_day(svatekUrl)
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
 	i.WeatherInfo = weatherInfo
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
-	i.OtherInfo = otherInfo
+	i.OtherInfo = req_ip_address(r)
 	i.Currency = get_holy_trinity(holytrinityUrl)
 	i.WttrLink = wttrLink
 	i.WttrSrc = wttrPng
 	i.WttrInHolder = wttrInHolders[prefix]
-	i.LocaleOptions = localeTags
+	i.LocaleOptions = getLocaleTags(lang) 
 	i.CryptoCurrency = getBtcXmr(fakemoneyUrl)
 	i.Tannoy = rss_feed_localplace(localtownUrl, 2, true, true)
 	i.LocalNews = rss_feed_localplace(localtownUrl, 5, false, true)
@@ -231,46 +172,20 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	var rssFeed string = ""
+	var location string = ""
 	var lang string = "cs-CZ"
 	var bg string = "442244"
 	var i feedsDisplay
 
-	if c, err := r.Cookie("lang"); err == nil {
-		value := strings.Split(c.String(), "=")[1]
-		lang = value
-	} else if err != nil {
-		fmt.Println(err)
-	}
-	q, _ := url.PathUnescape(r.URL.RawQuery)
-	if len(q) != 0 {
-		m, err := url.ParseQuery(q)
-		if err != nil {
-			fmt.Println(err)
-		}
+	handle_req_params(r, &location, &lang, &bg)
 
-		js, err := json.Marshal(m)
-		if err != nil {
-			fmt.Println(err)
-		}
-		var param *indexUrlParams
-		json.Unmarshal(js, &param)
-		//	if len(param.Location[0]) > 0 {
-		//		location = param.Location[0]
-		//	}
-		if len(param.Lang[0]) > 0 {
-			lang = param.Lang[0]
-		}
-		if len(param.Bg[0]) > 0 {
-			bg = param.Bg[0]
-		}
-	}
 	if lang == "cs-CZ" {
 		var ctkUrl string = "https://www.ceskenoviny.cz/sluzby/rss"
 		ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5, true)
 		ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5, true)
 		ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true)
 		ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 3, false)
-		neovlivni := rss_feed_neovlivni("https://neovlivni.cz/feed/atom/")
+		neovlivni := atom_feed("https://neovlivni.cz/feed/atom/")
 		hrad := rss_feed_ctk("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false)
 		render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr>
 			    %s <br><hr> %s <br><hr> %s <br><hr> %s`, neovlivni, hrad, ctkCr, ctkSvet, ctkEko, ctkSport )
@@ -280,8 +195,13 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 		
 		render_feeds := fmt.Sprintf(`%s <br><hr>`, taggeshau )
 		rssFeed = render_feeds
+	} else if lang == "gb-GB" {
+		theguardian := rss_feed_ctk("https://www.theguardian.com/uk/rss", 7, true)
+
+		render_feeds := fmt.Sprintf(`%s <br><hr>`, theguardian)
+		rssFeed = render_feeds
 	}
-	i.Bg = bg
+	i.Bg = "442244"
 	i.RssFeed = rssFeed
 	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
 	feedsTemplate.Execute(w, i)
@@ -426,7 +346,7 @@ func get_name_day(url string) string {
 	return answer
 }
 
-func rss_feed_neovlivni(url string) string {
+func atom_feed(url string) string {
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
 	if record, found := get(signature); found && record.value != "" {
@@ -512,6 +432,16 @@ func getCryptoCurrency(url, code string) string {
 	result = strings.Split(resp, "\n")[0]
 	store(signature, result)
 	return result
+}
+
+func getLocaleTags(lang string) string {
+	var localeTags string = ""
+	var tag string = ""
+	for key, value := range countryFlags {
+		tag = getHTMLOptionTag(key, value, (key == lang))
+		localeTags = strings.Join([]string{localeTags, tag}, "\n")
+	}
+	return localeTags
 }
 
 func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
@@ -709,6 +639,65 @@ func rss_feed_localplace(url string, nTitles int, tannoy, showDescription bool) 
 	}
 	store(signature, result)
 	return result
+}
+
+func handle_req_params(r *http.Request, location *string, lang *string, bg *string) {
+	if c, err := r.Cookie("place"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		//		location, _ = url.QueryUnescape(value)
+		*location = value
+		//		fmt.Println(value)
+	} else if err != nil {
+		fmt.Println(err)
+	}
+
+	if c, err := r.Cookie("lang"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		*lang = value
+	} else if err != nil {
+		fmt.Println(err)
+	}
+
+	if c, err := r.Cookie("bgColor"); err == nil {
+		value := strings.Split(c.String(), "=")[1]
+		*bg = value
+	} else if err != nil {
+		fmt.Println(err)
+	}
+
+	q, _ := url.PathUnescape(r.URL.RawQuery)
+	if len(q) != 0 {
+		m, err := url.ParseQuery(q)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		js, err := json.Marshal(m)
+		if err != nil {
+			fmt.Println(err)
+		}
+		var param *indexUrlParams
+		json.Unmarshal(js, &param)
+		if len(param.Location[0]) > 0 {
+			*location = param.Location[0]
+		}
+		if len(param.Lang[0]) > 0 {
+			*lang = param.Lang[0]
+		}
+		if len(param.Bg[0]) > 0 {
+			*bg = param.Bg[0]
+		}
+	}
+
+}
+
+func req_ip_address(r *http.Request) string {
+	if len(r.Header["X-Real-Ip"]) > 0 {
+		return fmt.Sprintf("<a target=\"_blank\" href=\"https://www.whois.com/whois/%s\">🌐 %s</a>",
+			r.Header["X-Real-Ip"][0], r.Header["X-Real-Ip"][0])
+	}
+	return "🌐 IPv4 address"
+
 }
 
 func new_request(url string) string {
