@@ -128,11 +128,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	handle_req_params(r, &location, &lang, &bg)
 
-	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	prefix := strings.Split(lang, "-")[0]
-	wttrPng := fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png",
-		wttrin, bg, prefix)
-	wttrLink := fmt.Sprintf("%s?lang=%s", wttrin, prefix)
+
+	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	forecastStr := get_forecast(wttrin)
 	forecasts := strings.Split(forecastStr, "\n")
 	if len(forecasts) >= 3 {
@@ -158,8 +156,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = req_ip_address(r)
 	i.Currency = get_holy_trinity(holytrinityUrl)
-	i.WttrLink = wttrLink
-	i.WttrSrc = wttrPng
+	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
+	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
+
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 
 	i.CryptoCurrency = getBtcXmr(fakemoneyUrl)
@@ -420,7 +419,7 @@ func getCryptoCurrency(url, code string) string {
 		if record.value != "" {
 			d = d.Add(time.Hour * 6)
 		} else {
-			d = d.Add(time.Minute * 3)
+			d = d.Add(time.Minute * 30)
 		}
 		result = record.value
 		if d.After(now) {
