@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net"
@@ -56,8 +57,6 @@ type feedsDisplay struct {
 const CACHESIZE int = 10000
 const MIN_SIZE_FILE_CACHE int = 80
 
-const PORT int = 7901
-
 var CACHE_DIR string = "cache"
 
 const HASHSIZE int = md5.Size
@@ -94,6 +93,8 @@ var indexTemplate *template.Template
 var feedsTemplate *template.Template
 
 func main() {
+	port := flag.Int("port", 8901, "Port for the server to listen on")
+	flag.Parse()
 	http.HandleFunc("/pics/rain.webp", file_handler)
 	http.HandleFunc("/pics/clouds.webp", file_handler)
 	http.HandleFunc("/pics/rain.gif", file_handler)
@@ -115,7 +116,7 @@ func main() {
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
-	http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
