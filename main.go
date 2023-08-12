@@ -81,14 +81,6 @@ var countryFlags = map[string]string{
 	"cs-CZ": "🇨🇿",
 }
 
-// var currSymbols = map[string]string{
-// 	"usd": "$",
-// 	"eur": "€",
-// 	"gbp": "£",
-// 	"czk": "Kč",
-// 	"btc": "BTC",
-// }
-
 var indexTemplate *template.Template
 var feedsTemplate *template.Template
 
