@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"sync"
 	"net/http"
 	"net/url"
 	"strings"
@@ -163,6 +164,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func feeds_handler(w http.ResponseWriter, r *http.Request) {
+	var wg sync.WaitGroup
 	var rssFeed string = ""
 	var location string = ""
 	var lang string = "cs-CZ"
@@ -172,26 +174,46 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	handle_req_params(r, &location, &lang, &bg)
 
 	if lang == "cs-CZ" {
+		wg.Add(6)
 		var ctkUrl string = "https://www.ceskenoviny.cz/sluzby/rss"
-		ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5, true)
-		ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5, true)
-		ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true)
-		ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 3, false)
-		neovlivni := atom_feed("https://neovlivni.cz/feed/atom/")
-		hrad := rss_feed_ctk("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false)
+		ctkCr := make(chan string)
+		go rss_feed_ctk(ctkUrl+"/cr.php", 5, true, ctkCr, &wg)
+		ctkSvet := make(chan string)
+		go rss_feed_ctk(ctkUrl+"/svet.php", 5, true, ctkSvet, &wg)
+		ctkEko := make(chan string)
+		go rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true, ctkEko, &wg)
+		ctkSport := make(chan string)
+		go rss_feed_ctk(ctkUrl+"/sport.php", 3, false, ctkSport, &wg)
+
+		// ctkCr := rss_feed_ctk(ctkUrl+"/cr.php", 5, true)
+		// ctkSvet := rss_feed_ctk(ctkUrl+"/svet.php", 5, true)
+		// ctkEko := rss_feed_ctk(ctkUrl+"/ekonomika.php", 5, true)
+		// ctkSport := rss_feed_ctk(ctkUrl+"/sport.php", 3, false)
+		hrad := make(chan string)
+		go rss_feed_ctk("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false, hrad, &wg)
+		neovlivni := make(chan string)
+		go atom_feed("https://neovlivni.cz/feed/atom/", neovlivni, &wg)
+		// neovlivni := atom_feed("https://neovlivni.cz/feed/atom/")
 		render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr>
-			    %s <br><hr> %s <br><hr> %s <br><hr> %s`, neovlivni, hrad, ctkCr, ctkSvet, ctkEko, ctkSport )
+			    %s <br><hr> %s <br><hr> %s <br><hr> %s`, <-neovlivni, <-hrad, <-ctkCr, <-ctkSvet, <-ctkEko, <-ctkSport )
 		rssFeed = render_feeds
+		wg.Wait()
 	} else if lang == "de-DE" {
-		taggeshau := rss_feed_ctk("https://www.tagesschau.de/ausland/index~rss2.xml", 5, true)
+		wg.Add(1)
+		taggeshau := make(chan string)
+		go rss_feed_ctk("https://www.tagesschau.de/ausland/index~rss2.xml", 5, true, taggeshau, &wg)
 		
-		render_feeds := fmt.Sprintf(`%s <br><hr>`, taggeshau )
+		render_feeds := fmt.Sprintf(`%s <br><hr>`, <-taggeshau )
+		wg.Wait()
 		rssFeed = render_feeds
 	} else if lang == "gb-GB" {
-		theguardian := rss_feed_ctk("https://www.theguardian.com/uk/rss", 7, true)
+		wg.Add(1)
+		theguardian := make(chan string)
+		go rss_feed_ctk("https://www.theguardian.com/uk/rss", 7, true, theguardian, &wg)
 
-		render_feeds := fmt.Sprintf(`%s <br><hr>`, theguardian)
+		render_feeds := fmt.Sprintf(`%s <br><hr>`, <-theguardian)
 		rssFeed = render_feeds
+		wg.Wait()
 	}
 	i.Bg = "442244"
 	i.RssFeed = rssFeed
@@ -338,7 +360,8 @@ func get_name_day(url string) string {
 	return answer
 }
 
-func atom_feed(url string) string {
+func atom_feed(url string, answer chan string, wg* sync.WaitGroup) string {
+	defer wg.Done()
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
 	if record, found := get(signature); found && record.value != "" {
@@ -347,17 +370,20 @@ func atom_feed(url string) string {
 		d = d.Add(time.Hour * 6)
 		result = record.value
 		if d.After(now) {
+			answer <- result
 			return result
 		}
 	}
 	resp := new_request(url)
 	if resp == "" {
+		answer <- result
 		return result
 	}
 	doc := etree.NewDocument()
 
 	if err := doc.ReadFromString(resp); err != nil {
 		fmt.Println(err)
+		answer <- ""
 		return ""
 	}
 
@@ -388,6 +414,7 @@ func atom_feed(url string) string {
 	}
 	result = fmt.Sprintf("%s\n</ul>", result)
 	store(signature, result)
+	answer <- result
 	return result
 }
 
@@ -436,7 +463,8 @@ func getLocaleTags(lang string) string {
 	return localeTags
 }
 
-func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
+func rss_feed_ctk(url string, nTitles int, showDescription bool, answer chan string, wg* sync.WaitGroup) string {
+	defer wg.Done()
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
 	if record, found := get(signature); found {
@@ -449,6 +477,7 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 		}
 		result = record.value
 		if d.After(now) {
+			answer <- result
 			return result
 		}
 	}
@@ -460,10 +489,12 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 	resp := new_request(url)
 	if resp == "" {
 		store(signature, result)
+		answer <- result
 		return result
 	}
 	if err := doc.ReadFromString(resp); err != nil {
 		fmt.Println(err)
+		answer <- ""
 		return ""
 	}
 
@@ -503,6 +534,8 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool) string {
 	}
 	result = fmt.Sprintf("%s\n</ul></div>", result)
 	store(signature, result)
+
+	answer <- result
 	return result
 }
 
