@@ -63,7 +63,7 @@ var CACHE_DIR string = "cache"
 const HASHSIZE int = md5.Size
 
 var svatekUrl string = "http://localhost:7903/today?pp"
-var holytrinityUrl string = "http://localhost:7902/holy_trinity?p"
+var currencyUrl string = "http://localhost:7902/holy_trinity?p"
 var wttrUrl string = "https://wttr.in"
 var fakemoneyUrl string = "https://rate.sx"
 var localtownUrl string = "https://www.mnhradiste.cz/rss"
@@ -149,13 +149,13 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = req_ip_address(r)
-	i.Currency = get_holy_trinity(holytrinityUrl)
+	i.Currency = get_cnb_currency(currencyUrl)
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
 
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 
-	i.CryptoCurrency = getBtcXmr(fakemoneyUrl)
+	i.CryptoCurrency = getFakeMoney(fakemoneyUrl)
 	i.Tannoy = rss_feed_localplace(localtownUrl, 2, true, true)
 	i.LocalNews = rss_feed_localplace(localtownUrl, 5, false, true)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
@@ -309,9 +309,9 @@ func get_forecast(url string) string {
 	return answer
 }
 
-func get_holy_trinity(url string) string {
+func get_cnb_currency(url string) string {
 	var result string = ""
-	signature := fmt.Sprintf(`%s:%s`, url, "trinity")
+	signature := fmt.Sprintf(`%s:%s`, url, "currency")
 	if record, found := get(signature); found {
 		now := time.Now()
 		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
@@ -418,19 +418,28 @@ func atom_feed(url string, answer chan string, wg* sync.WaitGroup) string {
 	return result
 }
 
-func getBtcXmr(url string) string {
+func getFakeMoney(url string) string {
+	var wg sync.WaitGroup
 	var result string = ""
-	btcStr := getCryptoCurrency(url, "btc")
-	btc, _ := strconv.ParseFloat(btcStr, 64)
-	xmrStr := getCryptoCurrency(url, "xmr")
-	xmr, _ := strconv.ParseFloat(xmrStr, 64)
+	wg.Add(2)
+	btcStr := make(chan string)	
+//	btcStr := getCryptoCurrency(url, "btc")
+	go getCryptoCurrency(url, "btc", btcStr, &wg)	
+//	xmrStr := getCryptoCurrency(url, "xmr")
+	xmrStr := make(chan string)
+	go getCryptoCurrency(url, "xmr", xmrStr, &wg)
+
+	btc, _ := strconv.ParseFloat(<-btcStr, 64)
+	xmr, _ := strconv.ParseFloat(<-xmrStr, 64)
+	wg.Wait()
 	result = fmt.Sprintf("1<b style=\"color: gold;\">BTC</b> %.2f$"+
 		" 1<b style=\"color: #999;\">XMR</b> %.2f$",
 		btc, xmr)
 	return result
 }
 
-func getCryptoCurrency(url, code string) string {
+func getCryptoCurrency(url, code string, answer chan string, wg* sync.WaitGroup) string {
+	defer wg.Done()
 	var result string = ""
 	signature := fmt.Sprintf("%s:%s", url, code)
 	if record, found := get(signature); found {
@@ -443,6 +452,7 @@ func getCryptoCurrency(url, code string) string {
 		}
 		result = record.value
 		if d.After(now) {
+			answer <- result
 			return result
 		}
 	}
@@ -450,6 +460,7 @@ func getCryptoCurrency(url, code string) string {
 	resp := new_request(url)
 	result = strings.Split(resp, "\n")[0]
 	store(signature, result)
+	answer <- result
 	return result
 }
 
