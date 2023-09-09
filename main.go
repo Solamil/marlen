@@ -47,8 +47,8 @@ type indexDisplay struct {
 	WttrSrc        string
 	WttrInHolder   string
 	CryptoCurrency string
-	Tannoy         string
 	LocalNews      string
+	Tannoy         string
 }
 type feedsDisplay struct {
 	Bg      string
@@ -100,7 +100,10 @@ func main() {
 	http.HandleFunc("/pics/forecastWind_0days.webp", file_handler)
 	http.HandleFunc("/pics/forecastPrecip_1days.webp", file_handler)
 	http.HandleFunc("/pics/forecastPrecip_1days.gif", file_handler)
+	http.HandleFunc("/pics/clouds_eu.webp", file_handler)
+	http.HandleFunc("/pics/clouds_eu.gif", file_handler)
 	http.HandleFunc("/pics/mhcam1.webp", file_handler)
+	http.HandleFunc("/pics/snap-klub.webp", file_handler)
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
 	http.HandleFunc("/traffic.html", file_handler)
