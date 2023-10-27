@@ -107,6 +107,9 @@ func main() {
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
 	http.HandleFunc("/traffic.html", file_handler)
+	http.HandleFunc("/f1.html", file_handler)
+	http.HandleFunc("/motogp.html", file_handler)
+	http.HandleFunc("/artix_arch.sh", file_handler)
 
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
