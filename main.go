@@ -49,6 +49,7 @@ type indexDisplay struct {
 	CryptoCurrency string
 	LocalNews      string
 	Tannoy         string
+	Crashnet       string
 }
 type feedsDisplay struct {
 	Bg      string
@@ -119,6 +120,7 @@ func main() {
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
+	var wg sync.WaitGroup
 	var location string = "Zdar"
 	var bg string = "893531"
 	var lang string = "en-US"
@@ -147,6 +149,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		} 
 	}
 
+	wg.Add(2)
 	var i indexDisplay
 	i.NameDay = get_name_day(svatekUrl)
 	i.Bg = bg
@@ -162,6 +165,12 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 
 	i.CryptoCurrency = getFakeMoney(fakemoneyUrl)
+	foneStr := make(chan string)
+	go rss_feed_crashnet("https://www.crash.net/rss/f1", "F1", 5, foneStr, &wg )
+	motogpStr := make(chan string)
+	go rss_feed_crashnet("https://www.crash.net/rss/motogp", "MotoGP", 5, motogpStr, &wg )
+	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
+	wg.Wait()	
 	i.Tannoy = rss_feed_localplace(localtownUrl, 2, true, true)
 	i.LocalNews = rss_feed_localplace(localtownUrl, 5, false, true)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
@@ -547,6 +556,69 @@ func rss_feed_ctk(url string, nTitles int, showDescription bool, answer chan str
 			line = fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\">%s &#128220;%s</a>\n"+
 				"</li>", link, date, title)
 		}
+		result = fmt.Sprintf("%s\n%s", result, line)
+	}
+	result = fmt.Sprintf("%s\n</ul></div>", result)
+	store(signature, result)
+
+	answer <- result
+	return result
+}
+
+func rss_feed_crashnet(url string, firstTitle string, nTitles int, answer chan string, wg* sync.WaitGroup) string {
+	defer wg.Done()
+	var result string = ""
+	var signature string = fmt.Sprintf(`%s:%s`, url, "rssCrashnet")
+	if record, found := get(signature); found {
+		now := time.Now()
+		d := record.expiry
+		if record.value != "" {
+			d = d.Add(time.Hour * 2)
+		} else {
+			d = d.Add(time.Minute * 35)
+		}
+		result = record.value
+		if d.After(now) {
+			answer <- result
+			return result
+		}
+	}
+	doc := etree.NewDocument()
+
+
+	resp := new_request(url)
+	if resp == "" {
+		answer <- result
+		store(signature, result)
+	}
+	if err := doc.ReadFromString(resp); err != nil {
+		fmt.Println(err)
+		answer <- result
+		return result
+	}
+
+	root := doc.SelectElement("rss").SelectElement("channel")
+	mainTitle := "&#128220;Crash Net "+firstTitle				// root.SelectElement("title").Text() 
+	linkSite := "https://crash.net"				// root.SelectElement("link").Text()
+	result = fmt.Sprintf("<div class=\"articles\" style=\"margin:5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4><ul>\n", linkSite, mainTitle)
+	if nTitles < 1 || nTitles > 100 {
+		nTitles = 5
+	}
+
+	for i, e := range root.SelectElements("item") {
+		if i >=	nTitles {
+			break
+		}
+		date := ""
+		if e.SelectElement("pubDate") != nil {
+			published := e.SelectElement("pubDate").Text()
+			date = fmt.Sprintf("<span class=\"date\">%s</span>", published)
+		}
+		title := e.SelectElement("title").Text()
+		link := e.SelectElement("link").Text()
+		line := fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s &#128220;%s</a></li>\n",
+			link, title, date)
+		
 		result = fmt.Sprintf("%s\n%s", result, line)
 	}
 	result = fmt.Sprintf("%s\n</ul></div>", result)
