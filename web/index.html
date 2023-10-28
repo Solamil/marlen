@@ -170,13 +170,6 @@ footer{	margin-top: 2em;
 			var panLink = document.getElementById("panorama_link")
 			panLink.href = panValues[1]
 
-			var dateSpanList = document.getElementsByClassName("date")
-			for (var i = 0; i < dateSpanList.length; i++) {
-				time = dateSpanList[i].innerHTML
-				var d = new Date(time)
-				var date_output = new Intl.DateTimeFormat(lang, {weekday: "long", day:"numeric", month:"long", hour: "numeric", minute: "numeric"}).format(d)
-				dateSpanList[i].innerHTML = date_output
-			}
 
 			panSelect.onchange = function() {
 				var panValues = panSelect.value.split(";")
@@ -196,6 +189,13 @@ footer{	margin-top: 2em;
 				timezonePar.innerHTML = day.toLocaleString(formatSelect.value, {timeZone: timezone}) 
 			}
 			var formatSelect = document.getElementById("select_lang")
+			var dateSpanList = document.getElementsByClassName("date")
+			for (var i = 0; i < dateSpanList.length; i++) {
+				time = dateSpanList[i].innerHTML
+				var d = new Date(time)
+				var date_output = new Intl.DateTimeFormat(formatSelect.value, {weekday: "long", day:"numeric", month:"long", hour: "numeric", minute: "numeric"}).format(d)
+				dateSpanList[i].innerHTML = date_output
+			}
 			var day = new Date(Date.now()) 
 			var timezone = timezoneSelect[timezoneSelect.value].innerHTML
 			timezonePar.innerHTML = day.toLocaleString(formatSelect.value, {timeZone: timezone}) 
