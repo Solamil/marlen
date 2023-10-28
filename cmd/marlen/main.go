@@ -133,7 +133,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		} 
 	}
 
-	wg.Add(3)
+	wg.Add(4)
 	var i indexDisplay
 	i.NameDay = get_name_day(svatekUrl)
 	i.Bg = bg
@@ -152,10 +152,12 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.LocaleOptions = getLocaleTags(lang) 
 	i.CryptoCurrency = getFakeMoney(fakemoneyUrl)
 	foneStr := make(chan string)
-	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "F1", 5, foneStr, &wg )
+	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
 	motogpStr := make(chan string)
-	go marlen.RssCrashnet("https://www.crash.net/rss/motogp", "MotoGP", 5, motogpStr, &wg )
-	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
+	go marlen.RssCrashnet("https://www.crash.net/rss/motogp", "Crash Net - MotoGP", "https://crash.net", 5, motogpStr, &wg )
+	nitterStr := make(chan string)
+	go marlen.RssCrashnet("https://www.nitter.cz/jeremyclarkson/rss", "nitter - JC", "https://nitter.cz/JeremyClarkson", 3, nitterStr, &wg )
+	i.Crashnet = fmt.Sprintf("%s \n %s \n %s", <-foneStr, <-motogpStr, <-nitterStr)
 	wg.Wait()	
 	i.Tannoy = marlen.RssLocalplace(localtownUrl, 2, true, true)
 	i.LocalNews = marlen.RssLocalplace(localtownUrl, 5, false, true)

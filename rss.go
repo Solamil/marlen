@@ -144,7 +144,7 @@ func RssCtk(url string, nTitles int, showDescription bool, answer chan string, w
 }
 
 
-func RssCrashnet(url string, firstTitle string, nTitles int, answer chan string, wg* sync.WaitGroup) string {
+func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, answer chan string, wg* sync.WaitGroup) string {
 	defer wg.Done()
 	var result string = ""
 	var signature string = fmt.Sprintf(`%s:%s`, url, "rssCrashnet")
@@ -169,6 +169,7 @@ func RssCrashnet(url string, firstTitle string, nTitles int, answer chan string,
 	if resp == "" {
 		answer <- result
 		Store(signature, result)
+		return result
 	}
 	if err := doc.ReadFromString(resp); err != nil {
 		fmt.Println(err)
@@ -177,8 +178,8 @@ func RssCrashnet(url string, firstTitle string, nTitles int, answer chan string,
 	}
 
 	root := doc.SelectElement("rss").SelectElement("channel")
-	mainTitle := "&#128220;Crash Net "+firstTitle				// root.SelectElement("title").Text() 
-	linkSite := "https://crash.net"				// root.SelectElement("link").Text()
+	mainTitle := fmt.Sprintf("&#128220;%s", firstTitle)		// root.SelectElement("title").Text() 
+	// linkSite := "https://crash.net"				// root.SelectElement("link").Text()
 	result = fmt.Sprintf("<div class=\"articles\" style=\"margin:5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4><ul>\n", linkSite, mainTitle)
 	if nTitles < 1 || nTitles > 100 {
 		nTitles = 5
