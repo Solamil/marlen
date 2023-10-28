@@ -133,7 +133,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		} 
 	}
 
-	wg.Add(2)
+	wg.Add(3)
 	var i indexDisplay
 	i.NameDay = get_name_day(svatekUrl)
 	i.Bg = bg
@@ -142,7 +142,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = req_ip_address(r)
-	i.Currency = get_cnb_currency(currencyUrl)
+	currency := make(chan string)
+	go get_cnb_currency(currencyUrl, currency, &wg)
+	i.Currency = <-currency
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
 
@@ -308,7 +310,8 @@ func get_forecast(url string) string {
 	return answer
 }
 
-func get_cnb_currency(url string) string {
+func get_cnb_currency(url string, answer chan string, wg *sync.WaitGroup) string {
+	defer wg.Done()
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "currency")
 	if record, found := marlen.Get(signature); found {
@@ -318,9 +321,11 @@ func get_cnb_currency(url string) string {
 		if record.Value != "" && ((now.Before(tUpdate) && now.Day() == d.Day() && now.Month() == d.Month() && now.Year() == d.Year()) ||
 			d.After(tUpdate)) {
 			result = record.Value
+			answer <- result
 			return result
 		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
 			result = record.Value
+			answer <- result
 			return result
 		}
 
@@ -329,6 +334,7 @@ func get_cnb_currency(url string) string {
 	value := marlen.NewRequest(url)
 	result = value
 	marlen.Store(signature, result)
+	answer <- result
 	return result
 }
 
