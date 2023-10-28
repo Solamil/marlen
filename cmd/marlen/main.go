@@ -10,7 +10,6 @@ import (
 	"strings"
 	//	"context"
 	//	"html"
-	"os/exec"
 	"strconv"
 	"text/template"
 	"time"
@@ -117,7 +116,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	prefix := strings.Split(lang, "-")[0]
 
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
-	forecastStr := get_forecast(wttrin)
+	forecastStr := marlen.GetForecast(wttrin)
 	forecasts := strings.Split(forecastStr, "\n")
 	if len(forecasts) >= 3 {
 		forecastFirst = forecasts[1]
@@ -126,7 +125,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	sunMoonUrl := fmt.Sprintf(`%s?format="%s"`, wttrin, "%S+%s+%m")
 
-	if sunMoonStr := get_daily_wttr_info(sunMoonUrl); len(sunMoonStr) != 0 {
+	if sunMoonStr := marlen.GetDailyWttrInfo(sunMoonUrl); len(sunMoonStr) != 0 {
 		sunMoon := strings.Split(sunMoonStr, " ")
 		if len(sunMoon) == 3 && len(forecasts) > 0 {
 			weatherInfo = "🌅 " + sunMoon[0] + " 🌇" + sunMoon[1] + " " + sunMoon[2] + " " + forecasts[0]
@@ -226,90 +225,6 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 
 func file_handler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, WEB_DIR+r.URL.Path)
-}
-
-func get_daily_wttr_info(url string) string {
-	signature := fmt.Sprintf(`%s:%s`, url, "daily")
-	var answer string = ""
-
-	if record, found := marlen.Get(signature); found {
-		now := time.Now()
-		yearNow, monthNow, dayNow := now.Date()
-		year, month, day := record.Expiry.Date()
-		d := record.Expiry
-		if record.Value != "" && dayNow == day && monthNow == month && yearNow == year {
-			answer = record.Value
-			return answer
-		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
-			answer = record.Value
-			return answer
-		}
-	}
-	value := get_weather_info(url)
-	answer = value
-	marlen.Store(signature, value)
-	return answer
-}
-
-func get_weather_info(url string) string {
-	var result string = ""
-	value := marlen.NewRequest(url)
-	if len(value) > 0 {
-		value = strings.ReplaceAll(value, "\"", "")
-		result = strings.ReplaceAll(value, "\n", "")
-	}
-	return result
-}
-
-func get_forecast(url string) string {
-	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
-	shell := "/bin/sh"
-	scriptFile := "./scripts/sb-forecast.sh"
-	var answer string = ""
-	if record, found := marlen.Get(signature); found {
-		now := time.Now()
-		d := record.Expiry
-		if record.Value != "" {
-			d = d.Add(time.Hour * 6)
-		} else {
-			d = d.Add(time.Minute * 35)
-		}
-		if d.After(now) {
-			answer = record.Value
-			return answer
-		}
-	}
-	output, err := exec.Command(shell, scriptFile, url).Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-	hum_low_high := strings.Replace(string(output), "\n", "", 1)
-
-	output, err = exec.Command(shell, scriptFile, url, "23", "26").Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-	hum_low_high_next := strings.Replace(string(output), "\n", "", 1)
-	output, err = exec.Command(shell, scriptFile, url, "33", "36").Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
-	var value string = ""
-
-	if len(hum_low_high) > 0 {
-		value = hum_low_high
-	}
-	if len(hum_low_high_next) > 0 {
-		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next)
-	}
-	if len(hum_low_high_next2) > 0 {
-		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next2)
-	}
-	answer = value
-	marlen.Store(signature, value)
-
-	return answer
 }
 
 func get_cnb_currency(url string, answer chan string, wg *sync.WaitGroup) string {
