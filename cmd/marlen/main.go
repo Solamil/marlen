@@ -10,9 +10,7 @@ import (
 	"strings"
 	//	"context"
 	//	"html"
-	"strconv"
 	"text/template"
-	"time"
 	"github.com/Solamil/marlen"
 )
 
@@ -137,7 +135,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	wg.Add(4)
 	var i indexDisplay
-	i.NameDay = get_name_day(svatekUrl)
+	i.NameDay = marlen.Nameday(svatekUrl)
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
 	i.WeatherInfo = weatherInfo
@@ -145,14 +143,14 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = req_ip_address(r)
 	currency := make(chan string)
-	go get_cnb_currency(currencyUrl, currency, &wg)
+	go marlen.CnbCurrency(currencyUrl, currency, &wg)
 	i.Currency = <-currency
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
 
 	// i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 
-	i.CryptoCurrency = getFakeMoney(fakemoneyUrl)
+	i.CryptoCurrency = marlen.FakeMoney(fakemoneyUrl)
 	foneStr := make(chan string)
 	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
 	motogpStr := make(chan string)
@@ -228,108 +226,6 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 
 func file_handler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, WEB_DIR+r.URL.Path)
-}
-
-func get_cnb_currency(url string, answer chan string, wg *sync.WaitGroup) string {
-	defer wg.Done()
-	var result string = ""
-	signature := fmt.Sprintf(`%s:%s`, url, "currency")
-	if record, found := marlen.Get(signature); found {
-		now := time.Now()
-		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
-		d := record.Expiry
-		if record.Value != "" && ((now.Before(tUpdate) && now.Day() == d.Day() && now.Month() == d.Month() && now.Year() == d.Year()) ||
-			d.After(tUpdate)) {
-			result = record.Value
-			answer <- result
-			return result
-		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
-			result = record.Value
-			answer <- result
-			return result
-		}
-
-	}
-
-	value := marlen.NewRequest(url)
-	result = value
-	marlen.Store(signature, result)
-	answer <- result
-	return result
-}
-
-func get_name_day(url string) string {
-
-	signature := fmt.Sprintf(`%s:%s`, url, "nameday")
-	var answer string = ""
-
-	if record, found := marlen.Get(signature); found {
-		now := time.Now()
-		d := record.Expiry
-		if record.Value != "" &&
-			d.Day() == now.Day() && d.Month() == now.Month() && d.Year() == now.Year() {
-			answer = record.Value
-			return answer
-		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
-			answer = record.Value
-			return answer
-		}
-
-	}
-
-	if value := marlen.NewRequest(url); value != "" {
-		answer = value
-		marlen.Store(signature, answer)
-
-	}
-	return answer
-}
-
-
-func getFakeMoney(url string) string {
-	var wg sync.WaitGroup
-	var result string = ""
-	wg.Add(2)
-	btcStr := make(chan string)	
-//	btcStr := getCryptoCurrency(url, "btc")
-	go getCryptoCurrency(url, "btc", btcStr, &wg)	
-//	xmrStr := getCryptoCurrency(url, "xmr")
-	xmrStr := make(chan string)
-	go getCryptoCurrency(url, "xmr", xmrStr, &wg)
-
-	btc, _ := strconv.ParseFloat(<-btcStr, 64)
-	xmr, _ := strconv.ParseFloat(<-xmrStr, 64)
-	wg.Wait()
-	result = fmt.Sprintf("1<b style=\"color: gold;\">BTC</b> %.2f$"+
-		" 1<b style=\"color: #999;\">XMR</b> %.2f$",
-		btc, xmr)
-	return result
-}
-
-func getCryptoCurrency(url, code string, answer chan string, wg* sync.WaitGroup) string {
-	defer wg.Done()
-	var result string = ""
-	signature := fmt.Sprintf("%s:%s", url, code)
-	if record, found := marlen.Get(signature); found {
-		now := time.Now()
-		d := record.Expiry
-		if record.Value != "" {
-			d = d.Add(time.Hour * 6)
-		} else {
-			d = d.Add(time.Minute * 30)
-		}
-		result = record.Value
-		if d.After(now) {
-			answer <- result
-			return result
-		}
-	}
-	url = fmt.Sprintf("%s/1%s", url, code)
-	resp := marlen.NewRequest(url)
-	result = strings.Split(resp, "\n")[0]
-	marlen.Store(signature, result)
-	answer <- result
-	return result
 }
 
 func getLocaleTags(lang string) string {
