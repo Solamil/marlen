@@ -88,6 +88,7 @@ func main() {
 	http.HandleFunc("/pics/clouds_eu.gif", file_handler)
 	http.HandleFunc("/pics/mhcam1.webp", file_handler)
 	http.HandleFunc("/pics/snap-klub.webp", file_handler)
+	http.HandleFunc("/pics/kalendar-m.png", file_handler)
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
 	http.HandleFunc("/traffic.html", file_handler)
