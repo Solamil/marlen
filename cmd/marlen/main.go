@@ -99,6 +99,7 @@ func main() {
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
+	// marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", "./web/pics/kalendar-m.png" )
 	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
 
