@@ -1,5 +1,5 @@
 weatherreport
-cmd/marlen/marlen
+/marlen
 errors.log
 c.out
 cover.out
