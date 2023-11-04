@@ -47,6 +47,8 @@ type feedsDisplay struct {
 
 const PORT = 8901
 
+var location string = "Mnichovo Hradiště"
+var lang string = "cs-CZ"
 var svatekUrl string = "http://localhost:7903/today?pp"
 var currencyUrl string = "http://localhost:7902/holy_trinity?p"
 var wttrUrl string = "https://wttr.in"
@@ -54,11 +56,11 @@ var fakemoneyUrl string = "https://rate.sx"
 var localtownUrl string = "https://www.mnhradiste.cz/rss"
 
 var WEB_DIR string = "web"
-var wttrInHolders = map[string]string{
-	"en": "Weather in...",
-	"de": "Wetter für...",
-	"cs": "Počasí v...",
-}
+// var wttrInHolders = map[string]string{
+// 	"en": "Weather in...",
+// 	"de": "Wetter für...",
+// 	"cs": "Počasí v...",
+// }
 
 var countryFlags = map[string]string{
 	"en-US": "🇺🇸",
@@ -72,6 +74,7 @@ var feedsTemplate *template.Template
 func main() {
 	port := flag.Int("port", PORT, "Port for the server to listen on")
 	flag.Parse()
+
 	http.HandleFunc("/pics/rain.webp", file_handler)
 	http.HandleFunc("/pics/clouds.webp", file_handler)
 	http.HandleFunc("/pics/rain.gif", file_handler)
@@ -106,9 +109,7 @@ func main() {
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
-	var location string = "Zdar"
 	var bg string = "893531"
-	var lang string = "en-US"
 	var weatherInfo string = ""
 	var forecastFirst string = ""
 	var forecastSecond string = ""
@@ -149,7 +150,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
 
-	i.WttrInHolder = wttrInHolders[prefix]
+	// i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 
 	i.CryptoCurrency = getFakeMoney(fakemoneyUrl)
 	foneStr := make(chan string)
