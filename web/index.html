@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Home Page</title>
+<title>Jabbapoint</title>
 <!--<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />-->
 <!--<link rel="stylesheet" href="./style.css" type="text/css" media="screen" /> -->
 <meta charset="utf-8"/>
@@ -76,15 +76,17 @@ footer{	margin-top: 2em;
 	</nav>
 
 	<main  style="margin-top: 20px;">
-		<a href='https://kalendar.beda.cz/' target="_blank"><img src='https://kalendar.beda.cz/pic/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
+		<a href='https://kalendar.beda.cz/' target="_blank"><img src='./pics/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
 		<div class="cs-CZ" style="display: inline-block">
 			<p style="max-width: 550px;"><a href="http://svatek.jabbapoint.local/">{{.NameDay}}</a></p>
 			<p style="display:inline-block"><a id="curr" href="http://czk.jabbapoint.local/">{{.Currency}}</a></p>
 			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">{{.CryptoCurrency}}</a></p>
 		</div>
 		<div id="text_forecast">
-			<p id="tomorrow_forecast" style="display: inline-block"><span id="first_date"></span> {{.ForecastFirst}}</p>
-			<p id="next_forecast" style="display: inline-block"><span id="second_date"></span> {{.ForecastSecond}}</p>
+			<a href="{{.WttrLink}}" target="_blank">
+				<p id="tomorrow_forecast" style="display: inline-block"><span id="first_date"></span> {{.ForecastFirst}}</p>
+				<p id="next_forecast" style="display: inline-block"><span id="second_date"></span> {{.ForecastSecond}}</p>
+			</a>
 		</div>
 		<div class="cs-CZ" id="english" style="display:inline-block; margin:20px;">
 			<form action="https://slovniky.lingea.cz/anglicko-cesky/" autocomplete="off" target="_blank" method="get" style="display:inline-block">
@@ -106,6 +108,7 @@ footer{	margin-top: 2em;
 			</form>
 		</div>
 		<div>
+			<!--
 			<div id="wttr-in-module" style="display: inline-block">
 				<a href='{{.WttrLink}}' target="_blank" target='wttr.in' id="wttr-link"><image id="weather-img" src='{{.WttrSrc}}' loading=lazy style="border: 0px" alt="Current weather in"></a>
 				<form id="weather-form">
@@ -115,6 +118,7 @@ footer{	margin-top: 2em;
 					<button id="weather-btn" type="button">OK</button>
 				</form>
 			</div>
+			-->
 			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank" id="panorama_link"><img src='./pics/mhcam1.webp' id="panorama_img" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
 			<select name="camera" id="select_panorama">
 				<option value="./pics/mhcam1.webp;https://www.mnhradiste.cz/kamera/mhcam1.jpg">Mnichovo Hradiště</option>
