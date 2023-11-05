@@ -61,7 +61,7 @@ var WEB_DIR string = "web"
 // }
 
 var countryFlags = map[string]string{
-	"en-US": "🇺🇸",
+//	"en-US": "🇺🇸",
 	"de-DE": "🇩🇪",
 	"cs-CZ": "🇨🇿",
 }

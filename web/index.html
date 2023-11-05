@@ -164,7 +164,7 @@ footer{	margin-top: 2em;
 		{{.Tannoy}}
 
 		{{.Crashnet}}
-		<script async="" src="./js/module-wttrin-widget.js"></script>
+		<!--<script async="" src="./js/module-wttrin-widget.js"></script> -->
 		<script>
 			
 			var panSelect = document.getElementById("select_panorama")
@@ -246,22 +246,6 @@ footer{	margin-top: 2em;
 				}
 				
 			}
-			document.getElementById("weather-btn-default").onclick = function () {
-				if (document.cookie.length != 0) {
-					var cookieList = document.cookie.split("; ")
-					var cookiePlace = cookieList.find(e => e.startsWith("place"))
-					if (cookiePlace != undefined) {
-						place = cookiePlace.split("=")[1]
-						var weatherImg = document.getElementById("weather-img")
-						var formatSelect = document.getElementById("select_lang")
-						var bgColor = document.getElementById("background")
-						var prefix = formatSelect.value.split("-")[0]
-						weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background="+bgColor.value+"_lang="+prefix+".png"
-						document.getElementById("wttr-link").href = "https://wttr.in/"+place+"?lang="+prefix
-					}
-
-				}
-			}
 			document.getElementById("background").oninput = function() {
 				document.getElementsByTagName("body")[0].style.backgroundColor = "#"+this.value
 			}
@@ -312,6 +296,24 @@ footer{	margin-top: 2em;
 
 		</script>
 
+<!--			
+			document.getElementById("weather-btn-default").onclick = function () {
+				if (document.cookie.length != 0) {
+					var cookieList = document.cookie.split("; ")
+					var cookiePlace = cookieList.find(e => e.startsWith("place"))
+					if (cookiePlace != undefined) {
+						place = cookiePlace.split("=")[1]
+						var weatherImg = document.getElementById("weather-img")
+						var formatSelect = document.getElementById("select_lang")
+						var bgColor = document.getElementById("background")
+						var prefix = formatSelect.value.split("-")[0]
+						weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background="+bgColor.value+"_lang="+prefix+".png"
+						document.getElementById("wttr-link").href = "https://wttr.in/"+place+"?lang="+prefix
+					}
+
+				}
+			}
+			-->
 	</main>
 	<footer style="font-size: x-small">
 		<p>Personal Home Page</p>
