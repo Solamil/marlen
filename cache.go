@@ -53,7 +53,7 @@ func Get(signature string) (cacheRecord, bool) {
 	if found && record.Value != "" {
 		if strings.Compare(record.Value, fmt.Sprintf("file:%x.txt", cacheSignature)) == 0 {
 			filename := fmt.Sprintf("%s/file:%x.txt", CACHE_DIR, cacheSignature)
-			record.Value = readFile(filename)
+			record.Value = readAllFile(filename)
 		}
 	}
 	return record, found
@@ -63,7 +63,7 @@ func hash(signature string) [HASHSIZE]byte {
 	return md5.Sum([]byte(signature))
 }
 
-func readFile(filename string) string {
+func readAllFile(filename string) string {
 	result, err := os.ReadFile(filename)
 	if os.IsNotExist(err) {
 		return ""
