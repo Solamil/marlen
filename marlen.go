@@ -8,6 +8,9 @@ import (
 	"strings"
 )
 
+var ratesDir string = "./rates"
+var pathHolytrinity string = ratesDir+"/svata_trojice.txt"
+
 func FakeMoney(url string) string {
 	var wg sync.WaitGroup
 	var result string = ""
@@ -81,31 +84,37 @@ func Nameday(url string) string {
 	return answer
 }
 
-func CnbCurrency(url string, answer chan string, wg *sync.WaitGroup) string {
-	defer wg.Done()
-	var result string = ""
-	signature := fmt.Sprintf(`%s:%s`, url, "currency")
-	if record, found := Get(signature); found {
-		now := time.Now()
-		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
-		d := record.Expiry
-		if record.Value != "" && ((now.Before(tUpdate) && now.Day() == d.Day() && now.Month() == d.Month() && now.Year() == d.Year()) ||
-			d.After(tUpdate)) {
-			result = record.Value
-			answer <- result
-			return result
-		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
-			result = record.Value
-			answer <- result
-			return result
-		}
-
-	}
-
-	value := NewRequest(url)
-	result = value
-	Store(signature, result)
-	answer <- result
-	return result
+func CnbCurr(answer chan string, wg *sync.WaitGroup) string {
+	defer wg.Done()	
+	result := readAllFile(pathHolytrinity)
+	answer <- result 
+	return result 
 }
 
+// func CnbCurrency(url string, answer chan string, wg *sync.WaitGroup) string {
+// 	defer wg.Done()
+// 	var result string = ""
+// 	signature := fmt.Sprintf(`%s:%s`, url, "currency")
+// 	if record, found := Get(signature); found {
+// 		now := time.Now()
+// 		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
+// 		d := record.Expiry
+// 		if record.Value != "" && ((now.Before(tUpdate) && now.Day() == d.Day() && now.Month() == d.Month() && now.Year() == d.Year()) ||
+// 			d.After(tUpdate)) {
+// 			result = record.Value
+// 			answer <- result
+// 			return result
+// 		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
+// 			result = record.Value
+// 			answer <- result
+// 			return result
+// 		}
+// 
+// 	}
+// 
+// 	value := NewRequest(url)
+// 	result = value
+// 	Store(signature, result)
+// 	answer <- result
+// 	return result
+// }

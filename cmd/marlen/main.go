@@ -95,6 +95,7 @@ func main() {
 	http.HandleFunc("/traffic.html", file_handler)
 	http.HandleFunc("/f1.html", file_handler)
 	http.HandleFunc("/motogp.html", file_handler)
+	http.HandleFunc("/cnb-rates.html", file_handler)
 	http.HandleFunc("/artix_arch.sh", file_handler)
 
 	indexTemplate, _ = template.ParseFiles("web/index.html")
@@ -143,7 +144,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = req_ip_address(r)
 	currency := make(chan string)
-	go marlen.CnbCurrency(currencyUrl, currency, &wg)
+	go marlen.CnbCurr(currency, &wg)
 	i.Currency = <-currency
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
