@@ -1,5 +1,7 @@
 weatherreport
 /marlen
+.rsync-filter
+/rates
 errors.log
 c.out
 cover.out
