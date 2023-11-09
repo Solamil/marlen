@@ -45,6 +45,7 @@ type feedsDisplay struct {
 
 const PORT = 8901
 
+var svatekFile string = "web/nameday_cz_sk_pretty.txt"
 var location string = "Mnichovo Hradiště"
 var lang string = "cs-CZ"
 var svatekUrl string = "http://localhost:7903/today?pp"
@@ -96,12 +97,16 @@ func main() {
 	http.HandleFunc("/f1.html", file_handler)
 	http.HandleFunc("/motogp.html", file_handler)
 	http.HandleFunc("/cnb-rates.html", file_handler)
+	http.HandleFunc("/svatek.html", file_handler)
 	http.HandleFunc("/artix_arch.sh", file_handler)
+	http.HandleFunc("/nameday_cz_sk_pretty.txt", file_handler)
 
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
+
+	marlen.PrepareSvatekList(svatekFile)
 	// marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", "./web/pics/kalendar-m.png" )
 	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
@@ -136,7 +141,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	wg.Add(4)
 	var i indexDisplay
-	i.NameDay = marlen.Nameday(svatekUrl)
+	i.NameDay = "📆Dnes má svátek "+marlen.GetSvatekNameToday("cs-CZ")
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
 	i.WeatherInfo = weatherInfo
