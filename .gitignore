@@ -2,6 +2,7 @@ weatherreport
 /marlen
 .rsync-filter
 /rates
+denni_kurz.txt
 errors.log
 c.out
 cover.out
