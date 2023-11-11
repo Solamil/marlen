@@ -79,8 +79,8 @@ footer{	margin-top: 2em;
 		<a href='https://kalendar.beda.cz/' target="_blank"><img src='./pics/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
 		<div class="cs-CZ" style="display: inline-block">
 			<p style="max-width: 550px;"><a href="./svatek.html">{{.NameDay}}</a></p>
-			<p style="display:inline-block"><a id="curr" href="./cnb-rates.html">{{.Currency}}</a></p>
-			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">{{.CryptoCurrency}}</a></p>
+			<p style="display:inline-block"><a id="curr" href="./cnb-rates.html">💵{{.Currency}}</a></p>
+			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">🪙{{.CryptoCurrency}}</a></p>
 		</div>
 		<div id="text_forecast">
 			<a href="{{.WttrLink}}" target="_blank">
@@ -231,17 +231,17 @@ footer{	margin-top: 2em;
 				if (inputLocation.value != ""){
 					place = encodeURIComponent(inputLocation.value)
 					document.cookie = "place="+encodeURI(inputLocation.value)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None"
-					var weatherImg = document.getElementById("weather-img")
-					var formatSelect = document.getElementById("select_lang")
+//					var weatherImg = document.getElementById("weather-img")
+//					var formatSelect = document.getElementById("select_lang")
 					var bgColor = document.getElementById("background")
-					var prefix = formatSelect.value.split("-")[0]
-					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background="+bgColor.value+"_lang="+prefix+".png"
+//					var prefix = formatSelect.value.split("-")[0]
+//					weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background="+bgColor.value+"_lang="+prefix+".png"
 
-					var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", 
-								"en": "Weather in..." }
-					document.getElementById("wttr-link").href = "https://wttr.in/"+place+"?lang="+prefix
-					var weatherInput = document.getElementById("weather-input")
-					weatherInput.placeholder = weatherInputDict[prefix]
+//					var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", 
+//								"en": "Weather in..." }
+//					document.getElementById("wttr-link").href = "https://wttr.in/"+place+"?lang="+prefix
+//					var weatherInput = document.getElementById("weather-input")
+//					weatherInput.placeholder = weatherInputDict[prefix]
 
 					document.cookie = "bgColor="+encodeURI(bgColor.value)+"; expires="+date.toUTCString()+"; Path=/; SameSite=None"
 
@@ -273,17 +273,17 @@ footer{	margin-top: 2em;
 				document.getElementById("second_date").innerHTML = date_output
 
 
-				var weatherImg = document.getElementById("weather-img")
-				var prefix = this.value.split("-")[0]
-				var inputLocation = document.getElementById("location_input")	
-				var place = inputLocation.value
-				var bgColor = document.getElementById("background")
-				weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background="+bgColor.value+"_lang="+prefix+".png"
+//				var weatherImg = document.getElementById("weather-img")
+//				var prefix = this.value.split("-")[0]
+//				var inputLocation = document.getElementById("location_input")	
+//				var place = inputLocation.value
+//				var bgColor = document.getElementById("background")
+//				weatherImg.src =  "https://wttr.in/"+place+"_0pq_transparency=255_background="+bgColor.value+"_lang="+prefix+".png"
 
-				var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", "en": "Weather in..." }
-				document.getElementById("wttr-link").href = "https://wttr.in/"+place+"?lang="+prefix
-				var weatherInput = document.getElementById("weather-input")
-				weatherInput.placeholder = weatherInputDict[prefix]
+//				var weatherInputDict= { "cs": "Počasí v...", "de": "Wetter für...", "en": "Weather in..." }
+//				document.getElementById("wttr-link").href = "https://wttr.in/"+place+"?lang="+prefix
+//				var weatherInput = document.getElementById("weather-input")
+//				weatherInput.placeholder = weatherInputDict[prefix]
 			}
 
 			function clockTicking() {

@@ -56,33 +56,33 @@ func getCryptoCurrency(url, code string, answer chan string, wg* sync.WaitGroup)
 	answer <- result
 	return result
 }
-
-func Nameday(url string) string {
-
-	signature := fmt.Sprintf(`%s:%s`, url, "nameday")
-	var answer string = ""
-
-	if record, found := Get(signature); found {
-		now := time.Now()
-		d := record.Expiry
-		if record.Value != "" &&
-			d.Day() == now.Day() && d.Month() == now.Month() && d.Year() == now.Year() {
-			answer = record.Value
-			return answer
-		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
-			answer = record.Value
-			return answer
-		}
-
-	}
-
-	if value := NewRequest(url); value != "" {
-		answer = value
-		Store(signature, answer)
-
-	}
-	return answer
-}
+// Deprecated
+// func Nameday(url string) string {
+// 
+// 	signature := fmt.Sprintf(`%s:%s`, url, "nameday")
+// 	var answer string = ""
+// 
+// 	if record, found := Get(signature); found {
+// 		now := time.Now()
+// 		d := record.Expiry
+// 		if record.Value != "" &&
+// 			d.Day() == now.Day() && d.Month() == now.Month() && d.Year() == now.Year() {
+// 			answer = record.Value
+// 			return answer
+// 		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
+// 			answer = record.Value
+// 			return answer
+// 		}
+// 
+// 	}
+// 
+// 	if value := NewRequest(url); value != "" {
+// 		answer = value
+// 		Store(signature, answer)
+// 
+// 	}
+// 	return answer
+// }
 
 func CnbCurr(answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()	
@@ -91,6 +91,7 @@ func CnbCurr(answer chan string, wg *sync.WaitGroup) string {
 	return result 
 }
 
+// Deprecated
 // func CnbCurrency(url string, answer chan string, wg *sync.WaitGroup) string {
 // 	defer wg.Done()
 // 	var result string = ""
