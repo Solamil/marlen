@@ -3,13 +3,15 @@ package marlen
 import (
 	"time"
 	"fmt"
+	"sync"
 	"os/exec"
 	"strings"
 )
 
-func GetDailyWttrInfo(url string) string {
+func GetDailyWttrInfo(url string, answer chan string, wg *sync.WaitGroup) string {
+	defer wg.Done()
 	signature := fmt.Sprintf(`%s:%s`, url, "daily")
-	var answer string = ""
+	var result string = ""
 
 	if record, found := Get(signature); found {
 		now := time.Now()
@@ -17,24 +19,28 @@ func GetDailyWttrInfo(url string) string {
 		year, month, day := record.Expiry.Date()
 		d := record.Expiry
 		if record.Value != "" && dayNow == day && monthNow == month && yearNow == year {
-			answer = record.Value
-			return answer
+			result = record.Value
+			answer <- result
+			return result
 		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
-			answer = record.Value
-			return answer
+			result = record.Value
+			answer <- result
+			return result
 		}
 	}
 	value := getWeatherInfo(url)
-	answer = value
+	result = value
 	Store(signature, value)
-	return answer
+	answer <- result
+	return result
 }
 
-func GetForecast(url string) string {
+func GetForecast(url string, answer chan string, wg *sync.WaitGroup) string {
+	defer wg.Done()
 	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
 	shell := "/bin/sh"
 	scriptFile := "./scripts/sb-forecast.sh"
-	var answer string = ""
+	var result string = ""
 	if record, found := Get(signature); found {
 		now := time.Now()
 		d := record.Expiry
@@ -44,8 +50,9 @@ func GetForecast(url string) string {
 			d = d.Add(time.Minute * 35)
 		}
 		if d.After(now) {
-			answer = record.Value
-			return answer
+			result = record.Value
+			answer <- result
+			return result
 		}
 	}
 	output, err := exec.Command(shell, scriptFile, url).Output()
@@ -75,10 +82,10 @@ func GetForecast(url string) string {
 	if len(hum_low_high_next2) > 0 {
 		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next2)
 	}
-	answer = value
+	result = value
 	Store(signature, value)
-
-	return answer
+	answer <- result
+	return result
 }
 
 func getWeatherInfo(url string) string {

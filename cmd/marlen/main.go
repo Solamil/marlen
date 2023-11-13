@@ -122,8 +122,11 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	prefix := strings.Split(lang, "-")[0]
 
+	wg.Add(6)
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
-	forecastStr := marlen.GetForecast(wttrin)
+	forecastCh := make(chan string)
+	go marlen.GetForecast(wttrin, forecastCh, &wg)
+	forecastStr := <-forecastCh
 	forecasts := strings.Split(forecastStr, "\n")
 	if len(forecasts) >= 3 {
 		forecastFirst = forecasts[1]
@@ -131,15 +134,16 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		weatherInfo = forecasts[0]
 	}
 	sunMoonUrl := fmt.Sprintf(`%s?format="%s"`, wttrin, "%S+%s+%m")
-
-	if sunMoonStr := marlen.GetDailyWttrInfo(sunMoonUrl); len(sunMoonStr) != 0 {
+	sunMoonCh := make(chan string)
+	go marlen.GetDailyWttrInfo(sunMoonUrl, sunMoonCh, &wg)
+	sunMoonStr := <-sunMoonCh
+	if len(sunMoonStr) != 0 {
 		sunMoon := strings.Split(sunMoonStr, " ")
 		if len(sunMoon) == 3 && len(forecasts) > 0 {
 			weatherInfo = "🌅 " + sunMoon[0] + " 🌇" + sunMoon[1] + " " + sunMoon[2] + " " + forecasts[0]
 		} 
 	}
 
-	wg.Add(4)
 	var i indexDisplay
 	i.NameDay = "📆Dnes má svátek "+marlen.GetSvatekNameToday("cs-CZ")
 	i.Bg = bg
