@@ -66,12 +66,19 @@ footer{	margin-top: 2em;
 	<p id="zone-date" style="display: inline-block"></p>
 	</div>
 	<hr style="color: beige">
+	<div class="search" id="search_engine" style="display:inline-block; margin:20px;">
+		<form action="https://searx.tuxcloud.net/search" autocomplete="off" target="_blank" method="get" style="display:inline-block">
+			<input id="q" name="q" type="text" placeholder="" autocomplete="off">
+			<button type="submit" id="submit">OK</button>
+		</form>
+	</div>
 
 	<nav>
 		<ul>
-			<li><a href="https://github.com/" target="_blank">Github</a></li>
-			<li><a href="https://mnhradiste.cz/" target="_blank"><img src="https://www.mnhradiste.cz/images/logo.png" height=38 width=30 style="border: none;" loading=lazy></a></li>
-			<li><a href="https://www.chmi.cz/files/portal/docs/meteo/rad/inca-cz/short.html" target="_blank">🌤️</a></li>
+			<li><a href="https://github.com" target="_blank">github.com</a></li>
+			<li><a href="https://mnhradiste.cz" target="_blank">mnhradiste.cz</a></li>
+			<li><a href="https://bazos.cz" target="_blank">bazos.cz</a></li>
+			<li><a href="https://discord.com/app" target="_blank">discord.com</a></li>
 		</ul>
 	</nav>
 
@@ -120,6 +127,7 @@ footer{	margin-top: 2em;
 			</div>
 			-->
 			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank" id="panorama_link"><img src='./pics/mhcam1.webp' id="panorama_img" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
+		<a href="http://www.mhpocasi.unas.cz" target="_blank"> <img src="http://www.mhpocasi.unas.cz/webfiles/summary.jpg" width=377 height=243 border=0 title="Amatérská meteostanice Mnichovo Hradiště" alt="Mnichovo Hradiště"></a>
 			<!--
 			<select name="camera" id="select_panorama">
 				<option value="./pics/mhcam1.webp;https://www.mnhradiste.cz/kamera/mhcam1.jpg">Mnichovo Hradiště</option>
