@@ -5,6 +5,7 @@ import (
 	"strings"
 	"github.com/hashicorp/golang-lru/v2"
 	"os"
+	"path/filepath"
 	"crypto/md5"
 	"time"
 )
@@ -40,7 +41,7 @@ func storeInFile(signature, value string) string {
 		}
 	}
 	filename := fmt.Sprintf("file:%x.txt", hash(signature))
-	err := os.WriteFile(CACHE_DIR+"/"+filename, []byte(value), 0644)
+	err := os.WriteFile(filepath.Join(CACHE_DIR, filename), []byte(value), 0644)
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
@@ -52,7 +53,8 @@ func Get(signature string) (cacheRecord, bool) {
 	record, found := cache.Get(cacheSignature)
 	if found && record.Value != "" {
 		if strings.Compare(record.Value, fmt.Sprintf("file:%x.txt", cacheSignature)) == 0 {
-			filename := fmt.Sprintf("%s/file:%x.txt", CACHE_DIR, cacheSignature)
+			// filename := fmt.Sprintf("%s/file:%x.txt", CACHE_DIR, cacheSignature)
+			filename := filepath.Join(CACHE_DIR, fmt.Sprintf("file:%x.txt", cacheSignature))
 			record.Value = readAllFile(filename)
 		}
 	}

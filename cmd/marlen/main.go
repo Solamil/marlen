@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"path/filepath"
 	//	"context"
 	//	"html"
 	"text/template"
@@ -45,7 +46,7 @@ type feedsDisplay struct {
 
 const PORT = 8901
 var indexBg string = "893531"
-var svatekFile string = "web/nameday_cz_sk_pretty.txt"
+var svatekFile string = filepath.Join("web", "nameday_cz_sk_pretty.txt")
 var location string = "Mnichovo Hradiště"
 var lang string = "cs-CZ"
 // var svatekUrl string = "http://localhost:7903/today?pp"
@@ -235,7 +236,7 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func file_handler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, WEB_DIR+r.URL.Path)
+	http.ServeFile(w, r, filepath.Clean(WEB_DIR+r.URL.Path))
 }
 
 func getLocaleTags(lang string) string {
