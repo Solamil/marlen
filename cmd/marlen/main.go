@@ -49,8 +49,7 @@ var indexBg string = "893531"
 var svatekFile string = filepath.Join("web", "nameday_cz_sk_pretty.txt")
 var location string = "Mnichovo Hradiště"
 var lang string = "cs-CZ"
-// var svatekUrl string = "http://localhost:7903/today?pp"
-// var currencyUrl string = "http://localhost:7902/holy_trinity?p"
+
 var wttrUrl string = "https://wttr.in"
 var fakemoneyUrl string = "https://rate.sx"
 var localtownUrl string = "https://www.mnhradiste.cz/rss"
@@ -123,7 +122,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	prefix := strings.Split(lang, "-")[0]
 
-	wg.Add(6)
+	wg.Add(5)
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	forecastCh := make(chan string)
 	go marlen.GetForecast(wttrin, forecastCh, &wg)
