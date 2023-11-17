@@ -1,0 +1,367 @@
+Date|cs-CZ|sk-SK
+1.1|🎇Nový rok, 🇨🇿Státní svátek, Den obnovy samostatného českého státu|🎇Nový rok, 🇸🇰Štátny sviatok, Deň vzniku Slovenskej republiky
+2.1|Karina/Vasil|Alexandra/Sandra/Karina
+3.1|Radmila/Radomil|Daniela
+4.1|Diana|Drahoslav
+5.1|Dalimil|Andrea/Artur
+6.1|Kašpar/Melichar/Baltazar, 🎄👑Tři králové|Antónia, Zjavenie Pána(🎄👑Traja králi a vianočný sviatok pravoslávných kresťanov)
+7.1|Vilma|Bohuslava
+8.1|Čestmír|Severín
+9.1|Vladan/Valtr|Alexej/Alex/Alexia
+10.1|Břetislav|Daša
+11.1|Bohdana/Teodora|Malvína
+12.1|Pravoslav|Ernest/Ernestína
+13.1|Edita/Leontýna|Rastislav
+14.1|Radovan|Radovan/Radovana
+15.1|Alice|Dobroslav/Dobroslava
+16.1|Ctirad, Den památky Jana Palacha(významný den)|Kristína
+17.1|Drahoslav|Nataša
+18.1|Vladislav/Vladislava|Bohdana
+19.1|Doubravka|Mário/Sára/Zara
+20.1|Ilona/Sebastián|Dalibor/Sebastián
+21.1|Běla|Vincent
+22.1|Slavomír/Slavomíra|Zora/Zoran
+23.1|Zdeněk|Miloš
+24.1|Milena|Timotej/Timon/Timea
+25.1|Miloš|Gejza
+26.1|Zora/Jitřenka|Tamara
+27.1|Ingrid, Den památky obětí holocaustu a předcházení zločinům proti lidskosti(významný den)|Bohuš
+28.1|Otýlie|Alfonz
+29.1|Zdislava|Gašpar
+30.1|Robin/Erna|Ema
+31.1|Marika|Emil
+1.2|Hynek|Tatiana/Táňa
+2.2|Nela, Hromnice|Erich/Erik/Erika, Hromnice
+3.2|Blažej|Blažej
+4.2|Jarmila|Veronika
+5.2|Dobromila|Agáta
+6.2|Vanda|Dorota
+7.2|Veronika/Verona|Vanda
+8.2|Milada|Zoja
+9.2|Apolena|Zdeno/Zdenko
+10.2|Mojmír|Gabriela
+11.2|Božena/Dezider|Dezider
+12.2|Slavěna/Slávka|Perla
+13.2|Věnceslav/Věnceslava|Arpád
+14.2|Valentýn/Valentýna|Valentín
+15.2|Jiřina|Pravoslav
+16.2|Ljuba|Ida/Liana
+17.2|Miloslava|Miloslava
+18.2|Gizela|Jaromír/Jaromíra
+19.2|Patrik|Vlasta
+20.2|Oldřich|Lívia/Aladár
+21.2|Lenka/Eleonora|Eleonóra
+22.2|Petr|Etela
+23.2|Svatopluk|Roman/Romana
+24.2|Matěj/Matyáš|Matej
+25.2|Liliana|Frederik/Frederika
+26.2|Dorota|Viktor
+27.2|Alexandr|Alexander
+28.2|Lumír|Zlatica
+29.2|Horymír/Horymíra|Radomír
+1.3|Bedřich/Bedřiška|Albín
+2.3|Anežka|Anežka, Popolcová streda
+3.3|Kamil|Bohumil/Bohumila
+4.3|Stela|Kazimír
+5.3|Kazimír|Fridrich
+6.3|Miroslav|Radoslav/Radoslava
+7.3|Tomáš|Tomáš
+8.3|Gabriela/Zoltán, Mezinárodní den žen(významný den)|Alan/Alana, Medzinárodný deň žien
+9.3|Františka/Rebeka, Den památky obětí vyhlazení terezínského rodinného tábora v Osvětimi-Březince(významný den)|Františka
+10.3|Viktorie|Branislav/Bronislav/Bruno
+11.3|Anděla/Angelika|Angela/Angelika
+12.3|Řehoř, 🤝Den přístupu České republiky k Severoantlantické smlouvě(NATO)(významný den)|Gregor
+13.3|Růžena|Vlastimil
+14.3|Rút/Matylda|Matilda
+15.3|Ida|Svetlana
+16.3|Elen/Elena/Herbert|Boleslav
+17.3|Vlastimil/Vlastimila|Ľubica
+18.3|Eduard|Eduard
+19.3|Josef/Josefa|Jozef
+20.3|Světlana/Světla, 💐První jarní den|Víťazoslav, 💐Prvý jarný deň
+21.3|Radek|Blahoslav
+22.3|Leona/Lea|Beňadik/Benedikt
+23.3|Ivona|Adrián
+24.3|Gabriel|Gabriel
+25.3|Marián|Marián
+26.3|Emanuel, V 02:00 začíná letní čas🕑➡️🕒|Emanuel, 02:00 začiatok letného času🕑➡️🕒
+27.3|Dita|Alena
+28.3|Soňa, Den narození Jana Amose Komenského(významný den)|Soňa
+29.3|Taťána/Táňa|Miroslav
+30.3|Arnošt/Ernest|Vieroslava
+31.3|Kvído|Benjamín
+1.4|Hugo|Hugo
+2.4|Erika|Zita
+3.4|Richard|Richard
+4.4|Ivana|Izidor
+5.4|Miroslava/Mirka|Miroslava
+6.4|Vendula/Venuše|Irena
+7.4|Heřman/Hermína, 📚Den vzdělanosti(významný den), Velký pátek|Zoltán, Veľký piatok
+8.4|Ema|Albert
+9.4|Dušan, Velikonoční neděle|Milena, Velikonočná nedeľa
+10.4|Darja, Velikonoční pondělí|Igor, Velikonočný pondelok
+11.4|Izabela|Július
+12.4|Julius|Estera
+13.4|Aleš|Aleš
+14.4|Vincenc|Justín/Justína
+15.4|Anastázie|Fedor
+16.4|Irena|Dana/Danica
+17.4|Rudolf/Raul|Rudolf
+18.4|Valérie|Valér
+19.4|Rostislav/Rastislav|Jela
+20.4|Marcela|Marcel
+21.4|Alexandra|Ervín
+22.4|Evženie|Slavomír
+23.4|Vojtěch/Vojtěška|Vojtech
+24.4|Jiří/Jura|Juraj
+25.4|Marek|Marek/Marko/Markus
+26.4|Oto/Otto|Jaroslava
+27.4|Jaroslav|Jaroslav
+28.4|Vlastislav|Jarmila
+29.4|Robert|Leo/Lea
+30.4|Blahoslav|Anastázia
+1.5|Svátek práce|Sviatok práce
+2.5|Zikmund|Žigmund
+3.5|Alexej/Alex|Galina
+4.5|Květoslav|Florián
+5.5|Klaudie, Květnové povstání českého lidu(významný den)|Lesana/Lesia
+6.5|Radoslav/Radoslava|Hermína
+7.5|Stanislav|Monika
+8.5|Státní svátek, Den vítězství|Ingrida, Deň víťazstva nad fašizmom
+9.5|Ctibor|Roland
+10.5|Blažena|Viktória
+11.5|Svatava|Blažena
+12.5|Pankrác|Pankrác
+13.5|Servác|Servác
+14.5|Bonifác, Svátek matek|Bonifác, Deň matiek
+15.5|Žofie/Sofie, 👪Den rodin (významný den)|Žofia/Sofia
+16.5|Přemysl|Svetozár
+17.5|Aneta|Gizela
+18.5|Nataša|Viola
+19.5|Ivo|Gertrúda
+20.5|Zbyšek|Bernard
+21.5|Monika|Zina
+22.5|Emil|Júlia/Juliana
+23.5|Vladimír/Vladimíra|Želmíra
+24.5|Jana/Vanesa|Ela/Vanesa
+25.5|Viola|Urban
+26.5|Filip|Dušan, Nanebovstúpenie Pána
+27.5|Valdemar|Iveta
+28.5|Vilém/Viliam|Viliam
+29.5|Maxmilián/Maxim|Vilma
+30.5|Ferdinand|Ferdinand
+31.5|Kamila|Petrana/Petronela/Nela
+1.6|Laura, Mezinárodní den dětí|Žaneta, Medzinárodný deň detí
+2.6|Jarmil|Oxana/Xénia
+3.6|Tamara/Kevin|Karolína/Kevin
+4.6|Dalibor|Lenka
+5.6|Dobroslav/Dobroslava|Laura, Turíce
+6.6|Norbert|Norbert
+7.6|Iveta/Slavoj|Róbert
+8.6|Medard|Medard
+9.6|Stanislava|Stanislava
+10.6|Gita/Margita, 🌹Den památky obětí vyhlazení obce Lidice (významný den)|Margaréta/Gréta
+11.6|Bruno|Jesika
+12.6|Antonie|Zlatko
+13.6|Antonín|Anton
+14.6|Roland/Herta|Vasil
+15.6|Vít|Vít
+16.6|Zbyněk|Bianka/Blanka, Božie telo
+17.6|Adolf/Vikoslav|Adolf
+18.6|Milan/Milana, Den hrdinů druhého odboje (významný den), Den otců|Vratislav, Den otcov
+19.6|Leoš/Leo|Alfréd
+20.6|Květa/Květuše|Valéria
+21.6|Alois/Aloise, 🌞První letní den|Alojz, 🌞Prvý letný deň
+22.6|Pavla|Paulína/Paula/Pavla
+23.6|Zdeňka|Sidónia
+24.6|Jan|Ján
+25.6|Ivan|Olívia/Tadeáš
+26.6|Adriana/Adrian|Adriána
+27.6|Ladislav/Ladislava, Den památky obětí komunistického režimu (významný den)|Ladislav/Ladislava
+28.6|Lubomír/Lubomíra|Beáta
+29.6|Petr a Pavel|Peter/Pavol/Petra
+30.6|Šárka|Melánia
+1.7|Jaroslava|Diana
+2.7|Patricie|Berta
+3.7|Radomír/Radomíra|Miloslav
+4.7|Prokop|Prokop
+5.7|Státní svátek, Den slovanských věrozvěstů Cyrila a Metoděje|Cyril/Metod, Štátny sviatok, Sviatok sv. Cyrila a sv. Metoda
+6.7|Státní svátek, Den upálení mistra Jana Husa|Patrik/Patricía
+7.7|Bohuslava|Oliver
+8.7|Nora|Ivan
+9.7|Drahoslava/Drahuše|Lujza
+10.7|Libuše/Amálie|Amália
+11.7|Olga/Helga|Milota
+12.7|Bořek|Nina
+13.7|Markéta/Margot|Margita
+14.7|Karolína|Kamil/Lara
+15.7|Jindřich/Egon|Henrich
+16.7|Luboš|Drahomír/Drahomíra
+17.7|Martina|Bohuslav
+18.7|Drahomíra/Drahomír|Kamila
+19.7|Čeněk|Šarlota/Dušana
+20.7|Ilja|Eliáš/Iľja
+21.7|Vítězslav/Vítězslava|Daniel
+22.7|Magdaléna/Magda|Magdaléna
+23.7|Libor/Larisa|Oľga
+24.7|Kristýna/Tina|Vladimír
+25.7|Jakub|Jakub
+26.7|Anna/Anita/Anika|Anna/Hana/Aneta
+27.7|Věroslav|Božena
+28.7|Viktor/Alina/Svatomír|Krištof
+29.7|Marta|Marta
+30.7|Bořivoj|Libuša
+31.7|Ignác/Elin|Ignác
+1.8|Oskar|Božidara
+2.8|Gustav|Gustáv
+3.8|Miluše|Jerguš
+4.8|Dominik/Dominika|Dominik/Dominika
+5.8|Kristián|Hortenzia
+6.8|Oldřiška|Jozefína
+7.8|Lada|Štefánia
+8.8|Soběslav|Oskar
+9.8|Roman|Ľubomíra
+10.8|Vavřinec|Vavrinec
+11.8|Zuzana|Zuzana
+12.8|Klára|Darina/Dárius/Dária
+13.8|Alena|Ľubomír
+14.8|Alan|Mojmír
+15.8|Hana|Marcela, Nanebovzatie Panny Márie
+16.8|Jáchym|Leonard
+17.8|Petra|Milica
+18.8|Helena/Jelena|Elena/Helena
+19.8|Ludvík|Lýdia
+20.8|Bernard|Anabela
+21.8|Johana, Den památky obětí invaze a následné okupace vojsky Varšavské smlouvy|Jana/Johana/Noema
+22.8|Bohuslav|Tichomír
+23.8|Sandra|Filip
+24.8|Bartoloměj|Bartoloměj
+25.8|Radim|Ľudovít
+26.8|Luděk/Luďka|Samuel
+27.8|Otakar|Silvia
+28.8|Augustýn|Augustín
+29.8|Evelína|Nikola/Nikolaj, Štátny sviatok, Výročie 🇸🇰Slovenského národného povstania
+30.8|Vladěna|Ružena
+31.8|Pavlína|Nora
+1.9|Linda/Samuel/Jiljí|Drahoslava, Štátný sviatok, Deň Ústavy 🇸🇰Slovenskej republiky
+2.9|Adéla|Linda/Rebeka
+3.9|Bronislav/Bronislava|Belo
+4.9|Jindřiška/Rozálie|Rozália
+5.9|Boris|Regína
+6.9|Boleslav|Alica
+7.9|Regína|Marianna
+8.9|Mariana|Miriama
+9.9|Daniela|Martina
+10.9|Irma|Oleg
+11.9|Denisa/Denis|Bystrík
+12.9|Marie/Mia/Tobiáš|Mária/Mia
+13.9|Lubor|Ctibor/Tobiáš/Tobias
+14.9|Radka|Ľudomil
+15.9|Jolana|Jolana, Sedembolestna Panna Mária
+16.9|Ludmila/Lidmila|Ľudmila
+17.9|Naděžda/Naďa|Olympia/Melisa
+18.9|Kryštof|Eugénia
+19.9|Zita|Konštantin
+20.9|Oleg|Ľuboslav/Ľuboslava
+21.9|Matouš|Matúš
+22.9|Darina|Móric
+23.9|Berta, 🍂První podzimní den|Zdenka, 🍂Prvý jesenný deň
+24.9|Jaromír/Jaromíra|Ľubor/Ľuboš
+25.9|Zlata/Zlatuše|Vladislav
+26.9|Andrea|Edita
+27.9|Jonáš/Damián|Cyprián/Damián
+28.9|Václav/Václava, 🇨🇿Státní svátek, Den české státnosti|Václav
+29.9|Michal/Michael|Michal/Michael/Michaela
+30.9|Jeroným/Ráchel|Jarolím
+1.10|Igor|Arnold
+2.10|Olívie/Oliver|Levoslav
+3.10|Bohumil|Stela
+4.10|František|František
+5.10|Eliška|Viera
+6.10|Hanuš|Natália
+7.10|Justýna|Eliška/Elisa
+8.10|Věra, Památný den sokolstva(významný den)|Brigita
+9.10|Štefan/Sára|Dionýz
+10.10|Marina|Slavomíra
+11.10|Andrej|Valentína
+12.10|Marcel|Maximilián/Maxim/Max
+13.10|Renáta/Koloman|Koloman
+14.10|Agáta|Boris
+15.10|Tereza/Terezie|Terézia/Tereza
+16.10|Havel/Galina|Vladimíra
+17.10|Hedvika/Heda|Hedviga
+18.10|Lukáš|Lukáš
+19.10|Michaela/Michala|Kristián
+20.10|Vendelín|Vendelín
+21.10|Brigita/Uršula|Uršuľa
+22.10|Sabina/Halka|Sergej
+23.10|Teodor|Alojzia
+24.10|Nina|Kvetoslava
+25.10|Beáta|Aurel
+26.10|Erik|Demeter
+27.10|Šarlota/Zoe|Sabína
+28.10|Alfréd, Státní svátek, Den vzniku samostatného 🇨🇿československého státu| Dobromila
+29.10|Silvie/Sylva V 03:00 končí letní čas🕒➡️🕑|Klára/Kiara 03:00 koniec letného času🕒➡️🕑
+30.10|Tadeáš|Šimon/Simon/Simona
+31.10|Štěpánka|Aurélia
+1.11|Felix|Denis/Denisa, Sviatok všetkých svätých
+2.11|Památka zesnulých|Pamiatka zosnulých
+3.11|Hubert|Hubert
+4.11|Karel/Karla|Karol
+5.11|Miriam/Emerich|Imrich
+6.11|Liběna|Renáta
+7.11|Saskie|René
+8.11|Bohumír/Bohumíra|Bohumír
+9.11|Bohdan|Teodor/Teo
+10.11|Evžen|Tibor
+11.11|Martin, Den válečných veteránů(významný den)|Martin/Maroš
+12.11|Benedikt|Svätopluk/Jonáš
+13.11|Tibor|Stanislav
+14.11|Sáva|Irma
+15.11|Leopold|Leopold
+16.11|Otmar|Agnesa
+17.11|Mahulena/Gertruda, ❤️✌️✌️Státní svátek, Den boje za svobodu a demokracii a Mezinárodní den studentstva|Klaudia, ❤️✌️✌️Štátný sviatok, Deň boja za slobodu a demokraciu a Medzinárodný deň studentstva
+18.11|Romana|Eugen
+19.11|Alžběta|Alžběta/Liliana
+20.11|Nikola/Nikol|Félix
+21.11|Albert|Elvíra
+22.11|Cecílie|Cecilia
+23.11|Klement|Klement
+24.11|Emílie|Emília
+25.11|Kateřina|Katarína
+26.11|Artur|Kornel
+27.11|Xenie/Oxana|Milan
+28.11|René/Renislav|Henrieta
+29.11|Zina|Vratko
+30.11|Ondřej/Ondráš|Andrej/Ondrej
+1.12|Iva|Edmund
+2.12|Blanka/Vivien|Bibiána/Viviána
+3.12|Svatoslav/Svatoslava|Oldrich
+4.12|Barbora/Barbara|Barbora/Barbara
+5.12|Jitka|Oto
+6.12|Mikuláš/Nikolas|Mikuláš/Nikolas
+7.12|Ambrož/Benjamin|Ambróz
+8.12|Květoslava|Marína, Nepoškvrnené počatie Panny Márie
+9.12|Vratislav/Vratislava|Izabela
+10.12|Julie|Radúz
+11.12|Dana/Danuše|Hilda
+12.12|Simona|Otília
+13.12|Lucie|Lucia
+14.12|Lýdie|Branislava/Bronislava
+15.12|Radana/Radan|Ivica
+16.12|Albína|Albína
+17.12|Daniel/Dan|Kornélia
+18.12|Miloslav|Sláva/Slávka
+19.12|Ester|Judita
+20.12|Dagmar/Dáša|Dagmara
+21.12|Natálie, ❄️První zimní den|Bohdan/Noel, ❄️Prvý zimný deň
+22.12|Šimon|Adela
+23.12|Vlasta|Nadežda/Naďa
+24.12|Adam a Eva, 🎄Štědrý den|Adam/Eva, 🎄Štedrý deň
+25.12|🎄Boží hod vánoční|🎄Prvý sviatok vianočný
+26.12|Štěpán, 🎄2. svátek vánoční|Štefan, 🎄Druhý sviatok vianočný
+27.12|Žaneta/Melánie|Filomena
+28.12|Bohumila|Ivana/Ivona
+29.12|Judita|Milada
+30.12|David|Dávid
+31.12|Silvestr|Silvester
