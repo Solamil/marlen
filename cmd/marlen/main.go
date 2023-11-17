@@ -301,7 +301,7 @@ func handle_req_params(r *http.Request, location *string, lang *string, bg *stri
 
 func req_ip_address(r *http.Request) string {
 	if len(r.Header["X-Real-Ip"]) > 0 {
-		return fmt.Sprintf("<a target=\"_blank\" href=\"https://www.whois.com/whois/%s\">🌐 %s</a>",
+		return fmt.Sprintf("<a target=\"_blank\" href=\"https://www.whois.com/whois/%s\">🌐 <span id=\"ipv4_address\">%s</span></a>",
 			r.Header["X-Real-Ip"][0], r.Header["X-Real-Ip"][0])
 	}
 	return "🌐 IPv4 address"
