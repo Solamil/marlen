@@ -21,9 +21,11 @@ func PrepareSvatekList(name string) {
 		} 
 	}
 }
+
 func GetSvatekNameToday(country string) string {
 	return GetSvatekName(time.Now(), country)
 }
+
 func GetSvatekName(t time.Time, country string) string {
 	var result string = ""
 	names := getLineByDate(t)

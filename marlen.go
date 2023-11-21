@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"sync"
 	"strings"
+	"path/filepath"
 )
 
-var ratesDir string = "./rates"
-var pathHolytrinity string = ratesDir+"/svata_trojice.txt"
+var ratesDir string = "rates"
+var pathHolytrinity string = filepath.Join(ratesDir, "svata_trojice.txt")
 
 func FakeMoney(url string) string {
 	var wg sync.WaitGroup
