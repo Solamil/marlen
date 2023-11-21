@@ -122,7 +122,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	prefix := strings.Split(lang, "-")[0]
 
-	wg.Add(5)
+	wg.Add(4)
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	forecastCh := make(chan string)
 	go marlen.GetForecast(wttrin, forecastCh, &wg)
@@ -152,9 +152,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = req_ip_address(r)
-	currency := make(chan string)
-	go marlen.CnbCurr(currency, &wg)
-	i.Currency = <-currency
+	// currency := make(chan string)
+	// go marlen.CnbCurr(currency, &wg)
+	// i.Currency = <-currency
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
 
