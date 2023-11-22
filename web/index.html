@@ -80,7 +80,7 @@ footer{	margin-top: 2em;
 		<a href='https://kalendar.beda.cz/' target="_blank"><img src='./pics/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
 		<div class="cs-CZ" style="display: inline-block">
 			<p style="max-width: 550px;"><a href="./svatek.html">{{.NameDay}}</a></p>
-			<p style="display:inline-block"><a id="curr" href="./cnb-rates.html">💵1zł 5.62Kč 1$ 22.37Kč 1€ 24.51Kč 1£ 28.07Kč</a></p>
+			<p style="display:inline-block"><a id="curr" href="./cnb-rates.html">💵{{.Currency}}</a></p>
 			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">🪙{{.CryptoCurrency}}</a></p>
 		</div>
 		<div id="text_forecast">
@@ -130,8 +130,9 @@ footer{	margin-top: 2em;
 				</form>
 			</div>
 			<div style="display:block; margin:20px;">
+				<a href="https://go.dev/" target="_blank">Go</a>
 				<form action="https://pkg.go.dev/search?" autocomplete="off" method="get" target="_blank" style="display:inline-block">
-					<input id="topic" name="q" type="text" placeholder="Go" maxlength="50">
+					<input id="topic" name="q" type="text" maxlength="50">
 					<button type="submit" id="submit">OK</button>
 				</form>
 			</div>
