@@ -47,6 +47,7 @@ type feedsDisplay struct {
 const PORT = 8901
 var indexBg string = "893531"
 var svatekFile string = filepath.Join("web", "nameday_cz_sk_pretty.txt")
+var holytrinityFile string = filepath.Join("rates", "svata_trojice.txt")
 var location string = "Mnichovo Hradiště"
 var lang string = "cs-CZ"
 
@@ -153,7 +154,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.ForecastSecond = forecastSecond
 	i.OtherInfo = req_ip_address(r)
 	currency := make(chan string)
-	go marlen.CnbCurr(currency, &wg)
+	go marlen.CnbCurrency(holytrinityFile, currency, &wg)
 	i.Currency = <-currency
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
