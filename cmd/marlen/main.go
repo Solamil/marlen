@@ -12,7 +12,9 @@ import (
 	//	"context"
 	//	"html"
 	"text/template"
+
 	"github.com/Solamil/marlen"
+	"github.com/robfig/cron/v3"
 )
 
 type indexUrlParams struct {
@@ -74,6 +76,12 @@ var feedsTemplate *template.Template
 func main() {
 	port := flag.Int("port", PORT, "Port for the server to listen on")
 	flag.Parse()
+	
+	c := cron.New()
+	c.AddFunc("40 14 * * 1-5", func() { marlen.RunScript(filepath.Join("scripts", "rates.sh")) })
+//	c.AddFunc("@hourly",      func() { fmt.Println("Every hour") })
+//	c.AddFunc("@every 1h30m", func() { fmt.Println("Every hour thirty") })
+	c.Start()
 
 	http.HandleFunc("/pics/rain.webp", file_handler)
 	http.HandleFunc("/pics/clouds.webp", file_handler)

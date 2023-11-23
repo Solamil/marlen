@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 	"strings"
+	"os/exec"
 )
 
 
@@ -115,4 +116,13 @@ func CnbCurrency(pathFile string, answer chan string, wg *sync.WaitGroup) string
 	Store(signature, result)
 	answer <- result
 	return result
+}
+
+func RunScript(pathfile string) {
+	shell := "/bin/sh"	
+	output, err := exec.Command(shell, pathfile).Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(output))
 }
