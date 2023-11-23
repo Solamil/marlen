@@ -79,6 +79,10 @@ func main() {
 	
 	c := cron.New()
 	c.AddFunc("40 14 * * 1-5", func() { marlen.RunScript(filepath.Join("scripts", "rates.sh")) })
+	c.AddFunc("50 * * * *", func() { 
+		marlen.RunScript(filepath.Join("scripts", "webcam.sh")) 
+		marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
+	})
 //	c.AddFunc("@hourly",      func() { fmt.Println("Every hour") })
 //	c.AddFunc("@every 1h30m", func() { fmt.Println("Every hour thirty") })
 	c.Start()
