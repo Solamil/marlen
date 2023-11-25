@@ -158,7 +158,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var i indexDisplay
-	i.NameDay = "📆Dnes má svátek "+marlen.GetSvatekNameToday("cs-CZ")
+	i.NameDay = "Dnes má svátek "+marlen.GetSvatekNameToday("cs-CZ")
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
 	i.WeatherInfo = weatherInfo
