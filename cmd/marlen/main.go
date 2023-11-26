@@ -39,7 +39,7 @@ type indexDisplay struct {
 	CryptoCurrency string
 	LocalNews      string
 	Tannoy         string
-	Crashnet       string
+	// Crashnet       string
 }
 type feedsDisplay struct {
 	Bg      string
@@ -135,7 +135,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	prefix := strings.Split(lang, "-")[0]
 
-	wg.Add(5)
+	wg.Add(3)
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	forecastCh := make(chan string)
 	go marlen.GetForecast(wttrin, forecastCh, &wg)
@@ -174,13 +174,13 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	// i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 
 	i.CryptoCurrency = marlen.FakeMoney(fakemoneyUrl)
-	foneStr := make(chan string)
-	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
-	motogpStr := make(chan string)
-	go marlen.RssCrashnet("https://www.crash.net/rss/motogp", "Crash Net - MotoGP", "https://crash.net", 5, motogpStr, &wg )
+//	foneStr := make(chan string)
+//	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
+//	motogpStr := make(chan string)
+//	go marlen.RssCrashnet("https://www.crash.net/rss/motogp", "Crash Net - MotoGP", "https://crash.net", 5, motogpStr, &wg )
 	// nitterStr := make(chan string)
 	// go marlen.RssCrashnet("https://www.nitter.cz/jeremyclarkson/rss", "nitter - JC", "https://nitter.cz/JeremyClarkson", 3, nitterStr, &wg )
-	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
+//	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
 	wg.Wait()	
 	i.Tannoy = marlen.RssLocalplace(localtownUrl, 2, true, true)
 	i.LocalNews = marlen.RssLocalplace(localtownUrl, 5, false, true)
