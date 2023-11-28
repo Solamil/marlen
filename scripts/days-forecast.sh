@@ -13,6 +13,10 @@ dir="$HOME/.local/src/marlen/web/pics"
 #dir="web/pics"
 dir_images="${dir}/sat24"
 out="${dir}/${forecastType}_${t}.gif"
+if [ -e "$out" ] && [ "$(date -r "$out" +"%d.%m")" = "$(date +"%d.%m")" ]; then
+	echo "Up to date."	
+	exit 0
+fi
 [ -d "$dir_images" ] || mkdir "$dir_images"
 
 for i in "00" "03" "06" "09" "12" "15" "18" "21"; do
