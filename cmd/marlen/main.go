@@ -77,15 +77,7 @@ func main() {
 	port := flag.Int("port", PORT, "Port for the server to listen on")
 	flag.Parse()
 	
-	c := cron.New()
-	c.AddFunc("40 14 * * 1-5", func() { marlen.RunScript(filepath.Join("scripts", "rates.sh")) })
-	c.AddFunc("50 * * * *", func() { 
-		marlen.RunScript(filepath.Join("scripts", "webcam.sh")) 
-		marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
-	})
-//	c.AddFunc("@hourly",      func() { fmt.Println("Every hour") })
-//	c.AddFunc("@every 1h30m", func() { fmt.Println("Every hour thirty") })
-	c.Start()
+	startupScripts()
 
 	http.HandleFunc("/pics/rain.webp", file_handler)
 	http.HandleFunc("/pics/clouds.webp", file_handler)
@@ -120,7 +112,6 @@ func main() {
 	http.HandleFunc("/", index_handler)
 
 	marlen.PrepareSvatekList(svatekFile)
-	// marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", "./web/pics/kalendar-m.png" )
 	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
 
@@ -308,6 +299,22 @@ func handle_req_params(r *http.Request, location *string, lang *string, bg *stri
 			*bg = param.Bg[0]
 		}
 	}
+
+}
+
+func startupScripts() {
+	marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
+	cronJobs()
+
+}
+func cronJobs() {
+	c := cron.New()
+	c.AddFunc("40 14 * * 1-5", func() { marlen.RunScript(filepath.Join("scripts", "rates.sh")) })
+	c.AddFunc("50 * * * *", func() { 
+		marlen.RunScript(filepath.Join("scripts", "webcam.sh")) 
+		marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
+	})
+	c.Start()
 
 }
 
