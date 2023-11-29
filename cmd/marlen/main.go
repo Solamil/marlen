@@ -27,7 +27,7 @@ type indexDisplay struct {
 	Bg             string
 	Location       string
 	WeatherInfo    string
-	OtherInfo      string
+	Ipv4address    string
 	LocaleOptions  string
 	Currency       string
 	NameDay        string
@@ -155,7 +155,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.WeatherInfo = weatherInfo
 	i.ForecastFirst = forecastFirst
 	i.ForecastSecond = forecastSecond
-	i.OtherInfo = req_ip_address(r)
+	if len(r.Header["X-Real-Ip"]) > 0 {
+		i.Ipv4address = r.Header["X-Real-Ip"][0]
+	}
 	currency := make(chan string)
 	go marlen.CnbCurrency(holytrinityFile, currency, &wg)
 	i.Currency = <-currency
@@ -303,7 +305,16 @@ func handle_req_params(r *http.Request, location *string, lang *string, bg *stri
 }
 
 func startupScripts() {
-	marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
+	var wg sync.WaitGroup
+	wg.Add(5)
+	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days")
+	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastTemp")
+	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastWind")
+	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
+	go marlen.CalendarImgRoutine(&wg, "https://kalendar.beda.cz/pic/kalendar-m.png", 
+					filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
+	wg.Wait()
+	//marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
 	cronJobs()
 
 }
@@ -315,15 +326,6 @@ func cronJobs() {
 		marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
 	})
 	c.Start()
-
-}
-
-func req_ip_address(r *http.Request) string {
-	if len(r.Header["X-Real-Ip"]) > 0 {
-		return fmt.Sprintf("<a target=\"_blank\" href=\"https://www.whois.com/whois/%s\">🌐 <span id=\"ipv4_address\">%s</span></a>",
-			r.Header["X-Real-Ip"][0], r.Header["X-Real-Ip"][0])
-	}
-	return "🌐 IPv4 address"
 
 }
 
