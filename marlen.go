@@ -7,6 +7,7 @@ import (
 	"sync"
 	"strings"
 	"os/exec"
+	"os"
 )
 
 
@@ -117,10 +118,27 @@ func CnbCurrency(pathFile string, answer chan string, wg *sync.WaitGroup) string
 	answer <- result
 	return result
 }
+// Download image calendar for today
+func CalendarImgRoutine(wg *sync.WaitGroup, url, destfile string) {
+	defer wg.Done()
+	CalendarImg(url, destfile)
 
-func RunScript(pathfile string) {
+}
+func CalendarImg(url, destfile string) {
+	fileinfo, err := os.Stat(destfile)
+	t := time.Now()
+	if err != nil || fileinfo.ModTime().Day() != t.Day() {
+		NewImgRequest(url, destfile)
+	}
+}
+func RunScriptRoutine(wg *sync.WaitGroup, args ...string) {
+	defer wg.Done()
+	RunScript(args...)
+}
+
+func RunScript(args ...string) {
 	shell := "/bin/sh"	
-	output, err := exec.Command(shell, pathfile).Output()
+	output, err := exec.Command(shell, args...).Output()
 	if err != nil {
 		fmt.Println(err)
 	}
