@@ -1,10 +1,10 @@
 Date|cs-CZ|sk-SK
-1.1|🎇Nový rok, 🇨🇿Státní svátek, Den obnovy samostatného českého státu|🎇Nový rok, 🇸🇰Štátny sviatok, Deň vzniku Slovenskej republiky
+1.1|🎇Nový rok - 🇨🇿Státní svátek Den obnovy samostatného českého státu|🎇Nový rok - 🇸🇰Štátny sviatok Deň vzniku Slovenskej republiky
 2.1|Karina/Vasil|Alexandra/Sandra/Karina
 3.1|Radmila/Radomil|Daniela
 4.1|Diana|Drahoslav
 5.1|Dalimil|Andrea/Artur
-6.1|Kašpar/Melichar/Baltazar, 🎄👑Tři králové|Antónia, Zjavenie Pána(🎄👑Traja králi a vianočný sviatok pravoslávných kresťanov)
+6.1|Kašpar/Melichar/Baltazar, 🎄👑Tři králové|Antónia, Zjavenie Pána - 🎄👑Traja králi a vianočný sviatok pravoslávných kresťanov
 7.1|Vilma|Bohuslava
 8.1|Čestmír|Severín
 9.1|Vladan/Valtr|Alexej/Alex/Alexia
@@ -301,7 +301,7 @@ Date|cs-CZ|sk-SK
 26.10|Erik|Demeter
 27.10|Šarlota/Zoe|Sabína
 28.10|Alfréd, Státní svátek, Den vzniku samostatného 🇨🇿československého státu| Dobromila
-29.10|Silvie/Sylva V 03:00 končí letní čas🕒➡️🕑|Klára/Kiara 03:00 koniec letného času🕒➡️🕑
+29.10|Silvie/Sylva, V 03:00 končí letní čas🕒➡️🕑|Klára/Kiara, 03:00 koniec letného času🕒➡️🕑
 30.10|Tadeáš|Šimon/Simon/Simona
 31.10|Štěpánka|Aurélia
 1.11|Felix|Denis/Denisa, Sviatok všetkých svätých
