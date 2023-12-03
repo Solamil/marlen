@@ -133,9 +133,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	forecastStr := <-forecastCh
 	forecasts := strings.Split(forecastStr, "\n")
 	if len(forecasts) >= 3 {
+		weatherInfo = forecasts[0]
 		forecastFirst = forecasts[1]
 		forecastSecond = forecasts[2]
-		weatherInfo = forecasts[0]
 	}
 	sunMoonUrl := fmt.Sprintf(`%s?format="%s"`, wttrin, "%S+%s+%m")
 	sunMoonCh := make(chan string)
@@ -162,7 +162,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	go marlen.CnbCurrency(holytrinityFile, currency, &wg)
 	i.Currency = <-currency
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
-	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
+//	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
 
 	// i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 

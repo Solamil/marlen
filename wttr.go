@@ -4,6 +4,7 @@ import (
 	"time"
 	"fmt"
 	"sync"
+	"path/filepath"
 	"os/exec"
 	"strings"
 )
@@ -38,8 +39,6 @@ func GetDailyWttrInfo(url string, answer chan string, wg *sync.WaitGroup) string
 func GetForecast(url string, answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()
 	signature := fmt.Sprintf(`%s:%s`, url, "forecast")
-	shell := "/bin/sh"
-	scriptFile := "./scripts/sb-forecast.sh"
 	var result string = ""
 	if record, found := Get(signature); found {
 		now := time.Now()
@@ -55,33 +54,35 @@ func GetForecast(url string, answer chan string, wg *sync.WaitGroup) string {
 			return result
 		}
 	}
+	shell := "/bin/sh"
+	scriptFile := filepath.Join("scripts", "sb-forecast.sh")
 	output, err := exec.Command(shell, scriptFile, url).Output()
 	if err != nil {
 		fmt.Printf("error %s", err)
 	}
-	hum_low_high := strings.Replace(string(output), "\n", "", 1)
+//	hum_low_high := strings.Replace(string(output), "\n", "", 1)
 
-	output, err = exec.Command(shell, scriptFile, url, "23", "26").Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-	hum_low_high_next := strings.Replace(string(output), "\n", "", 1)
-	output, err = exec.Command(shell, scriptFile, url, "33", "36").Output()
-	if err != nil {
-		fmt.Printf("error %s", err)
-	}
-	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
+//	output, err = exec.Command(shell, scriptFile, url, "23", "26").Output()
+//	if err != nil {
+//		fmt.Printf("error %s", err)
+//	}
+//	hum_low_high_next := strings.Replace(string(output), "\n", "", 1)
+//	output, err = exec.Command(shell, scriptFile, url, "33", "36").Output()
+//	if err != nil {
+//		fmt.Printf("error %s", err)
+//	}
+//	hum_low_high_next2 := strings.Replace(string(output), "\n", "", 1)
 	var value string = ""
 
-	if len(hum_low_high) > 0 {
-		value = hum_low_high
+	if len(output) > 0 {
+		value = string(output)
 	}
-	if len(hum_low_high_next) > 0 {
-		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next)
-	}
-	if len(hum_low_high_next2) > 0 {
-		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next2)
-	}
+//	if len(hum_low_high_next) > 0 {
+//		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next)
+//	}
+//	if len(hum_low_high_next2) > 0 {
+//		value = fmt.Sprintf("%s\n%s", value, hum_low_high_next2)
+//	}
 	result = value
 	Store(signature, value)
 	answer <- result
