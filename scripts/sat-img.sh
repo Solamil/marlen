@@ -1,6 +1,5 @@
 #!/bin/bash
-repo_path="$HOME/.local/bin/marlen"
-[ -d "$repo_path" ] || repo_path="$HOME/.local/src/marlen"
+repo_path="$HOME/.local/src/marlen"
 repo_pics_path="${repo_path}/web/pics"
 
 the_server="https://api.sat24.com"
