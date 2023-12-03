@@ -129,18 +129,22 @@ func CalendarImg(url, destfile string) {
 	t := time.Now()
 	if err != nil || fileinfo.ModTime().Day() != t.Day() {
 		NewImgRequest(url, destfile)
+		return
 	}
+	fmt.Println("Calendar up to date.")
 }
 func RunScriptRoutine(wg *sync.WaitGroup, args ...string) {
 	defer wg.Done()
 	RunScript(args...)
 }
 
-func RunScript(args ...string) {
+func RunScript(args ...string) (string, error) {
 	shell := "/bin/sh"	
 	output, err := exec.Command(shell, args...).Output()
 	if err != nil {
 		fmt.Println(err)
+		return "", err
 	}
 	fmt.Println(string(output))
+	return string(output), nil
 }
