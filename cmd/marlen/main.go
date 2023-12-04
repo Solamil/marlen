@@ -126,7 +126,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	prefix := strings.Split(lang, "-")[0]
 
-	wg.Add(3)
+	wg.Add(4)
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	forecastCh := make(chan string)
 	go marlen.GetForecast(wttrin, forecastCh, &wg)
@@ -174,8 +174,10 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	// nitterStr := make(chan string)
 	// go marlen.RssCrashnet("https://www.nitter.cz/jeremyclarkson/rss", "nitter - JC", "https://nitter.cz/JeremyClarkson", 3, nitterStr, &wg )
 //	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
+	tannoy := make(chan string)
+	go marlen.RssLocalplaceRoutine(localtownUrl, 2, true, true, tannoy, &wg)
+	i.Tannoy = <-tannoy
 	wg.Wait()	
-	i.Tannoy = marlen.RssLocalplace(localtownUrl, 2, true, true)
 	i.LocalNews = marlen.RssLocalplace(localtownUrl, 5, false, true)
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)

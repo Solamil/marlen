@@ -208,18 +208,23 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 	return result
 }
 
+func RssLocalplaceRoutine(url string, nTitles int, tannoy, showDescription bool, answer chan string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	answer <-RssLocalplace(url, nTitles, tannoy, showDescription)	
+}
 
 func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string {
 	var result string = ""
-	var signature string = fmt.Sprintf(`%s:%s`, url, "rssTannoy")
-	if !tannoy {
-		signature = fmt.Sprintf(`%s:%s`, url, "rssArticles")
+	var signature string = fmt.Sprintf(`%s:%s`, url, "rssArticles")
+	if tannoy {
+		signature = fmt.Sprintf(`%s:%s`, url, "rssTannoy")
 	}
 	if record, found := Get(signature); found {
 		now := time.Now()
 		d := record.Expiry
 		if record.Value != "" {
 			d = d.Add(time.Hour * 2)
+			fmt.Println("cached")
 		} else {
 			d = d.Add(time.Minute * 35)
 		}
