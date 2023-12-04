@@ -48,8 +48,8 @@ type feedsDisplay struct {
 
 const PORT = 8901
 var indexBg string = "893531"
-var svatekFile string = filepath.Join("web", "nameday_cz_sk_pretty.txt")
-var holytrinityFile string = filepath.Join("rates", "svata_trojice.txt")
+var fileSvatek string = filepath.Join("web", "nameday_cz_sk_pretty.txt")
+var fileHolytrinity string = filepath.Join("rates", "svata_trojice.txt")
 var location string = "Mnichovo Hradiště"
 var lang string = "cs-CZ"
 
@@ -111,7 +111,7 @@ func main() {
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
 
-	marlen.PrepareSvatekList(svatekFile)
+	marlen.PrepareSvatekList(fileSvatek)
 	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
 
@@ -159,7 +159,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		i.Ipv4address = r.Header["X-Real-Ip"][0]
 	}
 	currency := make(chan string)
-	go marlen.CnbCurrency(holytrinityFile, currency, &wg)
+	go marlen.CnbCurrency(fileHolytrinity, currency, &wg)
 	i.Currency = <-currency
 	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
 //	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)

@@ -91,10 +91,10 @@ func getCryptoCurrency(url, code string, answer chan string, wg* sync.WaitGroup)
 // 	return result 
 // }
 
-func CnbCurrency(pathFile string, answer chan string, wg *sync.WaitGroup) string {
+func CnbCurrency(filepath string, answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()
 	var result string = ""
-	signature := fmt.Sprintf(`%s:%s`, pathFile, "currency")
+	signature := fmt.Sprintf(`%s:%s`, filepath, "currency")
 	if record, found := Get(signature); found {
 		now := time.Now()
 		tUpdate := time.Date(now.Year(), now.Month(), now.Day(), 14, 45+1, 0, 0, now.Location())
@@ -112,23 +112,23 @@ func CnbCurrency(pathFile string, answer chan string, wg *sync.WaitGroup) string
 
 	}
 
-	value := readAllFile(pathFile) 
+	value := readAllFile(filepath) 
 	result = value
 	Store(signature, result)
 	answer <- result
 	return result
 }
 // Download image calendar for today
-func CalendarImgRoutine(wg *sync.WaitGroup, url, destfile string) {
+func CalendarImgRoutine(wg *sync.WaitGroup, url, filedest string) {
 	defer wg.Done()
-	CalendarImg(url, destfile)
+	CalendarImg(url, filedest)
 
 }
-func CalendarImg(url, destfile string) {
-	fileinfo, err := os.Stat(destfile)
+func CalendarImg(url, filedest string) {
+	fileinfo, err := os.Stat(filedest)
 	t := time.Now()
 	if err != nil || fileinfo.ModTime().Day() != t.Day() {
-		NewImgRequest(url, destfile)
+		NewImgRequest(url, filedest)
 		return
 	}
 	fmt.Println("Calendar up to date.")
@@ -145,6 +145,6 @@ func RunScript(args ...string) (string, error) {
 		fmt.Println(err)
 		return "", err
 	}
-	fmt.Println(string(output))
+	// fmt.Println(string(output))
 	return string(output), nil
 }
