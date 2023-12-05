@@ -224,7 +224,6 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string
 		d := record.Expiry
 		if record.Value != "" {
 			d = d.Add(time.Hour * 2)
-			fmt.Println("cached")
 		} else {
 			d = d.Add(time.Minute * 35)
 		}

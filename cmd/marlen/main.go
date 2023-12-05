@@ -107,6 +107,7 @@ func main() {
 	http.HandleFunc("/nameday_cz_sk_pretty.txt", file_handler)
 
 	indexTemplate, _ = template.ParseFiles("web/index.html")
+	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/", index_handler)
@@ -179,7 +180,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	i.Tannoy = <-tannoy
 	wg.Wait()	
 	i.LocalNews = marlen.RssLocalplace(localtownUrl, 5, false, true)
-	indexTemplate, _ = template.ParseFiles("web/index.html")
 	indexTemplate.Execute(w, i)
 
 }
@@ -238,7 +238,6 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	}
 	i.Bg = "442244"
 	i.RssFeed = rssFeed
-	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
 	feedsTemplate.Execute(w, i)
 }
 
