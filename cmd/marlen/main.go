@@ -79,23 +79,6 @@ func main() {
 	
 	startupScripts()
 
-	http.HandleFunc("/pics/rain.webp", file_handler)
-	http.HandleFunc("/pics/clouds.webp", file_handler)
-	http.HandleFunc("/pics/rain.gif", file_handler)
-	http.HandleFunc("/pics/clouds.gif", file_handler)
-	http.HandleFunc("/pics/forecastPrecip_0days.webp", file_handler)
-	http.HandleFunc("/pics/forecastPrecip_0days.gif", file_handler)
-	http.HandleFunc("/pics/forecastTemp_0days.gif", file_handler)
-	http.HandleFunc("/pics/forecastTemp_0days.webp", file_handler)
-	http.HandleFunc("/pics/forecastWind_0days.gif", file_handler)
-	http.HandleFunc("/pics/forecastWind_0days.webp", file_handler)
-	http.HandleFunc("/pics/forecastPrecip_1days.webp", file_handler)
-	http.HandleFunc("/pics/forecastPrecip_1days.gif", file_handler)
-	http.HandleFunc("/pics/clouds_eu.webp", file_handler)
-	http.HandleFunc("/pics/clouds_eu.gif", file_handler)
-	http.HandleFunc("/pics/mhcam1.webp", file_handler)
-	http.HandleFunc("/pics/snap-klub.webp", file_handler)
-	http.HandleFunc("/pics/kalendar-m.png", file_handler)
 	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
 	http.HandleFunc("/cover.html", file_handler)
 	http.HandleFunc("/traffic.html", file_handler)
@@ -105,6 +88,9 @@ func main() {
 	http.HandleFunc("/svatek.html", file_handler)
 	http.HandleFunc("/artix_arch.sh", file_handler)
 	http.HandleFunc("/nameday_cz_sk_pretty.txt", file_handler)
+
+	fs := http.FileServer(http.Dir("web/pics/"))
+	http.Handle("/pics/", http.StripPrefix("/pics/", fs))
 
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
