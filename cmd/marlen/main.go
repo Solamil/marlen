@@ -79,23 +79,15 @@ func main() {
 	
 	startupScripts()
 
-	http.HandleFunc("/js/module-wttrin-widget.js", file_handler)
-	http.HandleFunc("/cover.html", file_handler)
-	http.HandleFunc("/traffic.html", file_handler)
-	http.HandleFunc("/f1.html", file_handler)
-	http.HandleFunc("/motogp.html", file_handler)
-	http.HandleFunc("/cnb-rates.html", file_handler)
-	http.HandleFunc("/svatek.html", file_handler)
-	http.HandleFunc("/artix_arch.sh", file_handler)
-	http.HandleFunc("/nameday_cz_sk_pretty.txt", file_handler)
-
-	fs := http.FileServer(http.Dir("web/pics/"))
-	http.Handle("/pics/", http.StripPrefix("/pics/", fs))
+	fs := http.FileServer(http.Dir("web/"))
+	http.Handle("/web/", http.StripPrefix("/web/", fs))
 
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
+	http.HandleFunc("/index", index_handler)
+	http.HandleFunc("/feeds", feeds_handler)
 	http.HandleFunc("/", index_handler)
 
 	marlen.PrepareSvatekList(fileSvatek)
