@@ -1,11 +1,11 @@
 package marlen
 
 import (
-	"time"
 	"fmt"
-	"sync"
 	"path/filepath"
-//	"os/exec"
+	"sync"
+	"time"
+	//	"os/exec"
 	"strings"
 )
 
@@ -56,7 +56,7 @@ func GetForecast(url string, answer chan string, wg *sync.WaitGroup) string {
 	}
 	scriptFile := filepath.Join("scripts", "sb-forecast.sh")
 	if output, _ := RunScript(scriptFile); len(output) > 0 {
-		result = output	
+		result = output
 		Store(signature, output)
 	} else {
 		Store(signature, "")

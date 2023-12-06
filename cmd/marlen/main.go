@@ -79,11 +79,11 @@ func main() {
 	
 	startupScripts()
 
-	fs := http.FileServer(http.Dir("web/"))
-	http.Handle("/web/", http.StripPrefix("/web/", fs))
-
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
+
+	fs := http.FileServer(http.Dir("web/"))
+	http.Handle("/web/", http.StripPrefix("/web/", fs))
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
 	http.HandleFunc("/index", index_handler)

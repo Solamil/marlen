@@ -1,24 +1,23 @@
 package marlen
 
 import (
-	"strconv"
-	"time"
 	"fmt"
-	"sync"
-	"strings"
-	"os/exec"
 	"os"
+	"os/exec"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
 )
-
 
 func FakeMoney(url string) string {
 	var wg sync.WaitGroup
 	var result string = ""
 	wg.Add(2)
-	btcStr := make(chan string)	
-//	btcStr := getCryptoCurrency(url, "btc")
-	go getCryptoCurrency(url, "btc", btcStr, &wg)	
-//	xmrStr := getCryptoCurrency(url, "xmr")
+	btcStr := make(chan string)
+	//	btcStr := getCryptoCurrency(url, "btc")
+	go getCryptoCurrency(url, "btc", btcStr, &wg)
+	//	xmrStr := getCryptoCurrency(url, "xmr")
 	xmrStr := make(chan string)
 	go getCryptoCurrency(url, "xmr", xmrStr, &wg)
 
@@ -31,7 +30,7 @@ func FakeMoney(url string) string {
 	return result
 }
 
-func getCryptoCurrency(url, code string, answer chan string, wg* sync.WaitGroup) string {
+func getCryptoCurrency(url, code string, answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()
 	var result string = ""
 	signature := fmt.Sprintf("%s:%s", url, code)
@@ -56,12 +55,13 @@ func getCryptoCurrency(url, code string, answer chan string, wg* sync.WaitGroup)
 	answer <- result
 	return result
 }
+
 // Deprecated
 // func Nameday(url string) string {
-// 
+//
 // 	signature := fmt.Sprintf(`%s:%s`, url, "nameday")
 // 	var answer string = ""
-// 
+//
 // 	if record, found := Get(signature); found {
 // 		now := time.Now()
 // 		d := record.Expiry
@@ -73,22 +73,22 @@ func getCryptoCurrency(url, code string, answer chan string, wg* sync.WaitGroup)
 // 			answer = record.Value
 // 			return answer
 // 		}
-// 
+//
 // 	}
-// 
+//
 // 	if value := NewRequest(url); value != "" {
 // 		answer = value
 // 		Store(signature, answer)
-// 
+//
 // 	}
 // 	return answer
 // }
 
 // func CnbCurrAsync(answer chan string, wg *sync.WaitGroup) string {
-// 	defer wg.Done()	
+// 	defer wg.Done()
 // 	result := readAllFile(pathHolytrinity)
-// 	answer <- result 
-// 	return result 
+// 	answer <- result
+// 	return result
 // }
 
 func CnbCurrency(filepath string, answer chan string, wg *sync.WaitGroup) string {
@@ -112,12 +112,13 @@ func CnbCurrency(filepath string, answer chan string, wg *sync.WaitGroup) string
 
 	}
 
-	value := readAllFile(filepath) 
+	value := readAllFile(filepath)
 	result = value
 	Store(signature, result)
 	answer <- result
 	return result
 }
+
 // Download image calendar for today
 func CalendarImgRoutine(wg *sync.WaitGroup, url, filedest string) {
 	defer wg.Done()
@@ -139,7 +140,7 @@ func RunScriptRoutine(wg *sync.WaitGroup, args ...string) {
 }
 
 func RunScript(args ...string) (string, error) {
-	shell := "/bin/sh"	
+	shell := "/bin/sh"
 	output, err := exec.Command(shell, args...).Output()
 	if err != nil {
 		fmt.Println(err)

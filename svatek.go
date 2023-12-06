@@ -1,47 +1,47 @@
-package marlen 
+package marlen
 
 import (
 	"bufio"
 	"fmt"
-	"time"
-	"strings"
 	"os"
+	"strings"
+	"time"
 )
 
 const LINES int = 367
 const COLUMNS int = 3
-var svatekList = [LINES][COLUMNS]string{{}}
 
+var svatekList = [LINES][COLUMNS]string{{}}
 
 func PrepareSvatekList(name string) {
 	for i, line := range readFile(name) {
 		d := strings.Split(line, "|")
 		for j, value := range d {
 			svatekList[i][j] = value
-		} 
+		}
 	}
 }
 
 func GetSvatekNameToday(country string) string {
- 	signature := fmt.Sprintf(`%s:%s`, country, "namedayToday")
- 	var answer string = ""
- 	if record, found := Get(signature); found {
- 		now := time.Now()
- 		d := record.Expiry
+	signature := fmt.Sprintf(`%s:%s`, country, "namedayToday")
+	var answer string = ""
+	if record, found := Get(signature); found {
+		now := time.Now()
+		d := record.Expiry
 		if record.Value != "" {
- 			answer = record.Value
- 			return answer
- 		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
- 			answer = record.Value
- 			return answer
- 		}
- 
- 	}
+			answer = record.Value
+			return answer
+		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
+			answer = record.Value
+			return answer
+		}
+
+	}
 	if svatek := GetSvatekName(time.Now(), country); svatek != "" {
 		answer = svatek
 		Store(signature, answer)
 	}
-	return answer 
+	return answer
 }
 
 func GetSvatekName(t time.Time, country string) string {
@@ -51,13 +51,13 @@ func GetSvatekName(t time.Time, country string) string {
 	if col > 0 && col < COLUMNS {
 		result = names[col]
 	}
-	return result 
+	return result
 }
 
 func getLineByDate(t time.Time) []string {
 	var result []string
 	date := fmt.Sprintf("%d.%d", t.Day(), int(t.Month()))
-	
+
 	for i := 0; i < LINES; i++ {
 		if date == svatekList[i][0] {
 			result = svatekList[i][:]
@@ -69,19 +69,19 @@ func getLineByDate(t time.Time) []string {
 
 func getDate(name string, col int) string {
 	var result string = ""
-	for i := 0; i < LINES && col > 0 && col < COLUMNS ; i++ {
+	for i := 0; i < LINES && col > 0 && col < COLUMNS; i++ {
 		if name == svatekList[i][col] {
 			result = svatekList[i][0]
 			break
 		}
-		names := strings.Split(svatekList[i][col],"/")
-		
+		names := strings.Split(svatekList[i][col], "/")
+
 		if j := GetIndex(names, name); j != -1 {
 			result = svatekList[i][0]
 			break
 		}
 	}
-	return result 
+	return result
 }
 
 func readFile(name string) []string {
@@ -93,13 +93,13 @@ func readFile(name string) []string {
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
-	var text []string 
+	var text []string
 
 	for scanner.Scan() {
 		text = append(text, scanner.Text())
 	}
 	file.Close()
-	
+
 	return text
 }
 
@@ -107,12 +107,13 @@ func GetIndex(list []string, value string) int {
 	var index int = -1
 	for i := 0; i < len(list); i++ {
 		if list[i] == value {
-			index = i	
+			index = i
 			break
 		}
 	}
 	return index
 }
+
 // Compute the exact day for each year
 // credits to https://kalendar.beda.cz/vypocet-velikonocni-nedele-v-ruznych-programovacich-jazycich
 func Velikonoce(rok int) time.Time {
@@ -121,7 +122,7 @@ func Velikonoce(rok int) time.Time {
 	}
 	zlateCislo := (rok % 19) + 1
 	julEpakta := (11 * zlateCislo) % 30
-	stoleti := int(rok / 100) + 1
+	stoleti := int(rok/100) + 1
 	slunecniOprava := int(3 * (stoleti - 16) / 4)
 	mesicniOprava := int(8 * (stoleti - 15) / 25)
 	epakta := (julEpakta - 10 - slunecniOprava + mesicniOprava) % 30
@@ -140,7 +141,7 @@ func Velikonoce(rok int) time.Time {
 	}
 
 	gregOprava := 10 + slunecniOprava
-	denTydnePfm := (rok + (int)(rok / 4) - gregOprava + pfm) % 7
+	denTydnePfm := (rok + (int)(rok/4) - gregOprava + pfm) % 7
 	if denTydnePfm < 0 {
 		denTydnePfm += 7
 	}
@@ -171,7 +172,7 @@ func Denmatek(year int) time.Time {
 	return t
 }
 
-func Denotcu(year int) time.Time { 
+func Denotcu(year int) time.Time {
 	// Third sunday at the month of June
 	if year < 1910 {
 		year = 1910

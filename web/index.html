@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Jabbapoint</title>
-<!--<link rel="shortcut icon" href="./pics/favicon.svg" type="image/svg+xml" />-->
+<!--<link rel="shortcut icon" href="./web/pics/favicon.svg" type="image/svg+xml" />-->
 <!--<link rel="stylesheet" href="./style.css" type="text/css" media="screen" /> -->
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -79,10 +79,10 @@ footer{	margin-top: 2em;
 	</nav>
 
 	<main  style="margin-top: 20px;">
-		<a href='https://kalendar.beda.cz/' target="_blank"><img src='./pics/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
+		<a href='https://kalendar.beda.cz/' target="_blank"><img src='./web/pics/kalendar-m.png' loading=lazy alt="kalendář" style="margin: 5px;"></a>
 		<div class="cs-CZ" style="display: inline-block">
-			<p style="max-width: 550px;"><a href="./svatek.html">📆{{.NameDay}}</a></p>
-			<p style="display:inline-block"><a id="curr" href="./cnb-rates.html">💵{{.Currency}}</a></p>
+			<p style="max-width: 550px;"><abbr title="📆" style="text-decoration: none"><a href="./web/svatek.html">📆{{.NameDay}}</a></abbr></p>
+			<p style="display:inline-block"><a id="curr" href="./web/cnb-rates.html">💵{{.Currency}}</a></p>
 			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">🪙{{.CryptoCurrency}}</a></p>
 		</div>
 		<div id="text_forecast">
@@ -92,9 +92,9 @@ footer{	margin-top: 2em;
 			</a>
 		</div>
 		<!-- rain -->
-		<a href='./pics/rain.gif' id="link_sat24"><image src='./pics/rain.webp' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
+		<a href='./web/pics/rain.gif' id="link_sat24"><image src='./web/pics/rain.webp' id="img_sat24" width=360 height=227 loading=lazy style="margin: 5px"></a>
 		<!-- sun and clouds -->
-		<a href='./pics/clouds.gif' ><img src='./pics/clouds.webp' loading=lazy width=360 height=227 style="margin: 5px"></a>
+		<a href='./web/pics/clouds.gif' ><img src='./web/pics/clouds.webp' loading=lazy width=360 height=227 style="margin: 5px"></a>
 		<div style=display:inline-block>
 			<!--
 			<div id="wttr-in-module" style="display: inline-block">
@@ -107,11 +107,11 @@ footer{	margin-top: 2em;
 				</form>
 			</div>
 			-->
-			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank" id="panorama_link"><img src='./pics/mhcam1.webp' id="panorama_img" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
+			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank" id="panorama_link"><img src='./web/pics/mhcam1.webp' id="panorama_img" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
 			<!--<a href="http://www.mhpocasi.unas.cz" target="_blank"> <img src="http://www.mhpocasi.unas.cz/webfiles/summary.jpg" width=377 height=243 border=0 title="Amatérská meteostanice Mnichovo Hradiště" alt="Mnichovo Hradiště"></a>-->
 			<!--
 			<select name="camera" id="select_panorama">
-				<option value="./pics/mhcam1.webp;https://www.mnhradiste.cz/kamera/mhcam1.jpg">Mnichovo Hradiště</option>
+				<option value="./web/pics/mhcam1.webp;https://www.mnhradiste.cz/kamera/mhcam1.jpg">Mnichovo Hradiště</option>
 				<option value="https://webkamery.gc-system.cz/thumb.php?img=_data/stribro/stribro.jpg&thumb_width=320;https://webkamery.gc-system.cz/_data/stribro/stribro.jpg">Stříbro</option>
 				<option value="https://apl.brno.cz/kamery/mal3/image.jpg;https://apl.brno.cz/kamery/mal3/image.jpg">Brno</option>
 			</select>
@@ -139,39 +139,47 @@ footer{	margin-top: 2em;
 			</div>
 		</div>
 		
-		<a href='./pics/forecastPrecip_0days.gif' ><img src='./pics/forecastPrecip_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
-		<a href='./pics/forecastTemp_0days.gif' ><img src='./pics/forecastTemp_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
-		<a href='./pics/forecastWind_0days.gif' ><img src='./pics/forecastWind_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
-		<a href='./pics/forecastPrecip_1days.gif' ><img src='./pics/forecastPrecip_1days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
+		<a href='./web/pics/forecastPrecip_0days.gif' ><img src='./web/pics/forecastPrecip_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
+		<a href='./web/pics/forecastTemp_0days.gif' ><img src='./web/pics/forecastTemp_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
+		<a href='./web/pics/forecastWind_0days.gif' ><img src='./web/pics/forecastWind_0days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
+		<a href='./web/pics/forecastPrecip_1days.gif' ><img src='./web/pics/forecastPrecip_1days.webp' loading=lazy width=237 height=290 style="margin: 5px"></a>
 
 		<div style="display: inline-block; margin: 5px;">
-			<a href="./traffic.html">
+			<a href="./web/traffic.html">
 				<p>40,29 km, směr Chrastava</p>
 				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' loading=lazy style="height: 90px; border: 0px;" alt="Tabule 40,29 km, směr Chrastava">
 				<p>40,44 km, směr Praha</p>
 				<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' loading=lazy style="height: 90px; border: 0px;" alt="Tabule 40,44 km, směr Praha">
 			</a>
 		</div>
+		<div style="display:inline-block">
+			<h2 style="text-decoration:none">Letáky</h2>
+			<a href="https://www.penny.cz/nabidky/letaky" target="_blank"><h3 style=" margin: 10px;">Penny</h3></a>
+			<a href="https://www.lidl.cz/c/akcni-letak/s10008644" target="_blank"><h3 style=" margin: 10px;">Lidl</h3></a>
+			<a href="https://prodejny.kaufland.cz/letak.html" target="_blank"><h3 style=" margin:10px;">Kaufland</h3></a>
+			<a href="https://www.albert.cz/aktualni-letaky" target="_blank"><h3 style="margin:10px;">Albert</h3></a>
+			<a href="https://www.globus.cz/akcni-nabidka" target="_blank"><h3 style="margin: 10px;">Globus</h3></a>
+			<a href="https://itesco.cz/akcni-nabidky/letaky-a-katalogy/" target="_blank"><h3 style="margin:10px;">Tesco</h3></a>
+			<a href="https://www.billa.cz/akcni-letaky" target="_blank"><h3 style="margin: 10px;">Billa</h3></a>
+		</div>
+		<a href='./web/pics/clouds_eu.gif' ><img src='./web/pics/clouds_eu.webp' loading=lazy width=600 height=390 style="margin: 5px;"></a>
 
-		<a href='./pics/clouds_eu.gif' ><img src='./pics/clouds_eu.webp' loading=lazy width=600 height=390 style="margin: 5px;"></a>
-
-		<!--<a href='./traffic.html' ><img src='./pics/CameraImage3008.webp' loading=lazy width=400 height=220 style="margin: 5px" alt="Dopravní Informace"></a>-->
+		<!--<a href='./traffic.html' ><img src='./web/pics/CameraImage3008.webp' loading=lazy width=400 height=220 style="margin: 5px" alt="Dopravní Informace"></a>-->
 		<div style="display: block;">
-			<!--<a href="./motogp.html"><h3 style="display: inline-block; margin: 10px;">MotoGP kalendář</h3></a>
-			<a href="./f1.html"><h3 style="display: inline-block; margin: 10px;">F1 kalendář</h3></a> -->
-			<a href="./feeds.html?lang=cs-CZ"><h3 style="display: inline-block; margin: 10px;">📜 Články</h3></a>
+			<!--<a href="./web/motogp.html"><h3 style="display: inline-block; margin: 10px;">MotoGP kalendář</h3></a>
+			<a href="./web/f1.html"><h3 style="display: inline-block; margin: 10px;">F1 kalendář</h3></a> -->
+			<a href="./feeds?lang=cs-CZ"><h3 style="display: inline-block; margin: 10px;">📜 Články</h3></a>
 			<a href="https://www.chmi.cz/files/portal/docs/meteo/rad/inca-cz/short.html" target="_blank"><h3 style="display: inline-block; margin: 10px;">Radar</h3></a>
 			<a href="https://www.flightradar24.com/50.53,14.98/12" target="_blank"><h3 style="display: inline-block; margin: 10px;">Radarovič</h3></a>
-
 		</div>
 
-		<a href='https://kamery.mh2net.cz/img/snap-klub.jpeg' target="_blank" id="snap-klub"><img src='./pics/snap-klub.webp' id="snap_klub_img" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
+		<a href='https://kamery.mh2net.cz/img/snap-klub.jpeg' target="_blank" id="snap-klub"><img src='./web/pics/snap-klub.webp' id="snap_klub_img" loading=lazy width=340 height=200 style="margin: 5px; display:inline-block"></a>
 		{{.LocalNews}}
 
 		{{.Tannoy}}
 
 
-		<!--<script async="" src="./js/module-wttrin-widget.js"></script> -->
+		<!--<script async="" src="./web/js/module-wttrin-widget.js"></script> -->
 		<script>
 			
 //			var panSelect = document.getElementById("select_panorama")

@@ -2,13 +2,13 @@ package marlen
 
 import (
 	"fmt"
+	"github.com/beevik/etree"
+	"strings"
 	"sync"
 	"time"
-	"strings"
-	"github.com/beevik/etree"
 )
 
-func AtomFeed(url string, answer chan string, wg* sync.WaitGroup) string {
+func AtomFeed(url string, answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
@@ -66,8 +66,7 @@ func AtomFeed(url string, answer chan string, wg* sync.WaitGroup) string {
 	return result
 }
 
-
-func RssCtk(url string, nTitles int, showDescription bool, answer chan string, wg* sync.WaitGroup) string {
+func RssCtk(url string, nTitles int, showDescription bool, answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()
 	var result string = ""
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
@@ -143,8 +142,7 @@ func RssCtk(url string, nTitles int, showDescription bool, answer chan string, w
 	return result
 }
 
-
-func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, answer chan string, wg* sync.WaitGroup) string {
+func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()
 	var result string = ""
 	var signature string = fmt.Sprintf(`%s:%s`, url, "rssCrashnet")
@@ -164,7 +162,6 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 	}
 	doc := etree.NewDocument()
 
-
 	resp := NewRequest(url)
 	if resp == "" {
 		answer <- result
@@ -178,7 +175,7 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 	}
 
 	root := doc.SelectElement("rss").SelectElement("channel")
-	mainTitle := fmt.Sprintf("&#128220;%s", firstTitle)		// root.SelectElement("title").Text() 
+	mainTitle := fmt.Sprintf("&#128220;%s", firstTitle) // root.SelectElement("title").Text()
 	// linkSite := "https://crash.net"				// root.SelectElement("link").Text()
 	result = fmt.Sprintf("<div class=\"articles\" style=\"margin:5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4><ul>\n", linkSite, mainTitle)
 	if nTitles < 1 || nTitles > 100 {
@@ -186,7 +183,7 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 	}
 
 	for i, e := range root.SelectElements("item") {
-		if i >=	nTitles {
+		if i >= nTitles {
 			break
 		}
 		date := ""
@@ -198,7 +195,7 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 		link := e.SelectElement("link").Text()
 		line := fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s &#128220;%s</a></li>\n",
 			link, title, date)
-		
+
 		result = fmt.Sprintf("%s\n%s", result, line)
 	}
 	result = fmt.Sprintf("%s\n</ul></div>", result)
@@ -210,7 +207,7 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 
 func RssLocalplaceRoutine(url string, nTitles int, tannoy, showDescription bool, answer chan string, wg *sync.WaitGroup) {
 	defer wg.Done()
-	answer <-RssLocalplace(url, nTitles, tannoy, showDescription)	
+	answer <- RssLocalplace(url, nTitles, tannoy, showDescription)
 }
 
 func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string {

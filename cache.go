@@ -1,12 +1,12 @@
 package marlen
 
 import (
+	"crypto/md5"
 	"fmt"
-	"strings"
 	"github.com/hashicorp/golang-lru/v2"
 	"os"
 	"path/filepath"
-	"crypto/md5"
+	"strings"
 	"time"
 )
 
@@ -76,4 +76,3 @@ func readAllFile(filename string) string {
 	}
 	return string(result)
 }
-

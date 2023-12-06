@@ -1,14 +1,14 @@
-package marlen 
+package marlen
 
 import (
-	"time"
 	"testing"
+	"time"
 )
 
 func TestVelikonoce(t *testing.T) {
 	tests := []struct {
-		year int 
-		expected time.Time 
+		year     int
+		expected time.Time
 	}{
 		{1583, time.Date(1584, time.April, 1, 0, 0, 0, 0, time.UTC)},
 		{2016, time.Date(2016, time.March, 27, 0, 0, 0, 0, time.UTC)},
@@ -24,8 +24,8 @@ func TestVelikonoce(t *testing.T) {
 
 func TestDenmatek(t *testing.T) {
 	tests := []struct {
-		year int 
-		expected time.Time 
+		year     int
+		expected time.Time
 	}{
 		{1583, time.Date(1923, time.May, 13, 0, 0, 0, 0, time.UTC)},
 		{2016, time.Date(2016, time.May, 8, 0, 0, 0, 0, time.UTC)},
@@ -38,11 +38,11 @@ func TestDenmatek(t *testing.T) {
 
 	}
 }
- 
+
 func TestDenotcu(t *testing.T) {
 	tests := []struct {
-		year int 
-		expected time.Time 
+		year     int
+		expected time.Time
 	}{
 		{1583, time.Date(1910, time.June, 19, 0, 0, 0, 0, time.UTC)},
 		{1958, time.Date(1958, time.June, 15, 0, 0, 0, 0, time.UTC)},
@@ -59,9 +59,9 @@ func TestDenotcu(t *testing.T) {
 
 func TestSummertime(t *testing.T) {
 	tests := []struct {
-		year int 
-		end bool
-		expected time.Time 
+		year     int
+		end      bool
+		expected time.Time
 	}{
 		{2016, false, time.Date(2016, time.March, 27, 0, 0, 0, 0, time.UTC)},
 		{2016, true, time.Date(2016, time.October, 30, 0, 0, 0, 0, time.UTC)},
@@ -78,9 +78,9 @@ func TestSummertime(t *testing.T) {
 
 func TestLastSundayofmonth(t *testing.T) {
 	tests := []struct {
-		year int 
-		month time.Month	
-		expected time.Time 
+		year     int
+		month    time.Month
+		expected time.Time
 	}{
 		{2016, time.January, time.Date(2016, time.January, 31, 0, 0, 0, 0, time.UTC)},
 		{2016, time.December, time.Date(2016, time.December, 25, 0, 0, 0, 0, time.UTC)},

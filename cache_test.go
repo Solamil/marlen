@@ -2,11 +2,10 @@ package marlen
 
 import (
 	"crypto/md5"
-	"os"
 	"fmt"
+	"os"
 	"testing"
 )
-
 
 func TestCache(t *testing.T) {
 	const hashsize int = md5.Size

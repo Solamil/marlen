@@ -1,13 +1,14 @@
 package marlen
 
 import (
-	"io"
 	"fmt"
-	"os"
+	"io"
 	"net"
 	"net/http"
+	"os"
 	"time"
 )
+
 var client *http.Client = &http.Client{
 	Transport: &http.Transport{
 		Dial: (&net.Dialer{
