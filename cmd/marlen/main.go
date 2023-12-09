@@ -51,6 +51,8 @@ type feedsDisplay struct {
 const PORT = 8901
 var indexBg string = "893531"
 var fileSvatek string = filepath.Join("web", "nameday_cz_sk_pretty.txt")
+var svatekToday string = ""
+var svatekTomorrow string = ""
 var fileHolytrinity string = filepath.Join("rates", "svata_trojice.txt")
 var location string = "Mnichovo Hradiště"
 var lang string = "cs-CZ"
@@ -94,6 +96,9 @@ func main() {
 	http.HandleFunc("/", index_handler)
 
 	marlen.PrepareSvatekList(fileSvatek)
+	t := time.Now()
+	svatekToday = "Dnes má svátek "+marlen.GetSvatekName(t, "cs-CZ")
+	svatekTomorrow = "Zítra má svátek "+marlen.GetSvatekName(t.AddDate(0, 0, 1), "cs-CZ")
 	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
 
@@ -131,9 +136,8 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var i indexDisplay
-	t := time.Now()
-	i.NameToday = "Dnes má svátek "+marlen.GetSvatekName(t, "cs-CZ")
-	i.NameTmrw = "Zítra má svátek "+marlen.GetSvatekName(t.AddDate(0, 0, 1), "cs-CZ")
+	i.NameToday = svatekToday 
+	i.NameTmrw = svatekTomorrow
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
 	i.WeatherInfo = weatherInfo
