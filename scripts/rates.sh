@@ -21,17 +21,18 @@ parse_rates() {
 	grep "|" "$file" | cut -d"|" -f4 > "$list_file"
 	head -n 1 "$file" | cut -d" " -f1 > "$date_file"
 	head -n 1 "$file" | cut -d"#" -f2 > "$number_file"
-	codes=$(grep -v "^kód" "$list_file")
 
 	grep -v "kód" < "$list_file" | while IFS= read -r code 
 	do
 		line=$(grep "$code" "$file")
-		echo "$line" | grep -o "\|[^\|]*$" | tr "," "." > "$dir/$code.txt"
+		value=$(echo "$line" | grep -o "\|[^\|]*$" | tr "," ".")
+		printf "%.2f\n" "$value" > "$dir/$code.txt"
 		echo "$line" | cut -d"|" -f3 >> "$dir/$code.txt"
 	done
 
 #	option_tags=""
 #	links_code=""
+#	codes=$(grep -v "^kód" "$list_file")
 #	for i in $codes; do
 #		value=$(cat "${dir}/${i}.txt")
 #		option_tags=$option_tags" <option value=\"$i\">$i</option>"
