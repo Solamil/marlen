@@ -22,28 +22,6 @@ func PrepareSvatekList(name string) {
 	}
 }
 
-func GetSvatekNameToday(country string) string {
-	signature := fmt.Sprintf(`%s:%s`, country, "namedayToday")
-	var answer string = ""
-	if record, found := Get(signature); found {
-		now := time.Now()
-		d := record.Expiry
-		if record.Value != "" {
-			answer = record.Value
-			return answer
-		} else if d = d.Add(time.Minute * 35); record.Value == "" && d.After(now) {
-			answer = record.Value
-			return answer
-		}
-
-	}
-	if svatek := GetSvatekName(time.Now(), country); svatek != "" {
-		answer = svatek
-		Store(signature, answer)
-	}
-	return answer
-}
-
 func GetSvatekName(t time.Time, country string) string {
 	var result string = ""
 	names := getLineByDate(t)
