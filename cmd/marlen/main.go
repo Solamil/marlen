@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	//	"context"
 	//	"html"
+	"time"
 	"text/template"
 
 	"github.com/Solamil/marlen"
@@ -30,7 +31,8 @@ type indexDisplay struct {
 	Ipv4address    string
 	LocaleOptions  string
 	Currency       string
-	NameDay        string
+	NameToday      string
+	NameTmrw       string
 	ForecastFirst  string
 	ForecastSecond string
 	WttrLink       string
@@ -78,6 +80,7 @@ func main() {
 	flag.Parse()
 	
 	startupScripts()
+	cronJobs()
 
 	indexTemplate, _ = template.ParseFiles("web/index.html")
 	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
@@ -95,7 +98,6 @@ func main() {
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
-	var wg sync.WaitGroup
 	var bg string = indexBg 
 	var weatherInfo string = ""
 	var forecastFirst string = ""
@@ -105,6 +107,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	prefix := strings.Split(lang, "-")[0]
 
+	var wg sync.WaitGroup
 	wg.Add(4)
 	wttrin := fmt.Sprintf("%s/%s", wttrUrl, location)
 	forecastCh := make(chan string)
@@ -128,7 +131,9 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var i indexDisplay
-	i.NameDay = "Dnes má svátek "+marlen.GetSvatekNameToday("cs-CZ")
+	t := time.Now()
+	i.NameToday = "Dnes má svátek "+marlen.GetSvatekName(t, "cs-CZ")
+	i.NameTmrw = "Zítra má svátek "+marlen.GetSvatekName(t.AddDate(0, 0, 1), "cs-CZ")
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
 	i.WeatherInfo = weatherInfo
@@ -292,9 +297,8 @@ func startupScripts() {
 	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
 	go marlen.CalendarImgRoutine(&wg, "https://kalendar.beda.cz/pic/kalendar-m.png", 
 					filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
-	wg.Wait()
+	// wg.Wait()
 	//marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
-	cronJobs()
 
 }
 func cronJobs() {
