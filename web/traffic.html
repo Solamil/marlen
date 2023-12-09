@@ -9,33 +9,25 @@
 <style>
 body{	max-width:800px; margin: auto; background-color: #004677; color:beige;}
 a{	text-decoration:none; color:beige}
-img{ 	width: 370px;
-	height: 220px;
+img{ 	width: 370px; height: 220px;
 	border: 2px solid white;
 }
 h2{	text-align: center; text-decoration: underline;	}
 h3{	text-align: center; }
 hr{ 	color: gold; }
 p{ 	margin: 10px; }
-div{	
-	margin: 10px;
-	display: inline-block;
-	width:370px;
-}
-#main-href:hover, #d10-href:hover{
-	text-decoration: underline;
-}
+.vmsImg{ width: 396; height:119px; border: 0px; }
+div{ margin: 10px; display: inline-block; width:370px; }
 </style>
 </head>
 <body style="background-color:#{{.Bg}}">
 
-	<p><a href="./index.html">🏠</a></p>
+	<p><a href="/index">🏠</a></p>
 	<h3><a href="https://dopravniinfo.cz/">Dopravní informace</a></h3>
-	<p id="main-href" style="display:inline-block">Úvod</p>
-	<p id="d10-href"  style="display:inline-block">🛣️ D10</p>
+	<p style="display:inline-block"><a href="#d10">🛣️ D10</a></p>
 	<hr>
 
-	<main  style="margin-top: 20px;">
+	<main id="top" style="margin-top: 20px;">
 		<article id="main">
 			<div>
 				<h4>Most přes řeku Jizeru</h4>
@@ -54,13 +46,13 @@ div{
 			<div>
 				<h4>40,29 km, směr Chrastava</h4>
 				<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' >
-					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 40,29 km, směr Chrastava">
+					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=133' class="vmsImg" loading=lazy alt="Tabule 40,29 km, směr Chrastava">
 				</a>
 			</div>
 			<div>
 				<h4>40,44 km, směr Praha</h4>
 				<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' >
-					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 40,44 km, směr Praha">
+					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=311' class="vmsImg" loading=lazy alt="Tabule 40,44 km, směr Praha">
 				</a>
 			</div>
 
@@ -120,23 +112,23 @@ div{
 			<div>
 				<h4>26,8 km, směr Chrastava</h4>
 				<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=257' >
-					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=257' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 26,8 km, směr Chrastava">
+					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=257' class="vmsImg" loading=lazy alt="Tabule 26,8 km, směr Chrastava">
 				</a>
 			</div>
 			<div>
 				<h4>27,17 km, směr Praha</h4>
 				<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=309' >
-					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=309' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule 27,17 km, směr Praha">
+					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=309' class="vmsImg" loading=lazy alt="Tabule 27,17 km, směr Praha">
 				</a>
 			</div>
-		</article>
 
-		<article id="d10-article" style="display: none">
+			<h3 id="d10">D10, Turnov - Praha</h3>
+			<hr>
 
 			<div>
 				<h4>Tabule D10, 67,83 km, směr Turnov</h4>
 				<a href='https://api.dopravniinfo.cz/VmsImage.ashx?vms=132&rnd=f5c9JLg2' >
-					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=132&rnd=f5c9JLg2' style="width: 396; height:119px; border: 0px;" loading=lazy alt="Tabule D10, 67,83 km, směr Turnov">
+					<img src='https://api.dopravniinfo.cz/VmsImage.ashx?vms=132&rnd=f5c9JLg2' class="vmsImg" loading=lazy alt="Tabule D10, 67,83 km, směr Turnov">
 				</a>
 			</div>
 			<div>
@@ -166,29 +158,14 @@ div{
 				</a>
 			</div>
 		</article>
-	</main>
-	<script>
-		var main_href = document.getElementById("main-href")
-		main_href.onclick = function() {
-			var d10_article = document.getElementById("d10-article")
-			d10_article.style = "display: none"
-			var main_article = document.getElementById("main")
-			main_article.style = "display: block"
-		}
-		var d10_href = document.getElementById("d10-href")
-		d10_href.onclick = function() {
-			var main_article = document.getElementById("main")
-			main_article.style = "display: none"
-			var d10_article = document.getElementById("d10-article")
-			d10_article.style = "display: block"
 
-		}
-	</script>
+	</main>
 	<footer>
+		<p style="display:inline-block"><a href="#top">Nahoru</a></p>
 		<p>⚠️The images present on this page may be subject to copyright.</p>
 		<p>Zdroj: <a href="https://dopravniinfo.cz/">dopravniinfo.cz</a>
 	</footer>
 	<hr>	
-	<p><a href="./index.html">🏠</a></p>
+	<p><a href="/index.html">🏠</a></p>
 </body>
 </html>
