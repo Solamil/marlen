@@ -1,6 +1,6 @@
 #!/bin/bash
 repo_path="$HOME/.local/src/marlen"
-repo_pics_path="${repo_path}/web/pics"
+repo_pics_path="${repo_path}/web/static/pics"
 
 the_server="https://api.sat24.com"
 pic_link="${the_server}/mostrecent/DE"

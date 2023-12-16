@@ -8,7 +8,7 @@ list_file="$dir/list.txt"
 date_file="$dir/date.txt"
 number_file="$dir/number.txt"
 trinity_file="$dir/svata_trojice.txt"
-web_dir="${path}/web"
+web_dir="${path}/web/static/"
 index="${web_dir}/cnb-rates.html"
 
 [ -d "$web_dir" ] || mkdir -pv "$web_dir"

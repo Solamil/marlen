@@ -7,9 +7,9 @@ formatted=$(date -d "$t" "+%d.%m. %A")
 forecastType=${2:-"forecastPrecip"}
 continent=${3:-"europa"}
 url="https://sat118.sat24.com/image?type=${forecastType}&region=${continent}&timestamp="$tomorrow
-prefix="img"
+# prefix="img"
 img_type="png"
-dir="$HOME/.local/src/marlen/web/pics"
+dir="$HOME/.local/src/marlen/web/static/pics"
 #dir="web/pics"
 dir_images="${dir}/sat24"
 out="${dir}/${forecastType}_${t}.gif"
