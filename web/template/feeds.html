@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Feeds</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{	max-width:800px; margin: auto; background-color: #442244; color:beige;}
+a{	text-decoration:none; color:beige }
+li{ 	margin: 5px; }
+ul li a:hover{	color: gray}
+h2{	text-align: center; text-decoration: underline;	}
+h3{	text-align: center; }
+p{ 	margin: 10px; }
+footer{	margin-top: 2em;
+	text-align: center;
+	color: beige;
+	border: solid;
+	border-color: beige;
+	border-width: 2px 0px 0px 0px;
+}
+.ctk{	color: gold; }
+.date{  color: lightblue;
+	font-size: small;
+	padding-right: 20px;
+	float: right;
+}
+</style>
+</head>
+<body style="background-color:#{{.Bg}}">
+	<p><a href="./index.html">🏠</a></p>
+	<p style="text-align:center;">
+	<a href="./feeds.html?lang=cs-CZ" style="padding: 10px; text-decoration:underline">🇨🇿</a>
+	<a href="./feeds.html?lang=de-DE" style="padding: 10px; text-decoration:underline">🇩🇪</a>
+	<a href="./feeds.html?lang=gb-GB" style="padding: 10px; text-decoration:underline">🇬🇧</a>
+
+	</p>
+	{{.RssFeed}}
+
+	<script>
+		var lang = "cs-CZ"
+		if (document.cookie.length > 0) {
+			
+			var cookieList = document.cookie.split("; ")
+                        var cookieLang = cookieList.find(e => e.startsWith("lang"))
+
+			if (cookieLang != undefined) {
+			       lang = cookieLang.split("=")[1]
+			}
+		}
+		var dateSpanList = document.getElementsByClassName("date")
+		for (var i = 0; i < dateSpanList.length; i++) {
+			time = dateSpanList[i].innerHTML
+			var d = new Date(time)
+			var date_output = new Intl.DateTimeFormat(lang, {weekday: "long", day:"numeric", month:"long", hour: "numeric", minute: "numeric"}).format(d)
+			dateSpanList[i].innerHTML = date_output
+		}
+	</script>
+	<p><a href="./index.html">🏠</a></p>
+</body>
