@@ -49,8 +49,10 @@ type feedsDisplay struct {
 }
 
 const PORT = 8901
+var WEB_DIR string = "web"
+var STATIC_DIR string = filepath.Join(WEB_DIR, "static")
 var indexBg string = "893531"
-var fileSvatek string = filepath.Join("web", "nameday_cz_sk_pretty.txt")
+var fileSvatek string = filepath.Join(STATIC_DIR, "nameday_cz_sk_pretty.txt")
 var svatekToday string = ""
 var svatekTomorrow string = ""
 var fileHolytrinity string = filepath.Join("rates", "svata_trojice.txt")
@@ -61,7 +63,6 @@ var wttrUrl string = "https://wttr.in"
 var fakemoneyUrl string = "https://rate.sx"
 var localtownUrl string = "https://www.mnhradiste.cz/rss"
 
-var WEB_DIR string = "web"
 // var wttrInHolders = map[string]string{
 // 	"en": "Weather in...",
 // 	"de": "Wetter für...",
@@ -84,10 +85,11 @@ func main() {
 	startupScripts()
 	cronJobs()
 
-	indexTemplate, _ = template.ParseFiles("web/index.html")
-	feedsTemplate, _ = template.ParseFiles("web/feeds.html")
+	pathTemplate := filepath.Join(WEB_DIR, "template")
+	indexTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "index.html"))
+	feedsTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "feeds.html"))
 
-	fs := http.FileServer(http.Dir("web/"))
+	fs := http.FileServer(http.Dir(STATIC_DIR))
 	http.Handle("/web/", http.StripPrefix("/web/", fs))
 	http.HandleFunc("/index.html", index_handler)
 	http.HandleFunc("/feeds.html", feeds_handler)
@@ -228,10 +230,6 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	feedsTemplate.Execute(w, i)
 }
 
-func file_handler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, filepath.Clean(WEB_DIR+r.URL.Path))
-}
-
 func getLocaleTags(lang string) string {
 	var localeTags string = ""
 	var tag string = ""
@@ -300,9 +298,8 @@ func startupScripts() {
 	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastWind")
 	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
 	go marlen.CalendarImgRoutine(&wg, "https://kalendar.beda.cz/pic/kalendar-m.png", 
-					filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
+					filepath.Join(STATIC_DIR, "pics", "kalendar-m.png"))
 	// wg.Wait()
-	//marlen.NewImgRequest("https://kalendar.beda.cz/pic/kalendar-m.png", filepath.Join(WEB_DIR, "pics", "kalendar-m.png"))
 
 }
 func cronJobs() {
