@@ -38,7 +38,8 @@ type indexDisplay struct {
 	WttrLink       string
 	WttrSrc        string
 	WttrInHolder   string
-	CryptoCurrency string
+	BtcValue       string
+	XmrValue       string
 	LocalNews      string
 	Tannoy         string
 	// Crashnet       string
@@ -156,7 +157,10 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 	// i.WttrInHolder = wttrInHolders[prefix]
 	i.LocaleOptions = getLocaleTags(lang) 
-	i.CryptoCurrency = marlen.FakeMoney(fakemoneyUrl)
+	cryptoCurr := marlen.FakeMoney(fakemoneyUrl)
+	i.BtcValue = cryptoCurr[0]
+	i.XmrValue = cryptoCurr[1]
+	// i.CryptoCurrency = marlen.FakeMoney(fakemoneyUrl)
 //	foneStr := make(chan string)
 //	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
 //	motogpStr := make(chan string)

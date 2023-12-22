@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-func FakeMoney(url string) string {
+func FakeMoney(url string) []string {
 	var wg sync.WaitGroup
-	var result string = ""
+	var result []string 
 	wg.Add(2)
 	btcStr := make(chan string)
 	//	btcStr := getCryptoCurrency(url, "btc")
@@ -24,9 +24,8 @@ func FakeMoney(url string) string {
 	btc, _ := strconv.ParseFloat(<-btcStr, 64)
 	xmr, _ := strconv.ParseFloat(<-xmrStr, 64)
 	wg.Wait()
-	result = fmt.Sprintf("1<b style=\"color: gold;\">BTC</b> %.2f$"+
-		" 1<b style=\"color: #999;\">XMR</b> %.2f$",
-		btc, xmr)
+	result = append(result, fmt.Sprintf("%.2f", btc))
+	result = append(result, fmt.Sprintf("%.2f", xmr))
 	return result
 }
 
