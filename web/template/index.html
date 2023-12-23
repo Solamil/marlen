@@ -96,10 +96,10 @@ footer{	margin-top: 2em;
 				<p id="next_forecast" style="display: inline-block"><span id="second_date"></span> {{.ForecastSecond}}</p>
 			</a>
 		</div>
+		<a href='./web/pics/clouds.gif' style="display:block"><img src='https://www.chmi.cz/files/portal/docs/meteo/sat/mobile/msg2a6.gif' loading=lazy width=260 height=127></a>
 		<!-- rain -->
-		<a href='./web/pics/rain.gif' id="link_sat24"><image src='./web/pics/rain.webp' width=360 height=227 loading=lazy></a>
+		<!--<a href='./web/pics/rain.gif' id="link_sat24"><image src='./web/pics/rain.webp' width=360 height=227 loading=lazy></a> -->
 		<!-- sun and clouds -->
-		<a href='./web/pics/clouds.gif' ><img src='./web/pics/clouds.webp' loading=lazy width=360 height=227></a>
 		<div style=display:inline-block>
 			<a href='https://www.mnhradiste.cz/kamera/mhcam1.jpg' target="_blank" id="panorama_link"><img src='./web/pics/mhcam1.webp' id="panorama_img" loading=lazy width=340 height=200 style="display:inline-block"></a>
 			<!--<a href="http://www.mhpocasi.unas.cz" target="_blank"> <img src="http://www.mhpocasi.unas.cz/webfiles/summary.jpg" width=377 height=243 border=0 title="Amatérská meteostanice Mnichovo Hradiště" alt="Mnichovo Hradiště"></a>-->
@@ -125,12 +125,14 @@ footer{	margin-top: 2em;
 				</form>
 			</div>
 		</div>
-		
+
+	<!--	
 		<a href='./web/pics/forecastPrecip_0days.gif' ><img src='./web/pics/forecastPrecip_0days.webp' loading=lazy width=237 height=290></a>
 		<a href='./web/pics/forecastTemp_0days.gif' ><img src='./web/pics/forecastTemp_0days.webp' loading=lazy width=237 height=290></a>
 		<a href='./web/pics/forecastWind_0days.gif' ><img src='./web/pics/forecastWind_0days.webp' loading=lazy width=237 height=290></a>
 		<a href='./web/pics/forecastPrecip_1days.gif' ><img src='./web/pics/forecastPrecip_1days.webp' loading=lazy width=237 height=290></a>
-
+	-->
+		<a href='https://kamery.mh2net.cz/img/snap-klub.jpeg' target="_blank" id="snap-klub"><img src='./web/pics/snap-klub.webp' id="snap_klub_img" loading=lazy width=340 height=200></a>
 		<div style="display: inline-block;">
 			<a href="./web/traffic.html">
 				<p>40,29 km, směr Chrastava</p>
@@ -156,7 +158,7 @@ footer{	margin-top: 2em;
 			<a href="https://www.biedronka.pl/pl/gazetki" target="_blank"><h3 style="display: inline-block;">Biedronka PL</h3></a>
 			<a href="https://filiale.kaufland.de/prospekte.html" target="_blank"><h3 style="display: inline-block;">Kaufland DE</h3></a>
 		</div>
-		<a href='./web/pics/clouds_eu.gif' ><img src='./web/pics/clouds_eu.webp' loading=lazy width=600 height=390></a>
+		<!--<a href='./web/pics/clouds_eu.gif' ><img src='./web/pics/clouds_eu.webp' loading=lazy width=600 height=390></a>-->
 
 		<div>
 			<!--<a href="./web/motogp.html"><h3 style="display: inline-block;">MotoGP kalendář</h3></a>
@@ -166,7 +168,6 @@ footer{	margin-top: 2em;
 			<a href="https://www.flightradar24.com/50.53,14.98/12" target="_blank"><h3 style="display: inline-block;">Radarovič</h3></a>
 		</div>
 
-		<a href='https://kamery.mh2net.cz/img/snap-klub.jpeg' target="_blank" id="snap-klub"><img src='./web/pics/snap-klub.webp' id="snap_klub_img" loading=lazy width=340 height=200></a>
 		{{.LocalNews}}
 
 		{{.Tannoy}}

@@ -297,10 +297,10 @@ func handle_req_params(r *http.Request, location *string, lang *string, bg *stri
 func startupScripts() {
 	var wg sync.WaitGroup
 	wg.Add(5)
-	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days")
-	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastTemp")
-	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastWind")
-	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
+//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days")
+//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastTemp")
+//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastWind")
+//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
 	go marlen.CalendarImgRoutine(&wg, "https://kalendar.beda.cz/pic/kalendar-m.png", 
 					filepath.Join(STATIC_DIR, "pics", "kalendar-m.png"))
 	// wg.Wait()
@@ -311,7 +311,7 @@ func cronJobs() {
 	c.AddFunc("40 14 * * 1-5", func() { marlen.RunScript(filepath.Join("scripts", "rates.sh")) })
 	c.AddFunc("50 * * * *", func() { 
 		marlen.RunScript(filepath.Join("scripts", "webcam.sh")) 
-		marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
+		// marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
 	})
 	c.Start()
 
