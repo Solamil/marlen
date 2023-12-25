@@ -41,8 +41,12 @@ type indexDisplay struct {
 	BtcValue       string
 	Pranostika     string
 	XmrValue       string
-	LocalNews      string
-	Tannoy         string
+	LinkSite       []string
+	TitleSite      []string
+	TitleTannoy    []string
+	MsgTannoy      []string
+	// LocalNews      string
+	// Tannoy         string
 	// Crashnet       string
 }
 type feedsDisplay struct {

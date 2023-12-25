@@ -177,6 +177,25 @@ footer{	margin-top: 2em;
 			<a href="https://www.flightradar24.com/50.53,14.98/12" target="_blank"><h3 style="display: inline-block;">Radarovič</h3></a>
 		</div>
 
+		<div class="articles" style="margin:5px;">
+			<h4><a href="https://www.mnhradiste.cz/" target="_blank">📜Články města</a></h4>	
+			<ul>
+				
+				{{range $i, $element := .TitleSite}}
+				<li><a href="{{index $.LinkSite $i}}">{{$element}}</a></li>
+				{{end}}
+			</ul>
+		</div>
+		<div class="articles" style="margin:5px;">
+			<h4><a href="https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu" target="_blank">📣Hlášení rozhlasu</a></h4>	
+
+				{{range $i, $element := .TitleTannoy}}
+				<details style="margin-left: 30px;"><summary>{{$element}}</summary>
+					<p>{{index $.MsgTannoy $i}}</p>
+				</details>
+				{{end}}
+		</div>
+>>>>>>> 7695798 (Preparing of using html/template)
 		{{.LocalNews}}
 
 		{{.Tannoy}}
