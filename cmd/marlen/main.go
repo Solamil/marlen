@@ -87,7 +87,7 @@ func main() {
 	cronJobs()
 
 	pathTemplate := filepath.Join(WEB_DIR, "template")
-	indexTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "index.html"))
+	indexTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "index.html"), filepath.Join(pathTemplate, "timelocalization.html"))
 	feedsTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "feeds.html"))
 
 	fs := http.FileServer(http.Dir(STATIC_DIR))
