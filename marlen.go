@@ -12,7 +12,7 @@ import (
 
 func FakeMoney(url string) []string {
 	var wg sync.WaitGroup
-	var result []string 
+	var result []string
 	wg.Add(2)
 	btcStr := make(chan string)
 	//	btcStr := getCryptoCurrency(url, "btc")
