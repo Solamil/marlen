@@ -299,11 +299,12 @@ func handle_req_params(r *http.Request, location *string, lang *string, bg *stri
 
 func startupScripts() {
 	var wg sync.WaitGroup
-	wg.Add(5)
+	wg.Add(1)
 //	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days")
 //	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastTemp")
 //	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastWind")
 //	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
+	// go marlen.RunScriptRoutine(filepath.Join("scripts", "webcam.sh")) 
 	go marlen.CalendarImgRoutine(&wg, "https://kalendar.beda.cz/pic/kalendar-m.png", 
 					filepath.Join(STATIC_DIR, "pics", "kalendar-m.png"))
 	// wg.Wait()
