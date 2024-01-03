@@ -26,6 +26,7 @@ img{ 	border: 2px solid beige;
 	border-radius: 2px;
 	margin: 5px;
 }
+abbr{	text-decoration: none; }
 h2, h3{	text-align: center; text-decoration: underline;	}
 h3{ margin: 10px; }
 p{ 	margin: 10px; }
@@ -86,7 +87,8 @@ footer{	margin-top: 2em;
 	<main  style="margin-top: 20px;">
 		<a href='https://kalendar.beda.cz/' target="_blank"><img src='./web/pics/kalendar-m.png' loading=lazy alt="kalendář"></a>
 		<div class="cs-CZ" style="display: inline-block">
-			<p style="max-width: 550px;"><abbr title="📆{{.NameTmrw}}" style="text-decoration: none"><a href="./web/svatek.html">📆{{.NameToday}}</a></abbr></p>
+			<p style="max-width: 550px;"><abbr title="Pranostika pro dnešní den.">🗣️{{.Pranostika}}</abbr></p>
+			<p style="max-width: 550px;"><abbr title="📆{{.NameTmrw}}"><a href="./web/svatek.html">📆{{.NameToday}}</a></abbr></p>
 			<p style="display:inline-block"><a id="curr" href="./web/cnb-rates.html">💵{{.Currency}}</a></p>
 			<p><a id="cryptocurr" href="https://rate.sx/" target="_blank">🪙1<b style="color: gold;">BTC</b> {{.BtcValue}}$ 1<b style="color:#999;">XMR</b> {{.XmrValue}}$</a></p>
 		</div>
@@ -98,7 +100,7 @@ footer{	margin-top: 2em;
 		</div>
 		<div>
 			<a href='https://www.chmi.cz/files/portal/docs/meteo/sat/data_jsmsgview.html' target="_blank">
-				<img src='https://www.chmi.cz/files/portal/docs/meteo/sat/mobile/msg2a6.gif' loading=lazy width=260 height=127>
+				<img src='https://www.chmi.cz/files/portal/docs/meteo/sat/mobile/msg2a6.gif' loading=lazy width=150 height=130>
 			</a>
 			<a href='https://www.in-pocasi.cz/data/teplotni_mapy_cz_actual/t1600.png?1611068400' target="_blank">
 				<img src='https://www.in-pocasi.cz/data/teplotni_mapy_cz_actual/t1600.png?1611068400' style="border: 0px;" loading=lazy width=360 height=227>

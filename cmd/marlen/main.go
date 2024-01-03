@@ -39,6 +39,7 @@ type indexDisplay struct {
 	WttrSrc        string
 	WttrInHolder   string
 	BtcValue       string
+	Pranostika     string
 	XmrValue       string
 	LocalNews      string
 	Tannoy         string
@@ -56,6 +57,8 @@ var indexBg string = "893531"
 var fileSvatek string = filepath.Join(STATIC_DIR, "nameday_cz_sk_pretty.txt")
 var svatekToday string = ""
 var svatekTomorrow string = ""
+var filePranostika string = filepath.Join(STATIC_DIR, "pranostika_cz_pretty.txt")
+var pranostika string = ""
 var fileHolytrinity string = filepath.Join("rates", "svata_trojice.txt")
 var location string = "Mnichovo Hradiště"
 var lang string = "cs-CZ"
@@ -105,6 +108,8 @@ func main() {
 	t := time.Now()
 	svatekToday = "Dnes má svátek "+marlen.GetSvatekName(t, "cs-CZ")
 	svatekTomorrow = "Zítra má svátek "+marlen.GetSvatekName(t.AddDate(0, 0, 1), "cs-CZ")
+	marlen.PrepareSvatekList(filePranostika)
+	pranostika = marlen.GetSvatekName(t, "cs-CZ")
 	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
 
@@ -142,6 +147,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var i indexDisplay
+	i.Pranostika = pranostika
 	i.NameToday = svatekToday 
 	i.NameTmrw = svatekTomorrow
 	i.Bg = bg
