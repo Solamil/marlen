@@ -181,24 +181,20 @@ footer{	margin-top: 2em;
 			<h4><a href="https://www.mnhradiste.cz/" target="_blank">📜Články města</a></h4>	
 			<ul>
 				
-				{{range $i, $element := .TitleSite}}
-				<li><a href="{{index $.LinkSite $i}}">{{$element}}</a></li>
+				{{range $i, $element := .Localnews}}
+				<li><a href="{{$element.LinkSite}}" target="_blank">{{$element.Title}}</a></li>
 				{{end}}
 			</ul>
 		</div>
 		<div class="articles" style="margin:5px;">
 			<h4><a href="https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu" target="_blank">📣Hlášení rozhlasu</a></h4>	
 
-				{{range $i, $element := .TitleTannoy}}
-				<details style="margin-left: 30px;"><summary>{{$element}}</summary>
-					<p>{{index $.MsgTannoy $i}}</p>
+				{{range $i, $element := .Tannoy}}
+				<details style="margin-left: 30px;"><summary>{{$element.Title}}</summary>
+					<p>{{$element.Description}}</p>
 				</details>
 				{{end}}
 		</div>
->>>>>>> 7695798 (Preparing of using html/template)
-		{{.LocalNews}}
-
-		{{.Tannoy}}
 
 		<script>
 			

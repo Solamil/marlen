@@ -2,11 +2,21 @@ package marlen
 
 import (
 	"fmt"
+	"encoding/json"
 	"github.com/beevik/etree"
 	"strings"
 	"sync"
 	"time"
 )
+
+type Articles struct {
+	Author string `json:"author"`
+	Title string `json:"title"`
+	Description string `json:"description"`
+	LinkSite string `json:"linkSite"`
+	Date string `json:"date"`
+
+}
 
 func AtomFeed(url string, answer chan string, wg *sync.WaitGroup) string {
 	defer wg.Done()
@@ -205,17 +215,17 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 	return result
 }
 
-func RssLocalplaceRoutine(url string, nTitles int, tannoy, showDescription bool, answer chan string, wg *sync.WaitGroup) {
+func RssLocalplaceRoutine(url string, nTitles int, tannoy, showDescription bool, answer chan []Articles, wg *sync.WaitGroup) {
 	defer wg.Done()
 	answer <- RssLocalplace(url, nTitles, tannoy, showDescription)
 }
 
-func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string {
-	var result string = ""
+func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) []Articles {
 	var signature string = fmt.Sprintf(`%s:%s`, url, "rssArticles")
 	if tannoy {
 		signature = fmt.Sprintf(`%s:%s`, url, "rssTannoy")
 	}
+	var result []Articles
 	if record, found := Get(signature); found {
 		now := time.Now()
 		d := record.Expiry
@@ -224,16 +234,12 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string
 		} else {
 			d = d.Add(time.Minute * 35)
 		}
-		result = record.Value
+		json.Unmarshal([]byte(record.Value), &result)
 		if d.After(now) {
 			return result
 		}
 	}
 	doc := etree.NewDocument()
-	//	if err := doc.ReadFromFile("cr.rss"); err != nil {
-	//		fmt.Println(err)
-	//		return ""
-	//	}
 	var resp string = ""
 	signatureResp := fmt.Sprintf(`%s:%s`, url, "rssResp")
 	if record, found := Get(signatureResp); found {
@@ -255,20 +261,17 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string
 		Store(signatureResp, resp)
 	}
 	if resp == "" {
-		Store(signature, result)
-		return result
+		Store(signature, "")
+		return []Articles{}
 	}
 	if err := doc.ReadFromString(resp); err != nil {
 		fmt.Println(err)
-		return ""
+		return []Articles{}
 	}
 
+	var artList []Articles
 	root := doc.SelectElement("rss")
 	if !tannoy {
-		mainTitle := "📜Články města"
-		linkSite := "https://www.mnhradiste.cz/"
-		result = fmt.Sprintf("<div class=\"articles\" style=\"margin: 5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4>\n"+
-			"<ul>", linkSite, mainTitle)
 		if nTitles < 1 || nTitles > 10 {
 			nTitles = 3
 		}
@@ -279,28 +282,15 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string
 				break
 			}
 			title := e.SelectElement("title").Text()
-			_, new_title, found := strings.Cut(title, "Hlášení rozhlasu")
+			_, _, found := strings.Cut(title, "Hlášení rozhlasu")
 			if found {
 				continue
 			}
 			link := e.SelectElement("link").Text()
-			var line string = ""
-			if showDescription {
-				//	description := e.SelectElement("description").Text()
-				line = fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\">%s</a></li>"+
-					"\n", link, title)
-			} else {
-				line = fmt.Sprintf("<a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s</a>\n",
-					link, new_title)
-			}
-			result = fmt.Sprintf("%s\n%s", result, line)
+			artList = append(artList, Articles{"", title, "", link, ""})
 			i++
 		}
-		result = fmt.Sprintf("%s\n</ul></div>", result)
 	} else {
-		mainTitle := "📣Hlášení rozhlasu"
-		linkSite := "https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu"
-		result = fmt.Sprintf("<div class=\"tannoy\" style=\"margin:5px;\">\n<h4><a href=\"%s\" target=\"_blank\">%s</a></h4>\n", linkSite, mainTitle)
 		if nTitles < 1 || nTitles > 10 {
 			nTitles = 3
 		}
@@ -315,24 +305,17 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) string
 			if !found {
 				continue
 			}
-			link := e.SelectElement("link").Text()
-			var line string = ""
+			var description string = ""
 			if showDescription {
-				description := e.SelectElement("description").Text()
-				line = fmt.Sprintf("<details style=\"margin-left:30px;\"><summary>%s</summary>"+
-					"\n"+
-					"<p>%s</p>\n"+
-					"</details>", new_title, description)
-			} else {
-				line = fmt.Sprintf("<a href=\"%s\" target=\"_blank\" style=\"display: block;\">%s</a>\n",
-					link, new_title)
+				description = e.SelectElement("description").Text()
 			}
-			result = fmt.Sprintf("%s\n%s", result, line)
+			artList = append(artList, Articles{"", new_title, description, "", ""})
 			i++
 		}
-		result = fmt.Sprintf("%s\n</div>", result)
 
 	}
-	Store(signature, result)
-	return result
+	byteResult, _ := json.Marshal(artList)
+
+	Store(signature, string(byteResult))
+	return artList 
 }

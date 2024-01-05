@@ -41,10 +41,8 @@ type indexDisplay struct {
 	BtcValue       string
 	Pranostika     string
 	XmrValue       string
-	LinkSite       []string
-	TitleSite      []string
-	TitleTannoy    []string
-	MsgTannoy      []string
+	Tannoy	       []marlen.Articles
+	Localnews      []marlen.Articles
 	// LocalNews      string
 	// Tannoy         string
 	// Crashnet       string
@@ -181,11 +179,11 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	// nitterStr := make(chan string)
 	// go marlen.RssCrashnet("https://www.nitter.cz/jeremyclarkson/rss", "nitter - JC", "https://nitter.cz/JeremyClarkson", 3, nitterStr, &wg )
 //	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
-	tannoy := make(chan string)
-	go marlen.RssLocalplaceRoutine(localtownUrl, 2, true, true, tannoy, &wg)
-	i.Tannoy = <-tannoy
+	localnews := make(chan []marlen.Articles)
+	go marlen.RssLocalplaceRoutine(localtownUrl, 5, false, true, localnews, &wg)
+	i.Localnews = <-localnews
 	wg.Wait()	
-	i.LocalNews = marlen.RssLocalplace(localtownUrl, 5, false, true)
+	i.Tannoy = marlen.RssLocalplace(localtownUrl, 2, true, true)
 	indexTemplate.Execute(w, i)
 
 }
