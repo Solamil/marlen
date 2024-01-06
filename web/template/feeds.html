@@ -19,12 +19,16 @@ footer{	margin-top: 2em;
 	border-color: beige;
 	border-width: 2px 0px 0px 0px;
 }
+div{
+	margin: 5px;
+}
 .ctk{	color: gold; }
 .date{  color: lightblue;
 	font-size: small;
 	padding-right: 20px;
 	float: right;
 }
+
 </style>
 </head>
 <body style="background-color:#{{.Bg}}">
@@ -35,7 +39,31 @@ footer{	margin-top: 2em;
 	<a href="./feeds.html?lang=gb-GB" style="padding: 10px; text-decoration:underline">🇬🇧</a>
 
 	</p>
-	{{.RssFeed}}
+	{{range $i, $feed := .Feeds}}
+	<div>
+		<h3><a href="{{$feed.LinkSite}}" target="_blank">{{$feed.Title}}</a></h3>	
+		<ul>
+			
+			{{range $i, $element := $feed.ArtList}}
+
+			{{if $element.Description}} 
+			<li><h4><a href="{{$element.LinkSite}}"  class="ctk" target="_blank">
+						{{if $element.Date}}<span class="date">{{$element.Date}}</span>{{end}}{{if $element.Author}}&#9999;{{$element.Author}} {{end}}&#128220;{{$element.Title}}</a></h4>
+				<p>{{$element.Description}}</p> 
+			</li>
+			{{else}}
+			<li><a href="{{$element.LinkSite}}" class="{{$feed.Class}}" target="_blank">
+					{{if $element.Date}}<span class="date">{{$element.Date}}</span>{{end}}{{if $element.Author}}&#9999;{{$element.Author}} {{end}}&#128220;{{$element.Title}}</a>
+			</li>
+
+			{{end}}
+			{{end}}
+		</ul>
+	</div>
+	<br><hr>
+
+	{{end}}
+
 
 	<script>
 		var lang = "cs-CZ"

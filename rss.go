@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type Articles struct {
+type Article struct {
 	Author string `json:"author"`
 	Title string `json:"title"`
 	Description string `json:"description"`
@@ -18,31 +18,39 @@ type Articles struct {
 
 }
 
-func AtomFeed(url string, answer chan string, wg *sync.WaitGroup) string {
+type Feed struct {
+	Title string `json:"title"`
+	LinkSite string `json:"linkSite"`
+	ArtList []Article `json:"articles"`
+	Class string `json:"class"`
+}
+
+func AtomFeedRoutine(url string, answer chan Feed, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var result string = ""
+	answer <- AtomFeed(url)
+}
+
+func AtomFeed(url string) Feed {
+	var result Feed
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
 	if record, found := Get(signature); found && record.Value != "" {
 		now := time.Now()
 		d := record.Expiry
 		d = d.Add(time.Hour * 6)
-		result = record.Value
+		json.Unmarshal([]byte(record.Value), &result)
 		if d.After(now) {
-			answer <- result
 			return result
 		}
 	}
 	resp := NewRequest(url)
 	if resp == "" {
-		answer <- result
 		return result
 	}
 	doc := etree.NewDocument()
 
 	if err := doc.ReadFromString(resp); err != nil {
 		fmt.Println(err)
-		answer <- ""
-		return ""
+		return Feed{}
 	}
 
 	//	if err := doc.ReadFromFile("BwJLymVb.atom"); err != nil {
@@ -52,33 +60,31 @@ func AtomFeed(url string, answer chan string, wg *sync.WaitGroup) string {
 	root := doc.SelectElement("feed")
 	mainTitle := root.SelectElement("title").Text()
 	linkSite := root.SelectElement("link").SelectAttrValue("href", "")
-	result = fmt.Sprintf("<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>\n<ul>", linkSite, mainTitle)
+	var feed Feed = Feed{mainTitle, linkSite, []Article{}, ""}
 	for _, e := range root.SelectElements("entry") {
 		title := e.SelectElement("title").Text()
 		author := e.SelectElement("author")
 		name := author.SelectElement("name").Text()
-		date := ""
+		published := ""
 		if e.SelectElement("published") != nil {
-			published := e.SelectElement("published").Text()
-			date = fmt.Sprintf("<span class=\"date\">%s</span>", published)
-
+			published = e.SelectElement("published").Text()
 		}
 		link := e.SelectElement("link").SelectAttrValue("href", "")
-		//		t, _ := time.Parse(time.RFC3339, published)
-		// 	✏️ &#9999;📜&#128220;
-		line := fmt.Sprintf(`<li><a href="%s" target="_blank">%s &#9999;%s &#128220;%s</a></li>`, link, date, name, title)
-		result = fmt.Sprintf("%s\n%s", result, line)
-
+		feed.ArtList = append(feed.ArtList, Article{name, title, "", link, published})
 	}
-	result = fmt.Sprintf("%s\n</ul>", result)
-	Store(signature, result)
-	answer <- result
-	return result
+
+	byteResult, _ := json.Marshal(feed)
+	Store(signature, string(byteResult))
+	return feed 
 }
 
-func RssCtk(url string, nTitles int, showDescription bool, answer chan string, wg *sync.WaitGroup) string {
+func RssCtkRoutine(url string, nTitles int, showDescription bool, answer chan Feed, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var result string = ""
+	answer <- RssCtk(url, nTitles, showDescription)
+}
+
+func RssCtk(url string, nTitles int, showDescription bool) Feed {
+	var result Feed
 	signature := fmt.Sprintf(`%s:%s`, url, "rssFeed")
 	if record, found := Get(signature); found {
 		now := time.Now()
@@ -88,9 +94,8 @@ func RssCtk(url string, nTitles int, showDescription bool, answer chan string, w
 		} else {
 			d = d.Add(time.Minute * 35)
 		}
-		result = record.Value
+		json.Unmarshal([]byte(record.Value), &result)
 		if d.After(now) {
-			answer <- result
 			return result
 		}
 	}
@@ -101,55 +106,45 @@ func RssCtk(url string, nTitles int, showDescription bool, answer chan string, w
 	//	}
 	resp := NewRequest(url)
 	if resp == "" {
-		Store(signature, result)
-		answer <- result
 		return result
 	}
 	if err := doc.ReadFromString(resp); err != nil {
 		fmt.Println(err)
-		answer <- ""
-		return ""
+		return Feed{}
 	}
 
 	root := doc.SelectElement("rss").SelectElement("channel")
 	mainTitle := root.SelectElement("title").Text()
 	linkSite := root.SelectElement("link").Text()
-	result = fmt.Sprintf("<div>\n<h3><a href=\"%s\" target=\"_blank\">%s</a></h3>\n<ul>", linkSite, mainTitle)
 	if nTitles < 1 || nTitles > 100 {
 		nTitles = 5
 	}
+	var feed Feed = Feed{mainTitle, linkSite, []Article{}, ""}
 	var size int = nTitles
 	for i, e := range root.SelectElements("item") {
 		if i >= size {
 			break
 		}
 		title := e.SelectElement("title").Text()
-		date := ""
+		published := ""
 		if e.SelectElement("pubDate") != nil {
-			published := e.SelectElement("pubDate").Text()
-			date = fmt.Sprintf("<span class=\"date\">%s</span>", published)
+			published = e.SelectElement("pubDate").Text()
 		}
 		link := e.SelectElement("link").Text()
 		//		t, _ := time.Parse(time.RFC3339, published)
-		// 	✏️ &#9999;📜&#128220;
-		var line string = ""
+		description := ""
 		if showDescription {
-			description := e.SelectElement("description").Text()
-			line = fmt.Sprintf("<li><h4><a href=\"%s\" target=\"_blank\" class=\"ctk\">%s &#128220;%s"+
-				"</a></h4>\n"+
-				"<p>%s<p>\n"+
-				"</li>", link, date, title, description)
+			description = e.SelectElement("description").Text()
 		} else {
-			line = fmt.Sprintf("<li><a href=\"%s\" target=\"_blank\">%s &#128220;%s</a>\n"+
-				"</li>", link, date, title)
+			description = ""
 		}
-		result = fmt.Sprintf("%s\n%s", result, line)
+		name := ""
+		feed.ArtList = append(feed.ArtList, Article{name, title, description, link, published})
 	}
-	result = fmt.Sprintf("%s\n</ul></div>", result)
-	Store(signature, result)
+	byteResult, _ := json.Marshal(feed)
+	Store(signature, string(byteResult))
 
-	answer <- result
-	return result
+	return feed 
 }
 
 func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, answer chan string, wg *sync.WaitGroup) string {
@@ -215,17 +210,17 @@ func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, an
 	return result
 }
 
-func RssLocalplaceRoutine(url string, nTitles int, tannoy, showDescription bool, answer chan []Articles, wg *sync.WaitGroup) {
+func RssLocalplaceRoutine(url string, nTitles int, tannoy, showDescription bool, answer chan []Article, wg *sync.WaitGroup) {
 	defer wg.Done()
 	answer <- RssLocalplace(url, nTitles, tannoy, showDescription)
 }
 
-func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) []Articles {
-	var signature string = fmt.Sprintf(`%s:%s`, url, "rssArticles")
+func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) []Article {
+	var signature string = fmt.Sprintf(`%s:%s`, url, "rssArticle")
 	if tannoy {
 		signature = fmt.Sprintf(`%s:%s`, url, "rssTannoy")
 	}
-	var result []Articles
+	var result []Article
 	if record, found := Get(signature); found {
 		now := time.Now()
 		d := record.Expiry
@@ -262,14 +257,14 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) []Arti
 	}
 	if resp == "" {
 		Store(signature, "")
-		return []Articles{}
+		return []Article{}
 	}
 	if err := doc.ReadFromString(resp); err != nil {
 		fmt.Println(err)
-		return []Articles{}
+		return []Article{}
 	}
 
-	var artList []Articles
+	var artList []Article
 	root := doc.SelectElement("rss")
 	if !tannoy {
 		if nTitles < 1 || nTitles > 10 {
@@ -287,7 +282,7 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) []Arti
 				continue
 			}
 			link := e.SelectElement("link").Text()
-			artList = append(artList, Articles{"", title, "", link, ""})
+			artList = append(artList, Article{"", title, "", link, ""})
 			i++
 		}
 	} else {
@@ -309,7 +304,7 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) []Arti
 			if showDescription {
 				description = e.SelectElement("description").Text()
 			}
-			artList = append(artList, Articles{"", new_title, description, "", ""})
+			artList = append(artList, Article{"", new_title, description, "", ""})
 			i++
 		}
 

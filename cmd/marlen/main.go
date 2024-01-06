@@ -12,7 +12,7 @@ import (
 	//	"context"
 	//	"html"
 	"time"
-	"text/template"
+	"html/template"
 
 	"github.com/Solamil/marlen"
 	"github.com/robfig/cron/v3"
@@ -41,15 +41,15 @@ type indexDisplay struct {
 	BtcValue       string
 	Pranostika     string
 	XmrValue       string
-	Tannoy	       []marlen.Articles
-	Localnews      []marlen.Articles
+	Tannoy	       []marlen.Article
+	Localnews      []marlen.Article
 	// LocalNews      string
 	// Tannoy         string
 	// Crashnet       string
 }
 type feedsDisplay struct {
 	Bg      string
-	RssFeed string
+	Feeds   []marlen.Feed
 }
 
 const PORT = 8901
@@ -179,7 +179,7 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	// nitterStr := make(chan string)
 	// go marlen.RssCrashnet("https://www.nitter.cz/jeremyclarkson/rss", "nitter - JC", "https://nitter.cz/JeremyClarkson", 3, nitterStr, &wg )
 //	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
-	localnews := make(chan []marlen.Articles)
+	localnews := make(chan []marlen.Article)
 	go marlen.RssLocalplaceRoutine(localtownUrl, 5, false, true, localnews, &wg)
 	i.Localnews = <-localnews
 	wg.Wait()	
@@ -190,7 +190,6 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 
 func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
-	var rssFeed string = ""
 	var location string = ""
 	var lang string = "cs-CZ"
 	var bg string = "442244"
@@ -201,47 +200,42 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	if lang == "cs-CZ" {
 		wg.Add(6)
 		var ctkUrl string = "https://www.ceskenoviny.cz/sluzby/rss"
-		ctkCr := make(chan string)
-		go marlen.RssCtk(ctkUrl+"/cr.php", 5, true, ctkCr, &wg)
-		ctkSvet := make(chan string)
-		go marlen.RssCtk(ctkUrl+"/svet.php", 5, true, ctkSvet, &wg)
-		ctkEko := make(chan string)
-		go marlen.RssCtk(ctkUrl+"/ekonomika.php", 5, true, ctkEko, &wg)
-		ctkSport := make(chan string)
-		go marlen.RssCtk(ctkUrl+"/sport.php", 3, false, ctkSport, &wg)
+		ctkCr := make(chan marlen.Feed)
+		go marlen.RssCtkRoutine(ctkUrl+"/cr.php", 5, true, ctkCr, &wg)
+		ctkSvet := make(chan marlen.Feed)
+		go marlen.RssCtkRoutine(ctkUrl+"/svet.php", 5, true, ctkSvet, &wg)
+		ctkEko := make(chan marlen.Feed)
+		go marlen.RssCtkRoutine(ctkUrl+"/ekonomika.php", 5, true, ctkEko, &wg)
+		ctkSport := make(chan marlen.Feed)
+		go marlen.RssCtkRoutine(ctkUrl+"/sport.php", 3, false, ctkSport, &wg)
 
-		// ctkCr := marlen.RssCtk(ctkUrl+"/cr.php", 5, true)
-		// ctkSvet := marlen.RssCtk(ctkUrl+"/svet.php", 5, true)
-		// ctkEko := marlen.RssCtk(ctkUrl+"/ekonomika.php", 5, true)
-		// ctkSport := marlen.RssCtk(ctkUrl+"/sport.php", 3, false)
-		hrad := make(chan string)
-		go marlen.RssCtk("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false, hrad, &wg)
-		neovlivni := make(chan string)
-		go marlen.AtomFeed("https://neovlivni.cz/feed/atom/", neovlivni, &wg)
-
-		render_feeds := fmt.Sprintf(`%s <br><hr> %s <br><hr>
-			    %s <br><hr> %s <br><hr> %s <br><hr> %s`, <-neovlivni, <-hrad, <-ctkCr, <-ctkSvet, <-ctkEko, <-ctkSport )
-		rssFeed = render_feeds
+		// ctkCr := marlen.RssCtkRoutine(ctkUrl+"/cr.php", 5, true)
+		// ctkSvet := marlen.RssCtkRoutine(ctkUrl+"/svet.php", 5, true)
+		// ctkEko := marlen.RssCtkRoutine(ctkUrl+"/ekonomika.php", 5, true)
+		// ctkSport := marlen.RssCtkRoutine(ctkUrl+"/sport.php", 3, false)
+		hrad := make(chan marlen.Feed)
+		go marlen.RssCtkRoutine("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false, hrad, &wg)
+		neovlivni := make(chan marlen.Feed)
+		go marlen.AtomFeedRoutine("https://neovlivni.cz/feed/atom/", neovlivni, &wg)
+		i.Feeds = append(i.Feeds, <-neovlivni, <-hrad, <-ctkCr, <-ctkSvet, <-ctkEko, <-ctkSport)
 		wg.Wait()
 	} else if lang == "de-DE" {
 		wg.Add(1)
-		taggeshau := make(chan string)
-		go marlen.RssCtk("https://www.tagesschau.de/ausland/index~rss2.xml", 5, true, taggeshau, &wg)
+		taggeshau := make(chan marlen.Feed)
+		go marlen.RssCtkRoutine("https://www.tagesschau.de/ausland/index~rss2.xml", 5, true, taggeshau, &wg)
+		i.Feeds = append(i.Feeds, <-taggeshau)
 		
-		render_feeds := fmt.Sprintf(`%s <br><hr>`, <-taggeshau )
 		wg.Wait()
-		rssFeed = render_feeds
 	} else if lang == "gb-GB" {
 		wg.Add(1)
-		theguardian := make(chan string)
-		go marlen.RssCtk("https://www.theguardian.com/uk/rss", 7, true, theguardian, &wg)
+		theguardian := make(chan marlen.Feed)
+		go marlen.RssCtkRoutine("https://www.theguardian.com/uk/rss", 7, true, theguardian, &wg)
+		
+		i.Feeds = append(i.Feeds, <-theguardian)
 
-		render_feeds := fmt.Sprintf(`%s <br><hr>`, <-theguardian)
-		rssFeed = render_feeds
 		wg.Wait()
 	}
 	i.Bg = "442244"
-	i.RssFeed = rssFeed
 	feedsTemplate.Execute(w, i)
 }
 
