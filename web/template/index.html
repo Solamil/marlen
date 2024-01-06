@@ -55,7 +55,10 @@ footer{	margin-top: 2em;
 			<input type="submit" id="save_btn" style="position: absolute;
 		     left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<select name="lang" id="select_lang">
-				{{.LocaleOptions}}
+				{{range $i, $element := .LocaleList}}
+				<option value="{{$element.Code}}" {{$element.Selected}}>{{$element.Flag}}</option>
+				{{end}}
+
 			</select>
 			<span><a href="https://mapy.cz/" target="_blank">🏠</a></span>
 			<input type="text" name="location" id="location_input" value="{{.Location}}" 

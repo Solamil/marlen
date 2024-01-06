@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"sync"
 	"net/http"
 	"net/url"
-	"strings"
 	"path/filepath"
+	"strings"
+	"sync"
 	//	"context"
 	//	"html"
-	"time"
 	"html/template"
+	"time"
 
 	"github.com/Solamil/marlen"
 	"github.com/robfig/cron/v3"
@@ -24,12 +24,18 @@ type indexUrlParams struct {
 	Bg       [1]string `json:"bg"`
 }
 
+type localization struct {
+	Flag     string
+	Code     string
+	Selected string
+}
+
 type indexDisplay struct {
 	Bg             string
 	Location       string
 	WeatherInfo    string
 	Ipv4address    string
-	LocaleOptions  string
+	LocaleList     []localization
 	Currency       string
 	NameToday      string
 	NameTmrw       string
@@ -41,18 +47,19 @@ type indexDisplay struct {
 	BtcValue       string
 	Pranostika     string
 	XmrValue       string
-	Tannoy	       []marlen.Article
+	Tannoy         []marlen.Article
 	Localnews      []marlen.Article
 	// LocalNews      string
 	// Tannoy         string
 	// Crashnet       string
 }
 type feedsDisplay struct {
-	Bg      string
-	Feeds   []marlen.Feed
+	Bg    string
+	Feeds []marlen.Feed
 }
 
 const PORT = 8901
+
 var WEB_DIR string = "web"
 var STATIC_DIR string = filepath.Join(WEB_DIR, "static")
 var indexBg string = "893531"
@@ -76,7 +83,7 @@ var localtownUrl string = "https://www.mnhradiste.cz/rss"
 // }
 
 var countryFlags = map[string]string{
-//	"en-US": "🇺🇸",
+	//	"en-US": "🇺🇸",
 	"de-DE": "🇩🇪",
 	"cs-CZ": "🇨🇿",
 }
@@ -87,16 +94,16 @@ var feedsTemplate *template.Template
 func main() {
 	port := flag.Int("port", PORT, "Port for the server to listen on")
 	flag.Parse()
-	
+
 	startupScripts()
 	cronJobs()
 
 	pathTemplate := filepath.Join(WEB_DIR, "template")
-	indexTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "index.html"), 
-					filepath.Join(pathTemplate, "timelocalization.html"),
-					filepath.Join(pathTemplate, "footer.html"))
+	indexTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "index.html"),
+		filepath.Join(pathTemplate, "timelocalization.html"),
+		filepath.Join(pathTemplate, "footer.html"))
 	feedsTemplate, _ = template.ParseFiles(filepath.Join(pathTemplate, "feeds.html"),
-					filepath.Join(pathTemplate, "footer.html"))
+		filepath.Join(pathTemplate, "footer.html"))
 
 	fs := http.FileServer(http.Dir(STATIC_DIR))
 	http.Handle("/web/", http.StripPrefix("/web/", fs))
@@ -108,15 +115,15 @@ func main() {
 
 	marlen.PrepareSvatekList(fileSvatek)
 	t := time.Now()
-	svatekToday = "Dnes má svátek "+marlen.GetSvatekName(t, "cs-CZ")
-	svatekTomorrow = "Zítra má svátek "+marlen.GetSvatekName(t.AddDate(0, 0, 1), "cs-CZ")
+	svatekToday = "Dnes má svátek " + marlen.GetSvatekName(t, "cs-CZ")
+	svatekTomorrow = "Zítra má svátek " + marlen.GetSvatekName(t.AddDate(0, 0, 1), "cs-CZ")
 	marlen.PrepareSvatekList(filePranostika)
 	pranostika = marlen.GetSvatekName(t, "cs-CZ")
 	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }
 
 func index_handler(w http.ResponseWriter, r *http.Request) {
-	var bg string = indexBg 
+	var bg string = indexBg
 	var weatherInfo string = ""
 	var forecastFirst string = ""
 	var forecastSecond string = ""
@@ -145,12 +152,12 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 		sunMoon := strings.Split(sunMoonStr, " ")
 		if len(sunMoon) == 3 && len(forecasts) > 0 {
 			weatherInfo = "🌅 " + sunMoon[0] + " 🌇" + sunMoon[1] + " " + sunMoon[2] + " " + forecasts[0]
-		} 
+		}
 	}
 
 	var i indexDisplay
 	i.Pranostika = pranostika
-	i.NameToday = svatekToday 
+	i.NameToday = svatekToday
 	i.NameTmrw = svatekTomorrow
 	i.Bg = bg
 	i.Location, _ = url.QueryUnescape(location)
@@ -163,26 +170,26 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	currency := make(chan string)
 	go marlen.CnbCurrency(fileHolytrinity, currency, &wg)
 	i.Currency = <-currency
-	i.WttrLink =  fmt.Sprintf("%s?lang=%s", wttrin, prefix)
-//	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
+	i.WttrLink = fmt.Sprintf("%s?lang=%s", wttrin, prefix)
+	//	i.WttrSrc = fmt.Sprintf("%s_0pq_transparency=255_background=%s_lang=%s.png", wttrin, bg, prefix)
 
 	// i.WttrInHolder = wttrInHolders[prefix]
-	i.LocaleOptions = getLocaleTags(lang) 
+	i.LocaleList = getLocaleList(lang)
 	cryptoCurr := marlen.FakeMoney(fakemoneyUrl)
 	i.BtcValue = cryptoCurr[0]
 	i.XmrValue = cryptoCurr[1]
 	// i.CryptoCurrency = marlen.FakeMoney(fakemoneyUrl)
-//	foneStr := make(chan string)
-//	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
-//	motogpStr := make(chan string)
-//	go marlen.RssCrashnet("https://www.crash.net/rss/motogp", "Crash Net - MotoGP", "https://crash.net", 5, motogpStr, &wg )
+	//	foneStr := make(chan string)
+	//	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
+	//	motogpStr := make(chan string)
+	//	go marlen.RssCrashnet("https://www.crash.net/rss/motogp", "Crash Net - MotoGP", "https://crash.net", 5, motogpStr, &wg )
 	// nitterStr := make(chan string)
 	// go marlen.RssCrashnet("https://www.nitter.cz/jeremyclarkson/rss", "nitter - JC", "https://nitter.cz/JeremyClarkson", 3, nitterStr, &wg )
-//	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
+	//	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
 	localnews := make(chan []marlen.Article)
 	go marlen.RssLocalplaceRoutine(localtownUrl, 5, false, true, localnews, &wg)
 	i.Localnews = <-localnews
-	wg.Wait()	
+	wg.Wait()
 	i.Tannoy = marlen.RssLocalplace(localtownUrl, 2, true, true)
 	indexTemplate.Execute(w, i)
 
@@ -224,13 +231,13 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 		taggeshau := make(chan marlen.Feed)
 		go marlen.RssCtkRoutine("https://www.tagesschau.de/ausland/index~rss2.xml", 5, true, taggeshau, &wg)
 		i.Feeds = append(i.Feeds, <-taggeshau)
-		
+
 		wg.Wait()
 	} else if lang == "gb-GB" {
 		wg.Add(1)
 		theguardian := make(chan marlen.Feed)
 		go marlen.RssCtkRoutine("https://www.theguardian.com/uk/rss", 7, true, theguardian, &wg)
-		
+
 		i.Feeds = append(i.Feeds, <-theguardian)
 
 		wg.Wait()
@@ -239,14 +246,16 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 	feedsTemplate.Execute(w, i)
 }
 
-func getLocaleTags(lang string) string {
-	var localeTags string = ""
-	var tag string = ""
+func getLocaleList(lang string) []localization {
+	var localeList []localization
 	for key, value := range countryFlags {
-		tag = getHTMLOptionTag(key, value, (key == lang))
-		localeTags = strings.Join([]string{localeTags, tag}, "\n")
+		if key == lang {
+			localeList = append(localeList, localization{value, key, "selected"})
+		} else {
+			localeList = append(localeList, localization{value, key, ""})
+		}
 	}
-	return localeTags
+	return localeList
 }
 
 func handle_req_params(r *http.Request, location *string, lang *string, bg *string) {
@@ -302,33 +311,23 @@ func handle_req_params(r *http.Request, location *string, lang *string, bg *stri
 func startupScripts() {
 	var wg sync.WaitGroup
 	wg.Add(1)
-//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days")
-//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastTemp")
-//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastWind")
-//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
-	// go marlen.RunScriptRoutine(filepath.Join("scripts", "webcam.sh")) 
-	go marlen.CalendarImgRoutine(&wg, "https://kalendar.beda.cz/pic/kalendar-m.png", 
-					filepath.Join(STATIC_DIR, "pics", "kalendar-m.png"))
+	//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days")
+	//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastTemp")
+	//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "0days", "forecastWind")
+	//	go marlen.RunScriptRoutine(&wg, filepath.Join("scripts", "days-forecast.sh"), "1days")
+	// go marlen.RunScriptRoutine(filepath.Join("scripts", "webcam.sh"))
+	go marlen.CalendarImgRoutine(&wg, "https://kalendar.beda.cz/pic/kalendar-m.png",
+		filepath.Join(STATIC_DIR, "pics", "kalendar-m.png"))
 	// wg.Wait()
 
 }
 func cronJobs() {
 	c := cron.New()
 	c.AddFunc("40 14 * * 1-5", func() { marlen.RunScript(filepath.Join("scripts", "rates.sh")) })
-	c.AddFunc("50 * * * *", func() { 
-		marlen.RunScript(filepath.Join("scripts", "webcam.sh")) 
-		marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
+	c.AddFunc("50 * * * *", func() {
+		marlen.RunScript(filepath.Join("scripts", "webcam.sh"))
+		//		marlen.RunScript(filepath.Join("scripts", "sat-img.sh"))
 	})
 	c.Start()
 
-}
-
-func getHTMLOptionTag(value, symbol string, selected bool) string {
-	var tag string = ""
-	if selected {
-		tag = fmt.Sprintf("<option value=\"%s\" %s>%s</option>", value, "selected", symbol)
-	} else {
-		tag = fmt.Sprintf("<option value=\"%s\">%s</option>", value, symbol)
-	}
-	return tag
 }

@@ -1,8 +1,8 @@
 package marlen
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"github.com/beevik/etree"
 	"strings"
 	"sync"
@@ -10,19 +10,18 @@ import (
 )
 
 type Article struct {
-	Author string `json:"author"`
-	Title string `json:"title"`
+	Author      string `json:"author"`
+	Title       string `json:"title"`
 	Description string `json:"description"`
-	LinkSite string `json:"linkSite"`
-	Date string `json:"date"`
-
+	LinkSite    string `json:"linkSite"`
+	Date        string `json:"date"`
 }
 
 type Feed struct {
-	Title string `json:"title"`
-	LinkSite string `json:"linkSite"`
-	ArtList []Article `json:"articles"`
-	Class string `json:"class"`
+	Title    string    `json:"title"`
+	LinkSite string    `json:"linkSite"`
+	ArtList  []Article `json:"articles"`
+	Class    string    `json:"class"`
 }
 
 func AtomFeedRoutine(url string, answer chan Feed, wg *sync.WaitGroup) {
@@ -75,7 +74,7 @@ func AtomFeed(url string) Feed {
 
 	byteResult, _ := json.Marshal(feed)
 	Store(signature, string(byteResult))
-	return feed 
+	return feed
 }
 
 func RssCtkRoutine(url string, nTitles int, showDescription bool, answer chan Feed, wg *sync.WaitGroup) {
@@ -144,7 +143,7 @@ func RssCtk(url string, nTitles int, showDescription bool) Feed {
 	byteResult, _ := json.Marshal(feed)
 	Store(signature, string(byteResult))
 
-	return feed 
+	return feed
 }
 
 func RssCrashnet(url string, firstTitle string, linkSite string, nTitles int, answer chan string, wg *sync.WaitGroup) string {
@@ -312,5 +311,5 @@ func RssLocalplace(url string, nTitles int, tannoy, showDescription bool) []Arti
 	byteResult, _ := json.Marshal(artList)
 
 	Store(signature, string(byteResult))
-	return artList 
+	return artList
 }
