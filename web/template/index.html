@@ -186,7 +186,7 @@ footer{	margin-top: 2em;
 			<h4><a href="https://www.mnhradiste.cz/" target="_blank">📜Články města</a></h4>	
 			<ul>
 				
-				{{range $i, $element := .Localnews}}
+				{{range $i, $element := .Localnews.ArtList}}
 				<li><a href="{{$element.LinkSite}}" target="_blank">{{$element.Title}}</a></li>
 				{{end}}
 			</ul>
@@ -194,7 +194,7 @@ footer{	margin-top: 2em;
 		<div class="articles" style="margin:5px;">
 			<h4><a href="https://www.mnhradiste.cz/radnice/komunikace-s-obcany/hlaseni-rozhlasu" target="_blank">📣Hlášení rozhlasu</a></h4>	
 
-				{{range $i, $element := .Tannoy}}
+				{{range $i, $element := .Tannoy.ArtList}}
 				<details style="margin-left: 30px;"><summary>{{$element.Title}}</summary>
 					<p>{{$element.Description}}</p>
 				</details>

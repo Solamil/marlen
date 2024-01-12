@@ -47,8 +47,8 @@ type indexDisplay struct {
 	BtcValue       string
 	Pranostika     string
 	XmrValue       string
-	Tannoy         []marlen.Article
-	Localnews      []marlen.Article
+	Tannoy         marlen.Feed
+	Localnews      marlen.Feed
 	// LocalNews      string
 	// Tannoy         string
 	// Crashnet       string
@@ -178,15 +178,10 @@ func index_handler(w http.ResponseWriter, r *http.Request) {
 	cryptoCurr := marlen.FakeMoney(fakemoneyUrl)
 	i.BtcValue = cryptoCurr[0]
 	i.XmrValue = cryptoCurr[1]
-	// i.CryptoCurrency = marlen.FakeMoney(fakemoneyUrl)
-	//	foneStr := make(chan string)
-	//	go marlen.RssCrashnet("https://www.crash.net/rss/f1", "Crash Net - F1", "https://crash.net", 5, foneStr, &wg )
-	//	motogpStr := make(chan string)
-	//	go marlen.RssCrashnet("https://www.crash.net/rss/motogp", "Crash Net - MotoGP", "https://crash.net", 5, motogpStr, &wg )
 	// nitterStr := make(chan string)
 	// go marlen.RssCrashnet("https://www.nitter.cz/jeremyclarkson/rss", "nitter - JC", "https://nitter.cz/JeremyClarkson", 3, nitterStr, &wg )
 	//	i.Crashnet = fmt.Sprintf("%s \n %s", <-foneStr, <-motogpStr)
-	localnews := make(chan []marlen.Article)
+	localnews := make(chan marlen.Feed)
 	go marlen.RssLocalplaceRoutine(localtownUrl, 5, false, true, localnews, &wg)
 	i.Localnews = <-localnews
 	wg.Wait()
@@ -216,15 +211,12 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 		ctkSport := make(chan marlen.Feed)
 		go marlen.RssCtkRoutine(ctkUrl+"/sport.php", 3, false, ctkSport, &wg)
 
-		// ctkCr := marlen.RssCtkRoutine(ctkUrl+"/cr.php", 5, true)
-		// ctkSvet := marlen.RssCtkRoutine(ctkUrl+"/svet.php", 5, true)
-		// ctkEko := marlen.RssCtkRoutine(ctkUrl+"/ekonomika.php", 5, true)
-		// ctkSport := marlen.RssCtkRoutine(ctkUrl+"/sport.php", 3, false)
 		hrad := make(chan marlen.Feed)
 		go marlen.RssCtkRoutine("https://www.hrad.cz/cs/pro-media/rss/tiskove-zpravy.xml", 5, false, hrad, &wg)
 		neovlivni := make(chan marlen.Feed)
 		go marlen.AtomFeedRoutine("https://neovlivni.cz/feed/atom/", neovlivni, &wg)
-		i.Feeds = append(i.Feeds, <-neovlivni, <-hrad, <-ctkCr, <-ctkSvet, <-ctkEko, <-ctkSport)
+		i.Feeds = append(i.Feeds, <-neovlivni, <-hrad, <-ctkCr, <-ctkSvet, 
+					<-ctkEko, <-ctkSport)
 		wg.Wait()
 	} else if lang == "de-DE" {
 		wg.Add(1)
@@ -235,6 +227,10 @@ func feeds_handler(w http.ResponseWriter, r *http.Request) {
 		wg.Wait()
 	} else if lang == "gb-GB" {
 		wg.Add(1)
+		//	foneStr := make(chan marlen.Feed)
+		//	go marlen.RssCtkRoutine("https://www.crash.net/rss/f1", 5, false, foneStr, &wg )
+		//	motogpStr := make(chan marlen.Feed)
+		//	go marlen.RssCtkRoutine("https://www.crash.net/rss/motogp", 5, false, motogpStr, &wg )
 		theguardian := make(chan marlen.Feed)
 		go marlen.RssCtkRoutine("https://www.theguardian.com/uk/rss", 7, true, theguardian, &wg)
 
